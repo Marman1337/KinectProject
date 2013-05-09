@@ -1,7 +1,7 @@
-.log
-.aux
-.pdf
-.synctex.gz
+*.log
+*.aux
+*.pdf
+*.synctex.gz
 
 
 #################
