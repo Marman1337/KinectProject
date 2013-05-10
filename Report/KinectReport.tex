@@ -252,21 +252,7 @@ As a result, ... % CHANGE
 
 \subsection{Multiple People}
 \noindent
-In order to discover how many subject can be tracked by a single camera, we test with multiple people standing in front of it. The standard we have for a subject being fully visible is that the software \texttt{UserViewer} can identify all joints. Skeleton missing head or leg joints are invalid for our project. Improper results can be viewed in software as missing joints wrong identifications of skeleton for a subject, for example, one subject has part of its body skeleton actually belong to another subject. The test result is that 5 subjects is the maximum the camera and software can detect. Subjects are required to be in two rows, two in the front and three in the back so that they do not cover each other.\\
- 
-\begin{figure}[hbtp]
-\centering
-\includegraphics[scale=1]{multi_people1.jpg}
-\caption{how subjects are placed}
-\end{figure}
- 
-\begin{figure}[hbtp]
-\centering
-\includegraphics[scale=1]{multi_people2.jpg}
-\caption{5 subjects tracked}
-\end{figure}
- 
-As mentioned before, a subject needs to be 2.5 to 4 metres away from the camera to be fully visible. After splitting up the area for 5 subjects, each one has less than 1 metre square which is not enough for dance. 3 is an optimal number of subjects for a single camera to track.\\
+Here we test to see if the presence of multiple people in the field of view of the camera impedes the performance. We first try and fit as many people into the camera's screen as possible at about 3m away from the camera. We then see if the software can fit skeletons to all the people at the same time. Attempting this with 5 people, the maximum that 
 
 
 \subsection{Multiple Cameras}
@@ -276,6 +262,7 @@ There may be a requirement to use multiple cameras for the finalised product so 
 \textbf{ADD REFERENCE TO SHAKE\_N\_SENSE}. To test whether this will be a problem we use the following setup 
 %% CHANGE: Add sketch of setup for testing of two cameras
 \textbf{ADD FIGURE}. In this setup the two cameras have overlapping views and also are completely facing each other, which means there will be interference from one camera to the next. 
+%% SOME COMMENT TO TEST GIT
 \\\\
 \noindent
 The subjects stand and move in front of the camera at a distance of at least 2m from each camera. No noticeable interference is present when the subjects are in front of the IR light source of each of the cameras so that the camera opposite cannot detect the IR pattern created by it. But when there is no one in front of the camera, we can see that there is indeed a large `hole' that can be seen in the depth image due to the IR pattern of camera opposite it. 
