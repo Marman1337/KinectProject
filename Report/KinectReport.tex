@@ -128,17 +128,17 @@ Distance from Camera/cm & Description of Performance \\
 These results highlight the fact that the camera has a restricted field of view and therefore the number of people that each camera can support is limited. This will have to be further considered when finalising a design for the application. One thing to note is that, since  the optimum distance away from the camera, with respect to tracking, is in the range of 1.5m to 3.5m it would not be beneficial to have the camera(s) in the corners of the room. This would cause a huge amount of the already small range to be wasted due to the height of the room. 
 
 \subsection{Effect of Varying Lighting Conditions}
-<<<<<<< HEAD
-
-\noindent
-In order to evaulate the effect of varying lighting conditions on the tracking capabilities of the camera, we utilised a lux meter to determine the intensity of light in a room. The meter has been calibrated 
-=======
 \noindent
 In order to evaulate the effect of varying lighting conditions on the tracking capabilities of the camera, we utilised a lux meter to determine the intensity of light in a room. The meter has been calibrated such that a complete darkness represents 0 lux.
->>>>>>> e084d4dab93d5e1409d0ecf521ac13804fcb9ec7
+
 \subsection{Obstruction in Range}
-
-
+\noindent
+To test for the possibility that obstructions could interfere with the fitting of the skeleton on the subject, we place a chair in various positions around the subject and in front of the subject. We then do the same with another person walking in the vicinity of the subject. This scenario is probably more relevant to the situations which may be encountered in a dance class room.  
+\subsubsection{Chair}
+\noindent Positioning the chair adjacent to the subject produces interesting results. When the chair is directly in front of the subject, the NiTE software tries to fit a skeleton to the chair as well as the person. This can be seen in Figure \textbf{ADD FIGURE}. Putting the chair on the head of the subject and at the waist does not give this result, but instead the proportion of the skeleton that is created by the software is quite distorted (see Figure \textbf{ADD FIGURE}). 
+\subsubsection{Person}
+\noindent
+In this experiment the second person walks within different ranges of the camera and the initial subject. Interestingly enough, even at quite fast speeds of movement, the camera can calibrate and track both people quite quickly. This will most probably not be a limitation when creating the software. 
 \subsection{Velocity of Movement}
 
 
