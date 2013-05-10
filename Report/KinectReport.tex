@@ -11,6 +11,9 @@
 \usepackage{capt-of}
 \usepackage{amsfonts}
 \usepackage{verbatim}
+\usepackage{courier}
+\usepackage{float}
+\restylefloat{table}
 
 %%%%%%%%%%%%%%%%%%% Code %%%%%%%%%%%%%%%%%%%%%%
 \usepackage{color}
@@ -41,7 +44,7 @@ breakatwhitespace=false, % sets if automatic breaks should only happen at whites
 keywordstyle=\color{purple}, % keyword style
 numberstyle=\tiny\color{gray}, % the style that is used for the line-numbers
 rulecolor=\color{black}, % if not set, the frame-color may be changed on
-stringstyle=\color{blue},
+stringstyle=\color{blue}, % string literal style
 escapeinside={\%*}{*)} % if you want to add a comment within your code
 }
 \DefineVerbatimEnvironment{code}{Verbatim}{fontsize=\small}
@@ -168,7 +171,81 @@ This can be seen in Figure \textbf{ADD FIGURE}. Putting the chair on the head of
 \noindent
 In this experiment the second person walks within different ranges of the camera and the initial subject. Interestingly enough, even at quite fast speeds of movement, the camera can calibrate and track both people quite quickly. This will most probably not be a limitation when creating the software. 
 \subsection{Velocity of Movement}
+Another important criterion regarding the performance of both the Kinect camera and the NiTE software package is the accuracy and responsiveness of the skeleton fitting. Our evaluation procedure consists of the recording of a predefined movement which would provide us with the subject's velocity information and would allow us to estimate how accurately the fitted skeleton is able to follow the actual move, by calculating the error between the perceived and the actual movement. In particular, we would record a slower and a faster versions of the same movement and compare the corresponding errors.
 
+The subject's reference movement was determined to be a $180^o$ degrees right arm move starting from a vertical position with the hand facing the ceiling and following an arc. The testing procedure includes the modification of the \texttt{UserViewer} sample program in order to record twice the predefined movement as performed by the subject at high and low speeds. 
+
+By capturing the recorded passage with a Desktop camera at a rate of 24 frames per second(fps), we are able to extract individual frames from the recorded videos. At this point, we define a starting and an ending point of the subject's right arm and select the frames that more accurately correspond to these positions. After following this procedure for both recordings, we end up with 3 frames from the fast and 16 from the slow version. The starting and ending position frames for the slow and the fast versions are shown below on Figure \ref{start_pos}. The substantial deviation between the shoulder-elbow vertex of the skeleton and the arm indicate the important increased error when the subject performs a fast move.
+
+\begin{figure}[h]
+\center
+\includegraphics[scale=0.5]{SlowStart.jpg} \includegraphics[scale=0.5]{FastStart.jpg}
+\caption{Slow and fast recordings starting position.}
+\label{start_pos}
+\end{figure}
+
+\begin{figure}
+\center
+\includegraphics[scale=0.5]{SlowEnd.jpg} \includegraphics[scale=0.5]{FastEnd.jpg}
+\caption{Slow and fast recordings ending position, with substantial error in the fast version's skeleton fitting.}
+\end{figure}
+
+
+\noindent A summary of the number of frames and the time between the starting and ending arm position for each  is shown below.
+
+\begin{table}[H]
+\center
+\begin{tabular}{| c | c | c |}
+\hline
+Movement Speed & Number of Frames & Movement Duration/sec\\
+\hline
+Fast & 3 & 0.083\\
+Slow & 16 & 0.670\\
+\hline
+\end{tabular}
+\caption{Movement duration for fast and slow versions, recorded at 24 fps.}
+\end{table}
+
+The next step of the responsiveness evaluation is the estimation of the arm's actual starting and ending positions as well as its perceived position as defined by the fitted skeleton. As the arm follows an arc-shaped movement, we focus on measuring the angle between the subject's elbow and shoulder, with the shoulder  defined as the reference, and finding an estimate of the skeleton fitting error by comparing the actual angle and the angle of the vertex between the two joints with respect to the shoulder joint. Although both the actual and perceived starting positions are the same, the ending positions are different and result in errors in the subject's tracking. The angle measurements can be seen below in Table \ref{angle}.
+
+\begin{table}[H]
+\center
+\begin{tabular}{| c | c | c | c |}
+\hline
+Movement Speed & Starting Angle/deg & Perceived Ending Angle/deg & Actual Ending Angle/deg\\
+\hline
+Fast & $3.5^o$ & $-30.5^o$ & $-55.3^o$\\
+Slow & $4.4^o$ & $-49.2^o$ & $-64.0^o$\\
+\hline
+\end{tabular}
+\caption{Perceived and actual starting and ending angles of the subject's arm.}
+\label{angle}
+\end{table}
+
+The final step involved the estimation of the actual and perceived angular velocities based on the already obtained data and the calculation of the error as a consequence to the difference between them. By using the following formula, we estimate the angular velocities and the errors for both the slow and the fast recordings.
+\begin{equation}
+\omega = RotationalDisplacement * MovementDuration
+\end{equation}
+
+\noindent where \[RotationalDisplacement = EndingAngle - StartingAngle\]
+and  $\omega$ stands for the angular velocity
+
+\noindent The angular velocities and the corresponding errors for both the slow and the fast recordings are presented on the following table.
+
+\begin{table}[H]
+\center
+\begin{tabular}{| c | c | c | c |}
+\hline
+Movement Speed & Perceived Angular Velocity/$^o/s$ & Actual Angular Velocity/$^o/s$ & Error/\% \\
+\hline
+Fast & $-408.0$ & $-705.0$ & $42.12\%$ \\
+Slow & $-67.2$ & $-89.4$ & $24.8\%$ \\
+\hline
+\end{tabular}
+\caption{Perceived and actual angular velocities and percentage errors.}
+\end{table}
+
+As a result, ... % CHANGE
 
 \subsection{Camera Angle Relative to Subject}
 
