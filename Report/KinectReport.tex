@@ -155,7 +155,13 @@ Since the skeleton is primarily fitted using the depth sensor of the RGB-D camer
 \noindent
 To test for the possibility that obstructions could interfere with the fitting of the skeleton on the subject, we place a chair in various positions around the subject and in front of the subject. We then do the same with another person walking in the vicinity of the subject. This scenario is probably more relevant to the situations which may be encountered in a dance class room.  
 \subsubsection{Chair}
-\noindent Positioning the chair adjacent to the subject produces interesting results. When the chair is directly in front of the subject, the NiTE software tries to fit a skeleton to the chair as well as the person. This can be seen in Figure \textbf{ADD FIGURE}. Putting the chair on the head of the subject and at the waist does not give this result, but instead the proportion of the skeleton that is created by the software is quite distorted (see Figure \textbf{ADD FIGURE}). 
+\noindent Positioning the chair adjacent to the subject produces interesting results. When the chair is directly in front of the subject, the NiTE software tries to fit a skeleton to the chair as well as the person.
+%% CHANGE
+This can be seen in Figure \textbf{ADD FIGURE}. Putting the chair on the head of the subject and at the waist does not give this result, but instead the proportion of the skeleton that is created by the software is quite distorted
+%% CHANGE
+(see Figure \textbf{ADD FIGURE}). 
+%% CHANGE
+% Not finished. It seems that this section is quite a hand waving description of the experiment because we probably could have been more thorough.  
 \subsubsection{Person}
 \noindent
 In this experiment the second person walks within different ranges of the camera and the initial subject. Interestingly enough, even at quite fast speeds of movement, the camera can calibrate and track both people quite quickly. This will most probably not be a limitation when creating the software. 
@@ -166,6 +172,8 @@ In this experiment the second person walks within different ranges of the camera
 
 
 \subsection{Multiple People}
+\noindent
+Here we test to see if the presence of multiple people in the field of view of the camera impedes the performance. We first try and fit as many people into the camera's screen as possible at about 3m away from the camera. We then see if the software can fit skeletons to all the people at the same time. Attempting this with 5 people, the maximum that 
 
 
 \subsection{Multiple Cameras}
