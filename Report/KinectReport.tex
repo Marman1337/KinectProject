@@ -180,6 +180,20 @@ Here we test to see if the presence of multiple people in the field of view of t
 
 
 \subsection{Multiple Cameras}
+\noindent
+There may be a requirement to use multiple cameras for the finalised product so testing to see whether a setup using more than one camera has an effect on the performance of the hardware is something that must be considered. Research has suggested that using more than one camera with an overlapping view between them can lead to depth images that contain `holes' in them
+%% CHANGE
+\textbf{ADD REFERENCE TO SHAKE\_N\_SENSE}. To test whether this will be a problem we use the following setup 
+%% CHANGE: Add sketch of setup for testing of two cameras
+\textbf{ADD FIGURE}. In this setup the two cameras have overlapping views and also are completely facing each other, which means there will be interference from one camera to the next. 
+\\\\
+\noindent
+The subjects stand and move in front of the camera at a distance of at least 2m from each camera. No noticeable interference is present when the subjects are in front of the IR light source of each of the cameras so that the camera opposite cannot detect the IR pattern created by it. But when there is no one in front of the camera, we can see that there is indeed a large `hole' that can be seen in the depth image due to the IR pattern of camera opposite it. 
+%% CHANGE
+\textbf{ADD FIGURE}
+This is a possible configuration for the dance class and as long as there are people in front of both cameras, blocking their IR stream to stop interference, it is highly plausible as the experiments show. On all occasions the subjects are tracked by both cameras with no perceived deterioration in the performance. 
+
+\subsection{Analysis of Results}
 \clearpage
 
 \section*{Appendix}
