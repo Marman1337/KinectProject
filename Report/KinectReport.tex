@@ -59,11 +59,11 @@ escapeinside={\%*}{*)} % if you want to add a comment within your code
 
 \section{Kinect \& NiTE Software Evaluation}
 \noindent
-To determine a method of evaluating the dance student, the limitations of the camera and the NiTE software must first be evaluated with respect to the criteria addressed below. To do this we use the UserViewer Application that comes as a sample with the NiTE software library with the camera elevated 75cm above the ground, within the 60cm to 180cm range that is suggested by Microsoft for optimal tracking. 
+To determine a method of evaluating the dance student, the limitations of the camera and the NiTE software must first be evaluated with respect to the criteria addressed below. To do this we use the UserViewer Application that comes as a sample with the NiTE software library with the camera elevated 75 cm above the ground, within the 60 cm to 180 cm range that is suggested by Microsoft for optimal tracking. 
 
 \subsection{Camera Range}
 \noindent 
-To test for the camera's range, we lay a tape measure on the ground starting from directly below the camera up to 8m away from the camera. We then use two subjects of different heights and body shapes to evaluate the performance of the camera and the software for tracking at different distances. The subject first starts within a few centimetres of the camera and slowly moves backwards until the camera calibrates and starts tracking and continues to do so until the tracking is lost. After this, the subject is required to start from the depths of the room, much further than the range of the camera, and to start walking slowly towards the camera, again taking a record of the following specifications. The results can be shown in Tables \ref{cam_range_180_away} to \ref{cam_range_150_toward}.
+To test for the camera's range, we lay a tape measure on the ground starting from directly below the camera up to 8 m away from the camera. We then use two subjects of different heights and body shapes to evaluate the performance of the camera and the software for tracking at different distances. The subject first starts within a few centimetres of the camera and slowly moves backwards until the camera calibrates and starts tracking and continues to do so until the tracking is lost. After this, the subject is required to start from the depths of the room, much further than the range of the camera, and to start walking slowly towards the camera, again taking a record of the following specifications. The results can be shown in Tables \ref{cam_range_180_away} to \ref{cam_range_150_toward}.
 \\
 \begin{table}[h]
 \center
@@ -76,7 +76,7 @@ Distance from Camera/cm & Description of Performance \\
 410 & Tracking is lost\\
 \hline
 \end{tabular}
-\caption{Subject moving away from camera. Subject height 180cm.}
+\caption{Subject moving away from camera. Subject height 180 cm.}
 \label{cam_range_180_away}
 \end{table}
 
@@ -91,7 +91,7 @@ Distance from Camera/cm & Description of Performance \\
 410 & Tracking is lost\\
 \hline
 \end{tabular}
-\caption{Subject moving towards camera. Subject height 180cm.}
+\caption{Subject moving towards camera. Subject height 180 cm.}
 \label{cam_range_180_toward}
 \end{table}
 
@@ -106,7 +106,7 @@ Distance from Camera/cm & Description of Performance \\
 430 & Tracking is lost\\
 \hline
 \end{tabular}
-\caption{Subject moving away camera. Subject height 150cm.}
+\caption{Subject moving away camera. Subject height 150 cm.}
 \label{cam_range_150_away}
 \end{table}
 
@@ -128,14 +128,28 @@ Distance from Camera/cm & Description of Performance \\
 These results highlight the fact that the camera has a restricted field of view and therefore the number of people that each camera can support is limited. This will have to be further considered when finalising a design for the application. One thing to note is that, since  the optimum distance away from the camera, with respect to tracking, is in the range of 1.5m to 3.5m it would not be beneficial to have the camera(s) in the corners of the room. This would cause a huge amount of the already small range to be wasted due to the height of the room. 
 
 \subsection{Effect of Varying Lighting Conditions}
-<<<<<<< HEAD
+\noindent
+In order to evaulate the effect of varying lighting conditions on the tracking capabilities of the camera, we utilise a lux meter to determine the intensity of light in a room. The meter has been calibrated such that a complete darkness represents 0 lux. We then perform a series of tests to determine, if the varying lighting conditions have an effect on the tracking range of the camera. The table below presents the results of the tests:
+\begin{table}[h]
+\center
+\begin{tabular}{ | l | c |}
+\hline
+Light intensity & Tracking range (starts - stops tracking) \\
+\hline
+4 lux & 120 cm - 420 cm\\
+16 lux & 120 cm - 420 cm\\
+44 lux & 120 cm - 420 cm\\
+142 lux & 120 cm - 420 cm\\
+176 lux & 120 cm - 420 cm\\
+\hline
+\end{tabular}
+\caption{Tracking range in varying light intensity of the room}
+\label{cam_range_varying_light}
+\end{table}
 
 \noindent
-In order to evaulate the effect of varying lighting conditions on the tracking capabilities of the camera, we utilised a lux meter to determine the intensity of light in a room. The meter has been calibrated 
-=======
-\noindent
-In order to evaulate the effect of varying lighting conditions on the tracking capabilities of the camera, we utilised a lux meter to determine the intensity of light in a room. The meter has been calibrated such that a complete darkness represents 0 lux.
->>>>>>> e084d4dab93d5e1409d0ecf521ac13804fcb9ec7
+Since the skeleton is primarily fitted using the depth sensor of the RGB-D camera, the light intensity was expected to have little, if any, effect on the tracking range of the camera. This has been confirmed in the experiments.
+
 \subsection{Obstruction in Range}
 
 
