@@ -286,6 +286,18 @@ This is a possible configuration for the dance class and as long as there are pe
 \subsection{Analysis of Results}
 \clearpage
 
+\section{Automatic Evaluation of Students}
+\noindent
+This section discusses the way in which the application will be used to evaluate the student's performance with respect to the teacher's. The software will have to detect errors that the student has made, detect time periods in which the student performed poorly as well as satisfactory and be able to give a few other useful statistics for the teacher to also grade the student. Using only information from the data points of the joints from NiTE and the RGB-D stream from OpenNI, various things need to be considered and multiple modules will need to be created to handle the data. 
+\subsection{Algorithms \& Design}
+\noindent The design will consist of various modules that will divide the tasks into manageable chunks, which will be very helpful when trying to develop the software due to the level of abstraction associated with each piece of data. The algorithms will first be developed in Matlab, due to ease of use making the development of the algorithms as fast as possible, and then will be ported to C++, due to its speed and ease of integration with the development environment being used to develop the rest of the software. 
+
+\subsubsection{Motionless Activity Detector}
+\subsubsection{Normalisation Module}
+\subsubsection{Scaling Module}
+\subsubsection{Initial Frame Detector}
+\subsubsection{Data Analysis Module}
+
 \section*{Appendix}
 \subsection*{Some Code}
 \begin{lstlisting}
