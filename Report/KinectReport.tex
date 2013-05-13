@@ -293,7 +293,24 @@ This section discusses the way in which the application will be used to evaluate
 \noindent The design will consist of various modules that will divide the tasks into manageable chunks, which will be very helpful when trying to develop the software due to the level of abstraction associated with each piece of data. The algorithms will first be developed in Matlab, due to ease of use making the development of the algorithms as fast as possible, and then will be ported to C++, due to its speed and ease of integration with the development environment being used to develop the rest of the software. 
 
 \subsubsection{Motionless Activity Detector}
-\subsubsection{Normalisation Module}
+\noindent 
+With the current design in mind the student will be asked to first move slightly so that the NiTE software can calibrate and start tracking. After this, the student will be required to stand still in a predefined position for a minimum of 1 second afterwhich the student may start dancing. This will be the position that the next module will use to translate the coordinates with respect to a specific origin. The purpose of this module is to find a frame number during which the student will be in the standing still phase.\\\\
+\noindent 
+The algorithm is quite simple. Under the assumption that there is a time period in which there is relatively little movement the algorithm is only required to find a period with the least sum of the absolute change in all the coordinates. The aforementioned ``period'' takes the form of a non-overlapping sliding window over the joint data, for each joint. This sliding window has to contain the data of less than half the number of frames that are recorded in 1 second so that, if indeed the student did stand still for at least 1 second, a frame within that period of time can be found. The window must be sufficiently large however to get a sum over a wide enough range of values so that momentarily motionless activity is not detected instead at some other point.\\\\
+\noindent
+The algorithm takes the form:
+\begin{itemize}
+\setlength{\itemsep}{1pt}
+\setlength{\parskip}{0pt}
+\setlength{\parsep}{0pt}
+	\item Make a sliding window of 10 to 14 frames.
+	\item Take the sum of the absolute difference between the frames for each of the coordinates (x, y, z).
+	\item Find the window with the minimum for the sum of absolute difference between frames.
+	\item Get initial index of that frame.
+\item Do this for all major joints and make sure all initial indices match.
+\item If they do not all match, take the majority. 
+\end{itemize}
+\subsubsection{Translation Module}
 \subsubsection{Scaling Module}
 \subsubsection{Initial Frame Detector}
 \subsubsection{Data Analysis Module}
