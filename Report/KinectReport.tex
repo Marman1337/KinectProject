@@ -284,6 +284,7 @@ The subjects stand and move in front of the camera at a distance of at least 2m 
 This is a possible configuration for the dance class and as long as there are people in front of both cameras, blocking their IR stream to stop interference, it is highly plausible as the experiments show. On all occasions the subjects are tracked by both cameras with no perceived deterioration in the performance. 
 
 \subsection{Analysis of Results}
+\textbf{Not Finished}
 \clearpage
 
 \section{Automatic Evaluation of Students}
@@ -318,18 +319,22 @@ The first step is to check that the algorithm works for only one joint, chosen t
 To confirm our results, a plot of the graph for the coordinate's positions versus frames is created and the video is also watched with the frame number in the top left corner. If the frame number returned by the algorithm corresponds to a time period in which the subject is still, this is taken as a correct result. 
 \subsubsection{Testing with Multiple Points}
 \noindent 
-In this test the subject walks in front of the camera moving their limbs until tracking commences, then stands still for 1 second and then moves again. Variations of this are tested in which all body parts are used, the upper half and the lower half. 
+In this test the subject walks in front of the camera moving their limbs until tracking commences, then stands still for 1 second and then moves again. Variations of this are tested in which all body parts are used, the upper half and the lower half. Once again, the data is processed by the Matlab scripts created but this time a vector of results is returned by the algorithm. Each result in the vector is the stationary point for each joint for each of the coordinates (x, y, z). The algorithm then takes the frame value that has the highest occurrence in the vector and returns this as a frame in which there is no motion of the subject. The same criteria as in the previous test is used to measure the correctness of the algorithm. 
 
 \subsubsection{Obstacles Encountered}
 \noindent
-Various problems have arisen during the tests. 
+Various problems have arisen during the tests. The first problem is associated with the data itself. The data comes in a 4-tuple for each joint, representing the (x, y, z) coordinates and the fourth value is the confidence level. This is a basic measure for how reliable the reading is of a particular point. When the confidence level is equal to zero, the coordinates of the previous data point is used. This presents a problem for our initial algorithm however, because it works with differences between frames, and so if the confidence value is equal to zero, which happens often enough, the difference is also zero even when there is alot of activity taking place. To counter this, we change the algorithm so that, if two adjacent data points have the same value, a very large difference is associated to them. The probability of having results that are exactly equal is significantly low as the number of significant digits in the data is quite high, and empirically this has not been a problem.
 \begin{itemize}
 \item{Constant value due to 0 confidence level.}
 \item{Number of frames to use for window $\rightarrow$ increase time to stand still.}
 \item{Number of frames in data and number of frames in .oni file.}
 \end{itemize}
 
+
+\subsubsection{Results}
+
 \subsection{Translation Module}
+
 \subsection{Scaling Module}
 \subsection{Initial Frame Detector}
 \subsection{Data Analysis Module}
