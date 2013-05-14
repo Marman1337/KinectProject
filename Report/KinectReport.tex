@@ -289,10 +289,10 @@ This is a possible configuration for the dance class and as long as there are pe
 \section{Automatic Evaluation of Students}
 \noindent
 This section discusses the way in which the application will be used to evaluate the student's performance with respect to the teacher's. The software will have to detect errors that the student has made, detect time periods in which the student performed poorly as well as satisfactory and be able to give a few other useful statistics for the teacher to also grade the student. Using only information from the data points of the joints from NiTE and the RGB-D stream from OpenNI, various things need to be considered and multiple modules will need to be created to handle the data. 
-\subsection{Algorithms \& Design}
+\\\\
 \noindent The design will consist of various modules that will divide the tasks into manageable chunks, which will be very helpful when trying to develop the software due to the level of abstraction associated with each piece of data. The algorithms will first be developed in Matlab, due to ease of use making the development of the algorithms as fast as possible, and then will be ported to C++, due to its speed and ease of integration with the development environment being used to develop the rest of the software. 
 
-\subsubsection{Motionless Activity Detector}
+\subsection{Motionless Activity Detector}
 \noindent 
 With the current design in mind the student will be asked to first move slightly so that the NiTE software can calibrate and start tracking. After this, the student will be required to stand still in a predefined position for a minimum of 1 second afterwhich the student may start dancing. This will be the position that the next module will use to translate the coordinates with respect to a specific origin. The purpose of this module is to find a frame number during which the student will be in the standing still phase.\\\\
 \noindent 
@@ -305,19 +305,23 @@ The initial algorithm is of the form:
 \setlength{\parsep}{0pt}
 	\item Make a sliding window of 10 to 14 frames.
 	\item Take the sum of the absolute difference between the frames for each of the coordinates (x, y, z).
-	\item Find the window with the minimum for the sum of absolute difference between frames.
+	\item Find the window with the minimum for the sum of absolute derivative of the positions of the coordinates between frames.
 	\item Get initial index of that frame.
 \item Do this for all major joints and make sure all initial indices match.
 \item If they do not all match, take the majority. 
 \end{itemize}
-
+\noindent
 To test this we perfom 3 different types of tests.
-\subsubsection*{Test 1}
-The first step is to check that the algorithm works for only one joint, chosen to be the right hand. The subject moves the right hand until the \texttt{UserViewer} calibrates, then holds the hand in a certain position for a minimum of 1 second, and then moves it again. 
-\subsubsection{Translation Module}
-\subsubsection{Scaling Module}
-\subsubsection{Initial Frame Detector}
-\subsubsection{Data Analysis Module}
+\subsubsection{Test for One Joint}
+The first step is to check that the algorithm works for only one joint, chosen to be the right hand. The subject moves the right hand until the \texttt{UserViewer} calibrates and starts tracking, then holds the hand in a certain position for a minimum of 1 second, and then moves it again. 
+\subsubsection{Testing with Multiple Points}
+\subsubsection{Obstacles Encountered}
+
+
+\subsection{Translation Module}
+\subsection{Scaling Module}
+\subsection{Initial Frame Detector}
+\subsection{Data Analysis Module}
 
 \section*{Appendix}
 \subsection*{Some Code}
