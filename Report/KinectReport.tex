@@ -313,10 +313,21 @@ The initial algorithm is of the form:
 \noindent
 To test this we perfom 3 different types of tests.
 \subsubsection{Test for One Joint}
-The first step is to check that the algorithm works for only one joint, chosen to be the right hand. The subject moves the right hand until the \texttt{UserViewer} calibrates and starts tracking, then holds the hand in a certain position for a minimum of 1 second, and then moves it again. 
+The first step is to check that the algorithm works for only one joint, chosen to be the right hand. The subject moves the right hand until the \texttt{UserViewer} calibrates and starts tracking, then holds the hand in a certain position for a minimum of 1 second, and then moves it again. The data from all the points is then printed to a file, in a form that can be loaded by Matlab into a matrix and our algorithm is used to find the stationary point. \\\\
+\noindent
+To confirm our results, a plot of the graph for the coordinate's positions versus frames is created and the video is also watched with the frame number in the top left corner. If the frame number returned by the algorithm corresponds to a time period in which the subject is still, this is taken as a correct result. 
 \subsubsection{Testing with Multiple Points}
-\subsubsection{Obstacles Encountered}
+\noindent 
+In this test the subject walks in front of the camera moving their limbs until tracking commences, then stands still for 1 second and then moves again. Variations of this are tested in which all body parts are used, the upper half and the lower half. 
 
+\subsubsection{Obstacles Encountered}
+\noindent
+Various problems have arisen during the tests. 
+\begin{itemize}
+\item{Constant value due to 0 confidence level.}
+\item{Number of frames to use for window $\rightarrow$ increase time to stand still.}
+\item{Number of frames in data and number of frames in .oni file.}
+\end{itemize}
 
 \subsection{Translation Module}
 \subsection{Scaling Module}
