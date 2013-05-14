@@ -298,7 +298,7 @@ With the current design in mind the student will be asked to first move slightly
 \noindent 
 The algorithm is quite simple. Under the assumption that there is a time period in which there is relatively little movement the algorithm is only required to find a period with the least sum of the absolute change in all the coordinates. The aforementioned ``period'' takes the form of a non-overlapping sliding window over the joint data, for each joint. This sliding window has to contain the data of less than half the number of frames that are recorded in 1 second so that, if indeed the student did stand still for at least 1 second, a frame within that period of time can be found. The window must be sufficiently large however to get a sum over a wide enough range of values so that momentarily motionless activity is not detected instead at some other point.\\\\
 \noindent
-The algorithm takes the form:
+The initial algorithm is of the form:
 \begin{itemize}
 \setlength{\itemsep}{1pt}
 \setlength{\parskip}{0pt}
@@ -310,6 +310,10 @@ The algorithm takes the form:
 \item Do this for all major joints and make sure all initial indices match.
 \item If they do not all match, take the majority. 
 \end{itemize}
+
+To test this we perfom 3 different types of tests.
+\subsubsection*{Test 1}
+The first step is to check that the algorithm works for only one joint, chosen to be the right hand. The subject moves the right hand until the \texttt{UserViewer} calibrates, then holds the hand in a certain position for a minimum of 1 second, and then moves it again. 
 \subsubsection{Translation Module}
 \subsubsection{Scaling Module}
 \subsubsection{Initial Frame Detector}
