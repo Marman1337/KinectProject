@@ -357,13 +357,28 @@ The initial algorithm is of the form:
 \subsubsection{Testing}
 \noindent
 In order to test the algorithm, we record two videos, where the subject performs the same movement in completely different parts of the camera range. Because of that, we are expecting the original data to be of similar shape, but have different absolute values. After running the algorithm on the data, the offset should disappear and the signals should be similar in both their shape as well as in absolute values.
-\\\\
-\noindent
-\textbf{ADD FIGURE} shows the original data from two recordings for the right hand joint. Clearly, in both recordings, near the end the subject performs the same movement which is indicated by a spike in signal's value from being relatively constant. However, the absolute values of both signals do not correspond.
-\\\\
-\noindent
-\textbf{ADD FIGURE} shows the same signal after running it through the Translation Module. Now, the signal does not contain the initial calibration data any more. Additionally, both the shape and the absolute values of the signal are close to each other, which was the desired outcome.
+\\
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.3]{Non_Translated_R_H_Data.jpg}
+\caption{Right Hand data from two recordings before translation}
+\label{pre_translation_graph}
+\end{figure}
 
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.3]{R_H_Data_Relative_Torso.jpg}
+\caption{Right Hand data from two recordings after translation}
+\label{post_translation_graph}
+\end{figure}
+
+\noindent
+Figure \ref{pre_translation_graph} shows the original data from two recordings for the right hand joint. Clearly, in both recordings, near the end the subject performs the same movement which is indicated by a spike in signal's value from being relatively constant. However, the absolute values of both signals do not correspond.
+\\\\
+\noindent
+Figure \ref{post_translation_graph} shows the same signal after running it through the Translation Module. Now, the signal does not contain the initial calibration data any more. Additionally, both the shape and the absolute values of the signal are close to each other, which was the desired outcome.
+
+\clearpage
 \subsection{Scaling Module}
 \subsection{Initial Frame Detector}
 \subsection{Data Analysis Module}
