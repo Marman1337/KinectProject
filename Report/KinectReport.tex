@@ -62,6 +62,7 @@ escapeinside={\%*}{*)} % if you want to add a comment within your code
 \pagenumbering{arabic}
 \setcounter{page}{1}
 \section*{\center Abstract}
+\textbf{Not Done}
 
 \section{Kinect \& NiTE Software Evaluation}
 \noindent
@@ -327,7 +328,7 @@ Various problems have arisen during the tests. The first problem is associated w
 \noindent
 Another issue is concerned with the number of frames to use for the window size. A large window size means that a much more reliable conclusion from the results can be drawn, as the sample size increases, but at a cost that the student has to stand still for a longer period of time, since the window size time should be less than twice the time period of no motion. This means a good balance has to be found. On the one hand, making the student stand still for too long deteriorates the user experience. On the other hand, the smaller the window size, the more susceptible to detecting temporary motionless activity within the dancing period. From the experiments, it has been found that a frame size of 30 frames makes the best compromise and means that the student must stand still for at least two seconds. This is not a problem, however, since other commercial software for different purposes requires a stand still period which is of a similar magnitude, such as facial recognition systems in airports. \\\\
 \noindent
-A further complication is that the number of frames shown in the .oni file recording is greater than that of the data in the file processed by Matlab. This means that the offset has to be found by writing to a separate file the starting frame when the data is written to the frame processed by Matlab. 
+A further complication is that the number of frames shown in the .oni file recording is greater than that of the data in the file processed by Matlab. This means that the offset has to be found by writing to a separate file the starting frame when the first piece of data is written to the frame processed by Matlab. 
 \begin{itemize}
 \item{Constant value due to 0 confidence level.}
 \item{Number of frames to use for window $\rightarrow$ increase time to stand still.}
@@ -337,6 +338,64 @@ A further complication is that the number of frames shown in the .oni file recor
 
 \subsubsection{Results}
 
+\begin{table}[H]
+\center
+\begin{tabular}{| c | r | r | r | r | r | r | r | r |}
+\hline
+Coordinate & L Elbow & R Elbow & L Hand & R Hand & L Knee & R Knee & L Foot & R Foot \\
+\hline
+x & 241 & 211 & 241 & 241 & 241 & 241 & 211 & 211\\
+y & 211 & 211 & 211 & 241 & 181 & 181 & 181 & 151\\
+z & 211 & 211 & 241 & 241 & 211 & 211 & 151 & 211\\
+\hline
+\end{tabular}
+\caption{Frame returned for Test Case 1 - Moving all body parts. The frame number which is in the majority here is 211.}
+\label{angle}
+\end{table}
+
+\begin{table}[H]
+\center
+\begin{tabular}{| c | r | r | r | r | r | r | r | r |}
+\hline
+Coordinate & L Elbow & R Elbow & L Hand & R Hand & L Knee & R Knee & L Foot & R Foot \\
+\hline
+x & 301 & 211 & 301 & 301 & 301 & 271 & 271 & 271\\
+y & 301 & 271 &  31  & 271 & 271 & 301 &  31  &      1\\
+z & 211 & 211 & 241 & 241 & 211 & 211 & 151 & 211\\
+\hline
+\end{tabular}
+\caption{Frame returned for Test Case 2 - Moving only upper body parts. The frame number which is in the majority here is 301.}
+\label{angle}
+\end{table}
+
+\begin{table}[H]
+\center
+\begin{tabular}{| c | r | r | r | r | r | r | r | r |}
+\hline
+Coordinate & L Elbow & R Elbow & L Hand & R Hand & L Knee & R Knee & L Foot & R Foot \\
+\hline
+x & 91 & 91 & 151 & 91 & 121 & 151 & 151 & 91\\
+y & 91 & 91 & 121 & 91 & 91 & 151 & 151 & 61\\
+z & 121 & 121 & 121 & 91 & 121 & 121 & 151 & 121\\
+\hline
+\end{tabular}
+\caption{Frame returned for Test Case 3 - Moving only lower body parts. The frame number which is in the majority here is 91.}
+\label{angle}
+\end{table}
+
+\noindent
+Though there are quite a few different values returned, there are 2 or 3 ones that are in a significant majority in either case. These are usually only separated by a window or two at most which corresponds to the majority of the frames returned being in a period of three seconds from each other. Since the subject usually stands for about 3 to 4 seconds, in our specific scenario, these results are valid as confirmed below.
+\begin{figure}[h]
+\center
+\includegraphics[scale=0.3]{Motionless_R_Hand_L_Foot_X.jpg} 
+\caption{The x-coordinate data plotted for the right hand and the left foot of Test Case 1. The frames which are returned from the algorithm are shown on the graph.}
+\label{motionless_rh_lf}
+\end{figure}
+\\\\
+\noindent
+As it can be seen from Figure \ref{motionless_rh_lf} though the frame numbers that are returned are different, both are in fact in a region of relatively little activity, and as confirmed by the video are within the period that the subject is standing still. 
+
+\clearpage
 \subsection{Translation Module}
 \noindent
 The purpose of the Translation Module is to take the original joint's positions data and remove the information which only adds unnecessary complexity, such as the exact position of the subject in the view of the camera. This is needed, because when we are comparing two dance moves, we do not want the score to be affected by the position of the dancers in the range of the camera e.g. in one recording the subject is standing on the left, in the other on the right. In order words, the score should be based only on what moves the dancers perform, not where do they perform them. In order to achieve that, we are going to shift all joint's positions so that they are relative to the torso joint, which we treat as the origin of the coordinate system.
