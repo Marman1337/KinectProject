@@ -161,16 +161,45 @@ Since the skeleton is primarily fitted using the depth sensor of the RGB-D camer
 \noindent
 To test for the possibility that obstructions could interfere with the fitting of the skeleton on the subject, we place a chair in various positions around the subject and in front of the subject. We then do the same with another person walking in the vicinity of the subject. This scenario is probably more relevant to the situations which may be encountered in a dance class room.  
 \subsubsection{Chair}
-\noindent Positioning the chair adjacent to the subject produces interesting results. When the chair is directly in front of the subject, the NiTE software tries to fit a skeleton to the chair as well as the person.
-%% CHANGE
-This can be seen in Figure \textbf{ADD FIGURE}. Putting the chair on the head of the subject and at the waist does not give this result, but instead the proportion of the skeleton that is created by the software is quite distorted
-%% CHANGE
-(see Figure \textbf{ADD FIGURE}). 
+\noindent Positioning the chair adjacent to the subject produces interesting results. When the subject is holding the chair, the NiTE software falsely identifies the chair as an extension of the subject's body and, thus, tries to fit a skeleton to the chair as well as the person. This can be seen in Figure \ref{lifting_chair}.
+
+\begin{figure}[H]
+\center
+\includegraphics[scale=0.2]{Head_Chair.jpg} 
+\caption{Subject is lifting the chair. NiTE cannot distinguish between the chair and the subject.}
+\label{lifting_chair}
+\end{figure}
+
+Putting the chair directly in front of the subject at the level of its waits does not give the same result, but instead the proportion of the skeleton that is created by the software is quite distorted due to the reflection of the IR on the chair which does not allow the precise localisation and detection of the subject's obstructed parts. As Figure \ref{chair} illustrates the perceived angle of the subject's right leg appears to have a deviation angle of $45^o$ that does not agree with the actual leg position.
+
+\begin{figure}[H]
+\center
+\includegraphics[scale=0.2]{Chair.jpg} 
+\caption{Chair directly in front of the subject.}
+\label{chair}
+\end{figure} 
 %% CHANGE
 % Not finished. It seems that this section is quite a hand waving description of the experiment because we probably could have been more thorough.  
 \subsubsection{Person}
 \noindent
-In this experiment the second person walks within different ranges of the camera and the initial subject. Interestingly enough, even at quite fast speeds of movement, the camera can calibrate and track both people quite quickly. This will most probably not be a limitation when creating the software. 
+In this experiment, the second person walks within different ranges of the camera and the initial subject. Interestingly enough, even at quite fast speeds of movement, the camera can calibrate and track both people quite quickly. This will most probably not be a limitation when designing the software. Nevertheless, in the case where two dancers are dancing next to each other, the interference between their bodies distorts the received IR reading and the accuracy of the perceived joints' position deteriorates substantially.Figure \ref{occlusion1} indicates the inaccurate tracking of the right hand of one of the subjects due to its obstruction by the dancer on the left.
+
+\begin{figure}[H]
+\center
+\includegraphics[scale=0.2]{Occlusion1.jpg} 
+\caption{Adjacent dancers occlusion.}
+\label{occlusion1}
+\end{figure} 
+
+Moreover, when a subject stands directly in front of another, NiTE is not always able to distinguish between the two subjects and thus it appears as if they are one body. This is shown in Figure \ref{occlusion3} below.
+
+\begin{figure}[H]
+\center
+\includegraphics[scale=0.2]{Occlusion2.jpg} 
+\caption{Chair directly in front of the subject.}
+\label{occlusion3}
+\end{figure} 
+
 \subsection{Velocity of Movement}
 Another important criterion regarding the performance of both the Kinect camera and the NiTE software package is the accuracy and responsiveness of the skeleton fitting. Our evaluation procedure consists of the recording of a predefined movement which would provide us with the subject's velocity information and would allow us to estimate how accurately the fitted skeleton is able to follow the actual move, by calculating the error between the perceived and the actual movement. In particular, we would record a slower and a faster versions of the same movement and compare the corresponding errors.
 
@@ -196,7 +225,7 @@ By capturing the recorded passage with a Desktop camera at a rate of 24 frames p
 
 \begin{table}[H]
 \center
-\begin{tabular}{| c | c | c |}
+\begin{tabular}{| c | r | r |}
 \hline
 Movement Speed & Number of Frames & Movement Duration/sec\\
 \hline
@@ -211,7 +240,7 @@ The next step of the responsiveness evaluation is the estimation of the arm's ac
 
 \begin{table}[H]
 \center
-\begin{tabular}{| c | c | c | c |}
+\begin{tabular}{| c | r | r | r |}
 \hline
 Movement Speed & Starting Angle/deg & Perceived Ending Angle/deg & Actual Ending Angle/deg\\
 \hline
@@ -235,7 +264,7 @@ and  $\omega$ stands for the angular velocity
 
 \begin{table}[H]
 \center
-\begin{tabular}{| c | c | c | c |}
+\begin{tabular}{| c | r | r | r |}
 \hline
 Movement Speed & Perceived Angular Velocity/$^o/s$ & Actual Angular Velocity/$^o/s$ & Error/\% \\
 \hline
@@ -255,16 +284,16 @@ As a result, ... % CHANGE
 \noindent
 In order to discover how many subject can be tracked by a single camera, we test with multiple people standing in front of it. The standard we have for a subject being fully visible is that the software \texttt{UserViewer} can identify all joints. Skeleton missing head or leg joints are invalid for our project. Improper results can be viewed in software as missing joints wrong identifications of skeleton for a subject, for example, one subject has part of its body skeleton actually belong to another subject. The test result is that 5 subjects is the maximum the camera and software can detect. Subjects are required to be in two rows, two in the front and three in the back so that they do not cover each other.\\
  
-\begin{figure}[hbtp]
+\begin{figure}[H]
 \centering
-\includegraphics[scale=1]{multi_people1.jpg}
-\caption{how subjects are placed}
+\includegraphics[scale=0.3]{multi_people1.jpg}
+\caption{Multiple people positioning.}
 \end{figure}
  
-\begin{figure}[hbtp]
+\begin{figure}[H]
 \centering
-\includegraphics[scale=1]{multi_people2.jpg}
-\caption{5 subjects tracked}
+\includegraphics[scale=0.8]{multi_people2.jpg}
+\caption{Tracking of 5 people.}
 \end{figure}
  
 As mentioned before, a subject needs to be 2.5 to 4 metres away from the camera to be fully visible. After splitting up the area for 5 subjects, each one has less than 1 metre square which is not enough for dance. 3 is an optimal number of subjects for a single camera to track.\\
