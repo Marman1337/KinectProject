@@ -334,6 +334,31 @@ Various problems have arisen during the tests. The first problem is associated w
 \subsubsection{Results}
 
 \subsection{Translation Module}
+\noindent
+The purpose of the Translation Module is to take the original joint's positions data and remove the information which only adds unnecessary complexity, such as the exact position of the subject in the view of the camera. This is needed, because when we are comparing two dance moves, we do not want the score to be affected by the position of the dancers in the range of the camera e.g. in one recording the subject is standing on the left, in the other on the right. In order words, the score should be based only on what moves the dancers perform, not where do they perform them. In order to achieve that, we are going to shift all joint's positions so that they are relative to the torso joint, which we treat as the origin of the coordinate system.
+
+\subsubsection{Algorithm Description}
+\noindent
+The initial algorithm is of the form:
+\begin{itemize}
+\setlength{\itemsep}{1pt}
+\setlength{\parskip}{0pt}
+\setlength{\parsep}{0pt}
+	\item Find the number of the starting frame using Motionless Activity Detector.
+	\item Crop the original data to begin from the starting frame.
+	\item Find the (x, y, z) coordinates of the torso during the motionless activity by using the frame number obtained in the first step.
+	\item For all joints: subtract the coordinates of the torso.
+\end{itemize}
+
+\subsubsection{Testing}
+\noindent
+In order to test the algorithm, we record two videos, where the subject performs the same movement in completely different parts of the camera range. Because of that, we are expecting the original data to be of similar shape, but have different absolute values. After running the algorithm on the data, the offset should disappear and the signals should be similar in both their shape as well as in absolute values.
+\\\\
+\noindent
+\textbf{ADD FIGURE} shows the original data from two recordings for the right hand joint. Clearly, in both recordings, near the end the subject performs the same movement which is indicated by a spike in signal's value from being relatively constant. However, the absolute values of both signals do not correspond.
+\\\\
+\noindent
+\textbf{ADD FIGURE} shows the same signal after running it through the Translation Module. Now, the signal does not contain the initial calibration data any more. Additionally, both the shape and the absolute values of the signal are close to each other, which was the desired outcome.
 
 \subsection{Scaling Module}
 \subsection{Initial Frame Detector}
