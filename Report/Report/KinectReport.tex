@@ -196,7 +196,7 @@ Moreover, when a subject stands directly in front of another, NiTE is not always
 \begin{figure}[H]
 \center
 \includegraphics[scale=0.2]{Occlusion2.jpg} 
-\caption{Chair directly in front of the subject.}
+\caption{NiTE mistaking two skeletons for one.}
 \label{occlusion3}
 \end{figure} 
 
@@ -278,7 +278,18 @@ Slow & $-67.2$ & $-89.4$ & $24.8\%$ \\
 As a result, ... % CHANGE
 
 \subsection{Camera Angle Relative to Subject}
-
+\noindent 
+The fact that the application is to be used for the purpose of dancing means that an investigation into how the angle between the camera and the subject affects the results can help draw useful conclusions. For instance, in a certain dance the subject may turn so that only the profile is visible to the camera. Doing so without losing any information due to occlusion because of on of the arms or legs being covered by the rest of the body, may prove to be vital for the software to work effectively. 
+\\\\
+\noindent
+To test for this, the subject stands in front of the camera, lifting both arms from the sides in the positive y direction up to $90^o$ and then back down. The subject then turns $90^o$ about the y-axis so that the right arm is in front of the camera, but the left arm is covered by the body. The results can be seen in Figure \ref{angle_camera}. As it can be seen here, at frame number 322 there is a peak in the y-coordinate of the right hand and the x-coordinate, but at frame 465 when the subject turns, only the y-coordinate changes. This is perfectly understandable since the the x-coordinate now stays roughly constant whilst the arm is raised. For the left arm however, both the x-coordinate and y-coordinate values are lost when the subject rotates, and thus there is a loss of information due to self occlusion. This may be a problem, however, as long as the teacher's information is also lost, it may not be.  
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{Angle_To_Camera.jpg}
+\caption{x and y coordinates plotted against frame number for the right hand and the left hand joints in experiment to see how angle to camera affects results.}
+\label{angle_camera}
+\end{figure}
+ 
 
 \subsection{Multiple People}
 \noindent
@@ -354,7 +365,7 @@ In this case, a recording of the camera's view without a subject gives us a much
 
 There may be a requirement to use multiple cameras for the finalised product so testing to see whether a setup using more than one camera has an effect on the performance of the hardware is something that must be considered. Research has suggested that using more than one camera with an overlapping view between them can lead to depth images that contain `holes' in them
 %% CHANGE
-\textbf{ADD REFERENCE TO SHAKE\_N\_SENSE}. To test whether this will be a problem we use the following setup 
+\textbf{ADD REFERENCE TO SHAKE\_N\_SENSE} due to intereference in the IR pattern of the cameras. To test whether this will be a problem we use the following setup 
 %% CHANGE: Add sketch of setup for testing of two cameras
 \textbf{ADD FIGURE}. In this setup the two cameras have overlapping views and also are completely facing each other, which means there will be interference from one camera to the next. 
 \\\\
@@ -363,6 +374,9 @@ The subjects stand and move in front of the camera at a distance of at least 2m 
 %% CHANGE
 \textbf{ADD FIGURE}
 This is a possible configuration for the dance class and as long as there are people in front of both cameras, blocking their IR stream to stop interference, it is highly plausible as the experiments show. On all occasions the subjects are tracked by both cameras with no perceived deterioration in the performance. 
+\\\\
+\noindent
+A more plausible configuration can be found in Figure \textbf{ADD FIGURE}. This is because any information that is lost from one camera when the subject may rotate to have a profile view with respect to it, can be captured by the other camera. Even if not any information is lost with respect to one of the cameras, it may be that the dynamic range of the coordinates of one of the cameras for a joint increases when the person is in the profile view or the front view. 
 
 \subsection{Analysis of Results}
 \textbf{Not Finished}
@@ -371,8 +385,15 @@ This is a possible configuration for the dance class and as long as there are pe
 \section{Automatic Evaluation of Students}
 \noindent
 This section discusses the way in which the application will be used to evaluate the student's performance with respect to the teacher's. The software will have to detect errors that the student has made, detect time periods in which the student performed poorly as well as satisfactory and be able to give a few other useful statistics for the teacher to also grade the student. Using only information from the data points of the joints from NiTE and the RGB-D stream from OpenNI, various things need to be considered and multiple modules will need to be created to handle the data. 
-\\\\
-\noindent The design will consist of various modules that will divide the tasks into manageable chunks, which will be very helpful when trying to develop the software due to the level of abstraction associated with each piece of data. The algorithms will first be developed in Matlab, due to ease of use making the development of the algorithms as fast as possible, and then will be ported to C++, due to its speed and ease of integration with the development environment being used to develop the rest of the software. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.4]{data_analysis_modules.jpg}
+\caption{High level design of modules necessary for automatic evaluation of student data.}
+\label{modules}
+\end{figure}
+ 
+\noindent The design will consist of various modules, as seen in Figure \ref{modules}, that will divide the tasks into manageable chunks, which will be very helpful when trying to develop the software due to the level of abstraction associated with each piece of data. The algorithms will first be developed in Matlab, due to ease of use making the development of the algorithms as fast as possible, and then will be ported to C++, due to its speed and ease of integration with the development environment being used to develop the rest of the software. 
 
 \subsection{Motionless Activity Detector}
 \noindent 
@@ -393,27 +414,23 @@ The initial algorithm is of the form:
 \item If they do not all match, take the majority. 
 \end{itemize}
 \noindent
-To test this we perfom 3 different types of tests.
+We test this in the following ways.
 \subsubsection{Test for One Joint}
 The first step is to check that the algorithm works for only one joint, chosen to be the right hand. The subject moves the right hand until the \texttt{UserViewer} calibrates and starts tracking, then holds the hand in a certain position for a minimum of 1 second, and then moves it again. The data from all the points is then printed to a file, in a form that can be loaded by Matlab into a matrix and our algorithm is used to find the stationary point. \\\\
 \noindent
 To confirm our results, a plot of the graph for the coordinate's positions versus frames is created and the video is also watched with the frame number in the top left corner. If the frame number returned by the algorithm corresponds to a time period in which the subject is still, this is taken as a correct result. 
-\subsubsection{Testing with Multiple Points}
+\subsubsection{Test for Multiple Points}
 \noindent 
 In this test the subject walks in front of the camera moving their limbs until tracking commences, then stands still for 1 second and then moves again. Variations of this are tested in which all body parts are used, the upper half and the lower half. Once again, the data is processed by the Matlab scripts created but this time a vector of results is returned by the algorithm. Each result in the vector is the stationary point for each joint for each of the coordinates (x, y, z). The algorithm then takes the frame value that has the highest occurrence in the vector and returns this as a frame in which there is no motion of the subject. The same criteria as in the previous test is used to measure the correctness of the algorithm. 
 
 \subsubsection{Obstacles Encountered}
 \noindent
-Various problems have arisen during the tests. The first problem is associated with the data itself. The data comes in a 4-tuple for each joint, representing the (x, y, z) coordinates and the fourth value is the confidence level. This is a basic measure for how reliable the reading is of a particular point. When the confidence level is equal to zero, the coordinates of the previous data point is used. This presents a problem for our initial algorithm however, because it works with differences between frames, and so if the confidence value is equal to zero, which happens often enough, the difference is also zero even when there is alot of activity taking place. To counter this, we change the algorithm so that, if two adjacent data points have the same value, a very large difference is associated to them. The probability of having results that are exactly equal is significantly low as the number of significant digits in the data is quite high, and empirically this has proved to be the case.\\\\
+Various problems have arisen during the tests. The first problem is associated with the data itself. The data comes in a 4-tuple for each joint, representing the (x, y, z) coordinates and the fourth value is the confidence level. This is a basic measure for how reliable the reading is of a particular point. When the confidence level is equal to zero, the coordinates of the previous data point is used. This presents a problem for our initial algorithm however, because it works with differences between frames, and so if the confidence value is equal to zero, which happens often enough, the difference is also zero even when there is alot of activity taking place. To counter this, we change the algorithm so that, if two adjacent data points have the same value, a very large difference is associated to them. The probability of having results that are exactly equal is significantly low as the number of significant digits in the data is quite high, and empirically this has proven to be the case.\\\\
 \noindent
 Another issue is concerned with the number of frames to use for the window size. A large window size means that a much more reliable conclusion from the results can be drawn, as the sample size increases, but at a cost that the student has to stand still for a longer period of time, since the window size time should be less than twice the time period of no motion. This means a good balance has to be found. On the one hand, making the student stand still for too long deteriorates the user experience. On the other hand, the smaller the window size, the more susceptible to detecting temporary motionless activity within the dancing period. From the experiments, it has been found that a frame size of 30 frames makes the best compromise and means that the student must stand still for at least two seconds. This is not a problem, however, since other commercial software for different purposes requires a stand still period which is of a similar magnitude, such as facial recognition systems in airports. \\\\
 \noindent
 A further complication is that the number of frames shown in the .oni file recording is greater than that of the data in the file processed by Matlab. This means that the offset has to be found by writing to a separate file the starting frame when the first piece of data is written to the frame processed by Matlab. 
-\begin{itemize}
-\item{Constant value due to 0 confidence level.}
-\item{Number of frames to use for window $\rightarrow$ increase time to stand still.}
-\item{Number of frames in data and number of frames in .oni file.}
-\end{itemize}
+
 
 
 \subsubsection{Results}
@@ -515,13 +532,14 @@ In order to test the algorithm, we record two videos, where the subject performs
 Figure \ref{pre_translation_graph} shows the original data from two recordings for the right hand joint. Clearly, in both recordings, near the end the subject performs the same movement which is indicated by a spike in signal's value from being relatively constant. However, the absolute values of both signals do not correspond.
 \\\\
 \noindent
-Figure \ref{post_translation_graph} shows the same signal after running it through the Translation Module. Now, the signal does not contain the initial calibration data any more. Additionally, both the shape and the absolute values of the signal are close to each other, which was the desired outcome.
+Figure \ref{post_translation_graph} shows the same signal after running it through the Translation Module. Now, the signal does not contain the initial calibration data any more, which is necessary so that the calibration data does not affect the results of the following modules. Additionally, both the shape and the absolute values of the signal are close to each other, which is the desired outcome.
 
 \clearpage
 \subsection{Scaling Module}
 \subsection{Initial Frame Detector}
 \subsection{Data Analysis Module}
 
+\clearpage
 \section*{Appendix}
 \subsection*{Some Code}
 \begin{lstlisting}
