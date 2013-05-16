@@ -196,7 +196,7 @@ Moreover, when a subject stands directly in front of another, NiTE is not always
 \begin{figure}[H]
 \center
 \includegraphics[scale=0.2]{Occlusion2.jpg} 
-\caption{Chair directly in front of the subject.}
+\caption{NiTE mistaking two skeletons for one.}
 \label{occlusion3}
 \end{figure} 
 
@@ -303,7 +303,7 @@ As mentioned before, a subject needs to be 2.5 to 4 metres away from the camera 
 \noindent
 There may be a requirement to use multiple cameras for the finalised product so testing to see whether a setup using more than one camera has an effect on the performance of the hardware is something that must be considered. Research has suggested that using more than one camera with an overlapping view between them can lead to depth images that contain `holes' in them
 %% CHANGE
-\textbf{ADD REFERENCE TO SHAKE\_N\_SENSE}. To test whether this will be a problem we use the following setup 
+\textbf{ADD REFERENCE TO SHAKE\_N\_SENSE} due to intereference in the IR pattern of the cameras. To test whether this will be a problem we use the following setup 
 %% CHANGE: Add sketch of setup for testing of two cameras
 \textbf{ADD FIGURE}. In this setup the two cameras have overlapping views and also are completely facing each other, which means there will be interference from one camera to the next. 
 \\\\
@@ -312,6 +312,9 @@ The subjects stand and move in front of the camera at a distance of at least 2m 
 %% CHANGE
 \textbf{ADD FIGURE}
 This is a possible configuration for the dance class and as long as there are people in front of both cameras, blocking their IR stream to stop interference, it is highly plausible as the experiments show. On all occasions the subjects are tracked by both cameras with no perceived deterioration in the performance. 
+\\\\
+\noindent
+A more plausible configuration can be found in Figure \textbf{ADD FIGURE}. This is because any information that is lost from one camera when the subject may rotate to have a profile view with respect to it, can be captured by the other camera. Even if not any information is lost with respect to one of the cameras, it may be that the dynamic range of the coordinates of one of the cameras for a joint increases when the person is in the profile view or the front view. 
 
 \subsection{Analysis of Results}
 \textbf{Not Finished}
@@ -347,7 +350,7 @@ To test this we perfom 3 different types of tests.
 The first step is to check that the algorithm works for only one joint, chosen to be the right hand. The subject moves the right hand until the \texttt{UserViewer} calibrates and starts tracking, then holds the hand in a certain position for a minimum of 1 second, and then moves it again. The data from all the points is then printed to a file, in a form that can be loaded by Matlab into a matrix and our algorithm is used to find the stationary point. \\\\
 \noindent
 To confirm our results, a plot of the graph for the coordinate's positions versus frames is created and the video is also watched with the frame number in the top left corner. If the frame number returned by the algorithm corresponds to a time period in which the subject is still, this is taken as a correct result. 
-\subsubsection{Testing with Multiple Points}
+\subsubsection{Test for Multiple Points}
 \noindent 
 In this test the subject walks in front of the camera moving their limbs until tracking commences, then stands still for 1 second and then moves again. Variations of this are tested in which all body parts are used, the upper half and the lower half. Once again, the data is processed by the Matlab scripts created but this time a vector of results is returned by the algorithm. Each result in the vector is the stationary point for each joint for each of the coordinates (x, y, z). The algorithm then takes the frame value that has the highest occurrence in the vector and returns this as a frame in which there is no motion of the subject. The same criteria as in the previous test is used to measure the correctness of the algorithm. 
 
@@ -358,11 +361,7 @@ Various problems have arisen during the tests. The first problem is associated w
 Another issue is concerned with the number of frames to use for the window size. A large window size means that a much more reliable conclusion from the results can be drawn, as the sample size increases, but at a cost that the student has to stand still for a longer period of time, since the window size time should be less than twice the time period of no motion. This means a good balance has to be found. On the one hand, making the student stand still for too long deteriorates the user experience. On the other hand, the smaller the window size, the more susceptible to detecting temporary motionless activity within the dancing period. From the experiments, it has been found that a frame size of 30 frames makes the best compromise and means that the student must stand still for at least two seconds. This is not a problem, however, since other commercial software for different purposes requires a stand still period which is of a similar magnitude, such as facial recognition systems in airports. \\\\
 \noindent
 A further complication is that the number of frames shown in the .oni file recording is greater than that of the data in the file processed by Matlab. This means that the offset has to be found by writing to a separate file the starting frame when the first piece of data is written to the frame processed by Matlab. 
-\begin{itemize}
-\item{Constant value due to 0 confidence level.}
-\item{Number of frames to use for window $\rightarrow$ increase time to stand still.}
-\item{Number of frames in data and number of frames in .oni file.}
-\end{itemize}
+
 
 
 \subsubsection{Results}
@@ -464,13 +463,14 @@ In order to test the algorithm, we record two videos, where the subject performs
 Figure \ref{pre_translation_graph} shows the original data from two recordings for the right hand joint. Clearly, in both recordings, near the end the subject performs the same movement which is indicated by a spike in signal's value from being relatively constant. However, the absolute values of both signals do not correspond.
 \\\\
 \noindent
-Figure \ref{post_translation_graph} shows the same signal after running it through the Translation Module. Now, the signal does not contain the initial calibration data any more. Additionally, both the shape and the absolute values of the signal are close to each other, which was the desired outcome.
+Figure \ref{post_translation_graph} shows the same signal after running it through the Translation Module. Now, the signal does not contain the initial calibration data any more. Additionally, both the shape and the absolute values of the signal are close to each other, which is the desired outcome.
 
 \clearpage
 \subsection{Scaling Module}
 \subsection{Initial Frame Detector}
 \subsection{Data Analysis Module}
 
+\clearpage
 \section*{Appendix}
 \subsection*{Some Code}
 \begin{lstlisting}
