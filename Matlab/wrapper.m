@@ -13,7 +13,10 @@ function [ out1 , out2 ] = wrapper(input1, input2)
     frame2 = get_motionless(input2, 30);
 
     % translate both files
-    out1 = translate(input1,frame1);
-    out2 = translate(input2,frame2);
+    translated1 = translate(input1,frame1);
+    translated2 = translate(input2,frame2);
+
+    delay_est = delay_estimate(translated1, translated2);
+    [out1, out2] = align_signals(translated1, translated2, delay_est);    
 
 end

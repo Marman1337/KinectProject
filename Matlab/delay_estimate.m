@@ -7,7 +7,7 @@ function [ delay_est ] = delay_estimate( data_joints_1, data_joints_2 )
     delay_joints = zeros(1,60);
     for i = 1:60
         % Find the maximum value and the index of the correlation
-        [maxmum_value,index_of_max] = max(find_xcor(i,data_joints_1,data_joints_2));
+        [~,index_of_max] = max(xcorr(data_joints_1(:,i),data_joints_2(:,i)));
         % Save into an estimate of delays for each joint
         delay_joints(i) = index_of_max;
     end;
@@ -22,7 +22,7 @@ function [ delay_est ] = delay_estimate( data_joints_1, data_joints_2 )
     end;
 
     % find the centre of cross-correlation results
-    cor_length = length(find_xcor(1,data_joints_1,data_joints_2));
+    cor_length = length(xcorr(data_joints_1(:,1),data_joints_2(:,1)));
     offset_pt = round(cor_length/2);
 
     % remove the cross-correlation offset
