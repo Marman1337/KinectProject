@@ -328,7 +328,15 @@ This is a possible configuration for the dance class and as long as there are pe
 A more plausible configuration can be found in Figure \textbf{ADD FIGURE}. This is because any information that is lost from one camera when the subject may rotate to have a profile view with respect to it, can be captured by the other camera. Even if not any information is lost with respect to one of the cameras, it may be that the dynamic range of the coordinates of one of the cameras for a joint increases when the person is in the profile view or the front view. 
 
 \subsection{Analysis of Results}
-\textbf{Not Finished}
+\noindent
+During our preliminary tests, the camera range which allows subject tracking and skeleton fitting was determined to be within 1.2 - 4.1 metres. While it is more than enough for various video game applications, the range would clearly be a significant constraint when trying to implement the camera tracking in a dance studio. From this result we can immediately rule out the idea of placing multiple cameras in elevated positions of a room, since such positioning would further reduce the already small tracking range.
+
+\medskip \noindent While the lighting conditions of a room had absolutely no effect on the tracking capabilities of the camera, we determined that various objects in the vicinity to the subject can sometimes be wrongly identified as parts of the body. Additionally, the ones further away from the tracked person might disrupt the continuity of the skeleton tracking and the data reported from it. We determined, that the nubmer of people who can be actively tracked with the NiTE software is not restricted in any way other than how many can physically fit in the range of the camera, however any occlusion between them and the camera can create a serious challenge in assessing the performance of multiple dance students. In other words, it might be difficult to automatically assess the performance of multiple dancers in front of the same camera, due to the nature of this activity, during which the performers will inevitably obstruct themselves.
+
+\medskip \noindent We also determined that there is a significant correlation between the dancer's speed of movement and the error in the skeleton's data with respect to the actual position of the subject. During very fast moves, the skeleton sometimes lags significantly behind the subject, which may lead to losing some data precision. This will however depend strongly on the nature of the dance move and its effect on the assessment of the student is unclear at this point.
+
+\medskip \noindent As mentioned in the previous sections, some dance moves may require the performer to turn around and therefore cover some parts of their body from the camera. This unwanted, yet also unavoidable issue can partially be resolved by placing multiple RGB-D devices close to each side of the subject. This however poses another problem of the interference between them. We will investigate the actual cost/performance ratio of this solution in the following sections, when we will evaluate the performance of the automatic scoring algorithms with respect to the data from multiple cameras.
+
 \clearpage
 
 \section{Automatic Evaluation of Students}
