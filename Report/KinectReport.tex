@@ -275,7 +275,7 @@ Slow & $-67.2$ & $-89.4$ & $24.8\%$ \\
 \caption{Perceived and actual angular velocities and percentage errors.}
 \end{table}
 
-As a result, ... % CHANGE
+
 
 \subsection{Camera Angle Relative to Subject}
 \noindent 
@@ -292,22 +292,26 @@ To test for this, the subject stands in front of the camera, lifting both arms f
  
 
 \subsection{Multiple People}
+
 \noindent
-In order to discover how many subject can be tracked by a single camera, we test with multiple people standing in front of it. The standard we have for a subject being fully visible is that the software \texttt{UserViewer} can identify all joints. Skeleton missing head or leg joints are invalid for our project. Improper results can be viewed in software as missing joints wrong identifications of skeleton for a subject, for example, one subject has part of its body skeleton actually belong to another subject. The test result is that 5 subjects is the maximum the camera and software can detect. Subjects are required to be in two rows, two in the front and three in the back so that they do not cover each other.\\
+It may be necessary and efficient to use one camera to track multiple people and then process all the data in that way. This way fewer cameras would be needed for a particular class size with greater complexity being passed to the data analysis stages. \\\\
+\noindent
+In order to discover how many subject can be tracked by a single camera, we incrementally increase the number of people standing in front of the camera until the results are unsatisfactory for at least one of the skeletons. Unsatisfactory implies a skeleton deviating away from the body or discontinuity in tracking any of the joints. NiTE officially claims that the library can track as many people as can possibly fit physically in the camera range. We find that the maximum number of people that can fit in the cameras field of view with all joints showing 5. \\
  
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.3]{multi_people1.jpg}
-\caption{Multiple people positioning.}
+\caption{Position of five students with respect to the camera.}
+\label{people_pos}
 \end{figure}
  
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.8]{multi_people2.jpg}
-\caption{Tracking of 5 people.}
+\caption{Five people being tracked in the configuration of Figure \ref{people_pos}.}
 \end{figure}
- 
-As mentioned before, a subject needs to be 2.5 to 4 metres away from the camera to be fully visible. After splitting up the area for 5 subjects, each one has less than 1 metre square which is not enough for dance. 3 is an optimal number of subjects for a single camera to track.\\
+\noindent
+However, as mentioned before, a subject needs to be 2.5 to 4 metres away from the camera to be fully visible. Added to this, since the application of our software is for dancers, we need to provide an adequate spacing between students to allow for the movements involved in their practice. After splitting up the area for 5 subjects, each one has less than $1m^2$ of free space which is not considered enough for dancers. With 3 people for each camera however it will be able to provide a wide enough radius for each of the students.\\
 
 
 \subsection{Multiple Cameras}
