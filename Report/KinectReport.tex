@@ -363,7 +363,7 @@ The initial algorithm is of the form:
 \item If they do not all match, take the majority. 
 \end{itemize}
 \noindent
-To test this we perfom various tests.
+We test this in the following ways.
 \subsubsection{Test for One Joint}
 The first step is to check that the algorithm works for only one joint, chosen to be the right hand. The subject moves the right hand until the \texttt{UserViewer} calibrates and starts tracking, then holds the hand in a certain position for a minimum of 1 second, and then moves it again. The data from all the points is then printed to a file, in a form that can be loaded by Matlab into a matrix and our algorithm is used to find the stationary point. \\\\
 \noindent
