@@ -481,7 +481,7 @@ In order to test the algorithm, we record two videos, where the subject performs
 Figure \ref{pre_translation_graph} shows the original data from two recordings for the right hand joint. Clearly, in both recordings, near the end the subject performs the same movement which is indicated by a spike in signal's value from being relatively constant. However, the absolute values of both signals do not correspond.
 \\\\
 \noindent
-Figure \ref{post_translation_graph} shows the same signal after running it through the Translation Module. Now, the signal does not contain the initial calibration data any more. Additionally, both the shape and the absolute values of the signal are close to each other, which is the desired outcome.
+Figure \ref{post_translation_graph} shows the same signal after running it through the Translation Module. Now, the signal does not contain the initial calibration data any more, which is necessary so that the calibration data does not affect the results of the following modules. Additionally, both the shape and the absolute values of the signal are close to each other, which is the desired outcome.
 
 \clearpage
 \subsection{Scaling Module}
