@@ -312,20 +312,65 @@ As mentioned before, a subject needs to be 2.5 to 4 metres away from the camera 
 
 \subsection{Multiple Cameras}
 \noindent
-There may be a requirement to use multiple cameras for the finalised product so testing to see whether a setup using more than one camera has an effect on the performance of the hardware is something that must be considered. Research has suggested that using more than one camera with an overlapping view between them can lead to depth images that contain `holes' in them
-%% CHANGE
-\textbf{ADD REFERENCE TO SHAKE\_N\_SENSE} due to intereference in the IR pattern of the cameras. To test whether this will be a problem we use the following setup 
-%% CHANGE: Add sketch of setup for testing of two cameras
-\textbf{ADD FIGURE}. In this setup the two cameras have overlapping views and also are completely facing each other, which means there will be interference from one camera to the next. 
-\\\\
-\noindent
-The subjects stand and move in front of the camera at a distance of at least 2m from each camera. No noticeable interference is present when the subjects are in front of the IR light source of each of the cameras so that the camera opposite cannot detect the IR pattern created by it. But when there is no one in front of the camera, we can see that there is indeed a large `hole' that can be seen in the depth image due to the IR pattern of camera opposite it. 
-%% CHANGE
-\textbf{ADD FIGURE}
-This is a possible configuration for the dance class and as long as there are people in front of both cameras, blocking their IR stream to stop interference, it is highly plausible as the experiments show. On all occasions the subjects are tracked by both cameras with no perceived deterioration in the performance. 
-\\\\
-\noindent
-A more plausible configuration can be found in Figure \textbf{ADD FIGURE}. This is because any information that is lost from one camera when the subject may rotate to have a profile view with respect to it, can be captured by the other camera. Even if not any information is lost with respect to one of the cameras, it may be that the dynamic range of the coordinates of one of the cameras for a joint increases when the person is in the profile view or the front view. 
+Despite the various capabilities offered by a single Kinect camera, there are a number of weaknesses that can substantially limit the potential of its applications. Due to the active hacking community, the Kinect's specifications have been determined by reverse engineering the RGB camera, the IR laser projector and the 3-D depth sensor. An important result is that the angular field of view of the Kinect's RGB camera is limited to $62.7^o$ with the IR camera having a field of view of $57.8^o$. Given the aforementioned specifications and according to our testing, at an average working range of 2.5 meters, the depth image is only 3.5 meters wide. To overcome this obstacle and widen our field of view, additional Kinects can be used side by side. 
+
+Another limitation which motivates the use of multiple Kinects is the fact that as the depth data sensed by the IR sensor come from a single direction, more accurate data is captured when the subject is perpendicular to the camera's normal. In particular, for our application whenever the subject stands with a profile view to the camera, data is lost and thus the subject's tracking would be less accurate. With multiple Kinects, a mixture of data from different angles can be captured and combined as necessary to increase accuracy and produce a more complete scene.
+
+Nevertheless, the employment of multiple Kinects can lead to new obstacles. Research has suggested that using more than one camera with an overlapping region between them can lead to depth images that contain blind spots. To test whether this would be a problem in our application, we use the following initial setup.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.4]{figure_2cameras_opposite.jpg}
+\caption{Initial configuration of two Kinects placed on opposite sides.}
+\label{2_cameras_config1}
+\end{figure}
+
+We first record the camera's reading without a subject in the scene. As Figure \ref{IR_interference}. below shows, the IR interference caused by the Kinect on the opposite side of the room creates a substantial blind spot which confuses the algorithm that determines the depth and no useful depth data is captured.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.2]{IR_Interference2.jpg}
+\caption{Interference between Kinects placed on opposite sides of the room.}
+\label{IR_interference}
+\end{figure}
+
+When a subject comes in the scene, although it is tracked, the interference still poses a problem by distorting the left hand of the subject as shown in Figure \ref{IR_interference_w_subject}. Such a distortion is intolerable to our application. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.2]{IR_Interference3.jpg}
+\caption{Interference between Kinects placed on opposite sides of the room with subject.}
+\label{IR_interference_w_subject}
+\end{figure}
+
+A more useful configuration includes the placement of the second Kinect in such a way that the IR illumination patterns of the two cameras create an angle of $90^o$ so that any joints not visible to one camera, may be visible to the other. This also means that their field of view overlap is minimised. Such a configuration can be seen below in Figure \ref{2_cameras_config2}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.4]{figure_2cameras.jpg}
+\caption{Configuration of two Kinects in order to minimise overlap.}
+\label{2_cameras_config2}
+\end{figure}
+
+In this case, a recording of the camera's view without a subject gives us a much lower level of interference compared to the initial configuration. This can be seen in Figure \ref{IR_interference_90}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.2]{IR_Interference90deg.jpg}
+\caption{Interference between Kinects placed in a $90^o$ angle.}
+\label{IR_interference_90}
+\end{figure}
+ 
+In our experiment, the subject is asked to stand still in front of the camera with arms to the side for about 5 seconds. This is initially done four times with a single camera. The measured data is used as a reference when comparing to a two-cameras configuration. The same measurements are taken for two cameras placed in a $90^o$ angle. In this way, the effect of the interference can be quantified by comparing the two set of data. The method we follow to compare the sets of data is by comparing the mean of the standard deviations for each trial. This is illustrated in Figure \ref{Multiple_Std}. 
+ 
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{Multiple_Cameras_Std.jpg}
+\caption{Multiple Cameras Data.} % CHANGE
+\label{Multiple_Std}
+\end{figure}
+
+As it can be seen above, both sets of data give very similar standard deviations and consequently the mean standard deviation with no interference, $\sigma_{ni}$, is 6.2412 units whereas when interference is present $\sigma_{i}$ is 5.8198 units. As the numbers indicate, both have roughly equal magnitude and given the small sample size, they can be considered equal. Moreover, as the dynamic range of an average signal is in the range of 400 to 800 units, the difference between the means is insignificantly small and, as a result, the interference introduced in this configuration is tolerable for the purpose of our application.
 
 \subsection{Analysis of Results}
 \textbf{Not Finished}
