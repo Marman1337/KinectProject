@@ -301,6 +301,57 @@ As mentioned before, a subject needs to be 2.5 to 4 metres away from the camera 
 
 \subsection{Multiple Cameras}
 \noindent
+Despite the various capabilities offered by a single Kinect camera, there are a number of weaknesses that can substantially limit the potential of its applications. Due to the active hacking community, the Kinect's specifications have been determined by reverse engineering the RGB camera, the IR laser projector and the 3-D depth sensor. An important result is that the angular field of view of the Kinect's RGB camera is limited to $62.7^o$ with the IR camera having a field of view of $57.8^o$. Given the aforementioned specifications and according to our testing, at an average working range of 2.5 meters, the depth image is only 3.5 meters wide. To overcome this obstacle and widen our field of view, additional Kinects can be used side by side. 
+
+Another limitation which motivates the use of multiple Kinects is the fact that as the depth data sensed by the IR sensor come from a single direction, more accurate data is captured when the subject is perpendicular to the camera's normal. In particular, for our application whenever the subject stands with a profile view to the camera, data is lost and thus the subject's tracking would be less accurate. With multiple Kinects, a mixture of data from different angles can be captured and combined as necessary to increase accuracy and produce a more complete scene.
+
+Nevertheless, the employment of multiple Kinects can lead to new obstacles. Research has suggested that using more than one camera with an overlapping region between them can lead to depth images that contain blind spots. To test whether this would be a problem in our application, we use the following initial setup.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.4]{figure_2cameras_opposite.jpg}
+\caption{Initial configuration of two Kinects placed on opposite sides.}
+\label{2_cameras_config1}
+\end{figure}
+
+We first record the camera's reading without a subject in the scene. As Figure \ref{IR_interference}. below shows, the IR interference caused by the Kinect on the opposite side of the room creates a substantial blind spot which confuses the algorithm that determines the depth and no useful depth data is captured.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.2]{IR_Interference2.jpg}
+\caption{Interference between Kinects placed on opposite sides of the room.}
+\label{IR_interference}
+\end{figure}
+
+When a subject comes in the scene, although it is tracked, the interference still poses a problem by distorting the left hand of the subject as shown in Figure \ref{IR_interference_w_subject}. Such a distortion is intolerable to our application. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.2]{IR_Interference3.jpg}
+\caption{Interference between Kinects placed on opposite sides of the room with subject.}
+\label{IR_interference_w_subject}
+\end{figure}
+
+A more useful configuration includes the placement of the second Kinect in such a way that the IR illumination patterns of the two cameras create an angle of $90^o$ so that any joints not visible to one camera, may be visible to the other. This also means that their field of view overlap is minimised. Such a configuration can be seen below in Figure \ref{2_cameras_config2}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.4]{figure_2cameras.jpg}
+\caption{Configuration of two Kinects in order to minimise overlap.}
+\label{2_cameras_config2}
+\end{figure}
+
+In this case, a recording of the camera's view without a subject gives us a much lower level of interference compared to the initial configuration. This can be seen in Figure \ref{IR_interference_90}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.2]{IR_Interference90deg.jpg}
+\caption{Interference between Kinects placed in a $90^o$ angle.}
+\label{IR_interference_90}
+\end{figure}
+ 
+
+
 There may be a requirement to use multiple cameras for the finalised product so testing to see whether a setup using more than one camera has an effect on the performance of the hardware is something that must be considered. Research has suggested that using more than one camera with an overlapping view between them can lead to depth images that contain `holes' in them
 %% CHANGE
 \textbf{ADD REFERENCE TO SHAKE\_N\_SENSE}. To test whether this will be a problem we use the following setup 
@@ -445,13 +496,28 @@ The initial algorithm is of the form:
 \subsubsection{Testing}
 \noindent
 In order to test the algorithm, we record two videos, where the subject performs the same movement in completely different parts of the camera range. Because of that, we are expecting the original data to be of similar shape, but have different absolute values. After running the algorithm on the data, the offset should disappear and the signals should be similar in both their shape as well as in absolute values.
-\\\\
-\noindent
-\textbf{ADD FIGURE} shows the original data from two recordings for the right hand joint. Clearly, in both recordings, near the end the subject performs the same movement which is indicated by a spike in signal's value from being relatively constant. However, the absolute values of both signals do not correspond.
-\\\\
-\noindent
-\textbf{ADD FIGURE} shows the same signal after running it through the Translation Module. Now, the signal does not contain the initial calibration data any more. Additionally, both the shape and the absolute values of the signal are close to each other, which was the desired outcome.
+\\
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.3]{Non_Translated_R_H_Data.jpg}
+\caption{Right Hand data from two recordings before translation}
+\label{pre_translation_graph}
+\end{figure}
 
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.3]{R_H_Data_Relative_Torso.jpg}
+\caption{Right Hand data from two recordings after translation}
+\label{post_translation_graph}
+\end{figure}
+
+\noindent
+Figure \ref{pre_translation_graph} shows the original data from two recordings for the right hand joint. Clearly, in both recordings, near the end the subject performs the same movement which is indicated by a spike in signal's value from being relatively constant. However, the absolute values of both signals do not correspond.
+\\\\
+\noindent
+Figure \ref{post_translation_graph} shows the same signal after running it through the Translation Module. Now, the signal does not contain the initial calibration data any more. Additionally, both the shape and the absolute values of the signal are close to each other, which was the desired outcome.
+
+\clearpage
 \subsection{Scaling Module}
 \subsection{Initial Frame Detector}
 \subsection{Data Analysis Module}
