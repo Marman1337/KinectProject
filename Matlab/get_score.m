@@ -1,8 +1,6 @@
 function [ score_pos_av, score_vel_av, score_pos_joint, score_vel_joint, teacher_pos, student_pos ] = get_score( teacher_pos, student_pos, delay )
-
-    % Get aligned data
-    %[teacher_pos, student_pos] = wrapper(File_1, File_2);
-
+    
+    % Align signals according to the delay
     [teacher_pos, student_pos] = align_signals(teacher_pos, student_pos, delay);
     % Truncate longest signal
     teacher_len = numel(teacher_pos(:,1));
@@ -58,7 +56,6 @@ function [ score_pos_av, score_vel_av, score_pos_joint, score_vel_joint, teacher
     end
     % Average score based on position
     score_vel_av = sum(score_vel_joint)/15;
-
 
 end
 

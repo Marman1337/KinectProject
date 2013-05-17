@@ -16,7 +16,7 @@ function [ score_arr , teacher, student , opt_teacher , opt_student ] = wrapper(
     translated1 = translate(input1,frame1);
     translated2 = translate(input2,frame2);
 
-    [delay_est] = delay_estimate(translated1, translated2);
+    delay_est = delay_estimate(translated1, translated2);
     [teacher, student] = align_signals(translated1, translated2, delay_est); 
     
     score_arr = zeros(1, 21);
