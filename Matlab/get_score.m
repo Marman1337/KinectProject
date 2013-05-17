@@ -58,4 +58,3 @@ function [ score_pos_av, score_vel_av, score_pos_joint, score_vel_joint, teacher
     score_vel_av = sum(score_vel_joint)/15;
 
 end
-
