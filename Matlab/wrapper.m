@@ -1,4 +1,4 @@
-function [ score_arr , teacher, student , opt_teacher , opt_student ] = wrapper(input1, input2)
+function [ score_window, score_window_av, score_window_joint, score_arr , teacher, student ] = wrapper(input1, input2)
 
     % import data if not already in a matrix
     if(ischar(input1))
@@ -34,5 +34,8 @@ function [ score_arr , teacher, student , opt_teacher , opt_student ] = wrapper(
     [~,min_index] = min(score_arr);
     min_delay = min_index - 11;
     [opt_teacher, opt_student] = align_signals(teacher, student, min_delay);
+    
+    % get windowed score for the best alignment
+    [score_window, score_window_av, score_window_joint] = get_score_window(opt_teacher, opt_student, 10);
 
 end
