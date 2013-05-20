@@ -13,4 +13,3 @@ function [signal_1_correct, signal_2_correct] = align_signals( signal_1, signal_
     end
 
 end
-
