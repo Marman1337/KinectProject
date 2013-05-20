@@ -18,15 +18,19 @@ function [ score_arr , teacher, student , opt_teacher , opt_student ] = wrapper(
 
     % Find the estimate of the delay so that the signals can be aligned
     delay_est = delay_estimate(translated1, translated2);
+    % shift one of the signals so that there is little mismatch between
+    % them
     [teacher, student] = align_signals(translated1, translated2, delay_est); 
     
     % We give a maximum threshold of (+/-)1/3 seconds for the dances to be
-    % apart
+    % apart. This is represented as 21 different delay values.
     score_arr = zeros(1, 21);
     for i = -10:10
         score_arr(i+11) = get_score(teacher, student, i);
     end
     
+    % identify the best score and present the signals with their best
+    % possible alignment
     [~,min_index] = min(score_arr);
     min_delay = min_index - 11;
     [opt_teacher, opt_student] = align_signals(teacher, student, min_delay);
