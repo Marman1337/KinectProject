@@ -1,4 +1,4 @@
-function [ score_window, score_window_av, score_arr , teacher, student , opt_teacher , opt_student ] = wrapper(input1, input2)
+function [ score_arr , teacher, student , opt_teacher , opt_student ] = wrapper(input1, input2)
 
     % import data if not already in a matrix
     if(ischar(input1))
@@ -24,12 +24,11 @@ function [ score_window, score_window_av, score_arr , teacher, student , opt_tea
     
     % We give a maximum threshold of (+/-)1/3 seconds for the dances to be
     % apart. This is represented as 21 different delay values.
-%     score_arr = zeros(1, 21);
-%     score_window = zeros(1, 21);
-%     for i = -10:10
-%         [score_window(i+11), score_arr(i+11)] = get_score(teacher, student, i, 10);
-%     end
-    [score_window, score_window_av, score_arr] = get_score(teacher, student, 0, 10);
+    score_arr = zeros(1, 21);
+    for i = -10:10
+        score_arr(i+11) = get_score(teacher, student, i);
+    end
+    
     % identify the best score and present the signals with their best
     % possible alignment
     [~,min_index] = min(score_arr);
