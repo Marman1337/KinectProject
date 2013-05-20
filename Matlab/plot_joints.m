@@ -4,9 +4,9 @@ function plot_joints( data_1 , data_2, joint , xyz )
     % 1: y
     % 2: z
     figure;
-    stem( data_1(:,index_of_joint(joint)+xyz) , 'b' );
+    stem( data_1(:,index_of_joint(joint)+xyz) , 'r' );
     hold on;
-    stem( data_2(:,index_of_joint(joint)+xyz) , 'g' );
+    stem( data_2(:,index_of_joint(joint)+xyz) , 'b' );
     hold off;
 
 end

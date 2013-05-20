@@ -9,7 +9,7 @@ function [ index ] = index_of_joint( joint )
         case 'left_shoulder'
             index = 9;
         case 'right_shoulder'
-            index = 13;        
+            index = 13;
         case 'left_elbow'
             index = 17;
         case 'right_elbow'
@@ -34,6 +34,4 @@ function [ index ] = index_of_joint( joint )
             index = 57;        
     end
 
-
 end
-

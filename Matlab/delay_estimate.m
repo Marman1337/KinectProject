@@ -28,10 +28,28 @@ function [ delay_est ] = delay_estimate( data_joints_1, data_joints_2 )
     % remove the cross-correlation offset
     x_delay = x_delay - offset_pt;
     y_delay = y_delay - offset_pt;
+    
+    x_mean = mean(x_delay);
+    y_mean = mean(y_delay);
+    x_std = std(x_delay);
+    y_std = std(y_delay);
 
+    sum_del = 0;
+    count_el = 0;
+    for i = 1:15
+        if(x_delay(i) < x_mean + x_std && x_delay(i) > x_mean - x_std)
+            sum_del = sum_del + x_delay(i);
+            count_el = count_el + 1;
+        end
+        if(y_delay(i) < y_mean + y_std && y_delay(i) > y_mean - y_std)
+            sum_del = sum_del + y_delay(i);
+            count_el = count_el + 1;
+        end
+    end
+    
+    delay_est = round(sum_del / count_el);
     % calculate overall average delay
-    delay_est = round((sum(x_delay)/numel(x_delay) + sum(y_delay)/numel(y_delay))/2);
-
+    %delay_est = round((sum(x_delay)/numel(x_delay) + sum(y_delay)/numel(y_delay))/2);
 
 end
 
