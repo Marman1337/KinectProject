@@ -542,7 +542,29 @@ Figure \ref{post_translation_graph} shows the same signal after running it throu
 
 \clearpage
 \subsection{Scaling Module}
-\subsection{Initial Frame Detector}
+\subsection{Alignment}
+\subsubsection{Algorithm Description}
+\noindent
+The basic function of this module is to find the delay where the correlation coefficient is at a maximum at each joint. This is then averaged out over the number of joints taken into consideration to give an estimated delay. The signals for each of the joints of the student are then shifted by the delay amount so that the signals are synchronised to the teacher. 
+
+\subsubsection{Testing \& Results}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.2]{Initial_Frame_Det_Before.jpg}
+\includegraphics[scale=0.2]{Initial_Frame_Det_After.jpg}
+\caption{Right hand data from two recordings before alignment (top) and after alignment (bottom).}
+\label{pre_post_alginment}
+\end{figure}
+\noindent
+To test the algorithm, we take 2 subjects and make them perform the same ``dance'' move. This consists of moving to the left while raising both arms $90^o$ in the upward direction and then dropping them, and then repeating whilst moving to the right. 
+As it can be seen in figure \ref{pre_post_alginment}, before being aligned the signals of the right hand are about 45 frames out of sync (1.5 seconds), but after passing through the alignment module it can be seen that the signals are roughly aligned to an accurate degree. 
+
+\clearpage
+\subsubsection{Obstacles Encountered}
+\noindent
+This module had to be changed from its first iteration due to the fact that some signals were giving the wrong delay estimate. This is perfectly understandable by an example. Consider a joint which does not really change during the dance move, only due to noise, this signal will give a delay estimate that is completely random. These wrong estimate results were affecting the results for the averaged out delay estimate. To overcome this, the algorithm now calculates the sample mean and sample standard deviation of all the delay estimates for every joint. It then only takes into account samples that lie within one standard deviation of the mean and calculates their average. In this way outliers do not affect the results and resulting in a more accurate alignment of the two signals.  
+
 \subsection{Data Analysis Module}
 
 \clearpage
