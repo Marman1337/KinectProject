@@ -542,7 +542,7 @@ Figure \ref{post_translation_graph} shows the same signal after running it throu
 
 \clearpage
 \subsection{Scaling Module}
-\subsection{Alignment}
+\subsection{Data Alignment Module}
 \subsubsection{Algorithm Description}
 \noindent
 The basic function of this module is to find the delay where the correlation coefficient is at a maximum at each joint. This is then averaged out over the number of joints taken into consideration to give an estimated delay. The signals for each of the joints of the student are then shifted by the delay amount so that the signals are synchronised to the teacher. 
@@ -566,6 +566,18 @@ As it can be seen in figure \ref{pre_post_alginment}, before being aligned the s
 This module had to be changed from its first iteration due to the fact that some signals were giving the wrong delay estimate. This is perfectly understandable by an example. Consider a joint which does not really change during the dance move, only due to noise, this signal will give a delay estimate that is completely random. These wrong estimate results were affecting the results for the averaged out delay estimate. To overcome this, the algorithm now calculates the sample mean and sample standard deviation of all the delay estimates for every joint. It then only takes into account samples that lie within one standard deviation of the mean and calculates their average. In this way outliers do not affect the results and resulting in a more accurate alignment of the two signals.  
 
 \subsection{Data Analysis Module}
+\subsubsection{Algorithm Description}
+\subsubsection{Criteria for Scoring}
+\subsubsection{Testing \& Results}
+\subsubsection{Obstacles and Challenges}
+\begin{itemize}
+\item{Sometimes signals aligned in some places and misaligned in others.}
+\item{Velocity gives absurd results sometimes.}
+\item{Torso automatically has a higher weighting.}
+\item{Need for windowing.}
+\end{itemize}
+
+
 
 \clearpage
 \section*{Appendix}
