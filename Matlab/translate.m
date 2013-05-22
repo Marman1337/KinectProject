@@ -4,9 +4,9 @@ function [ out ] = translate(dataMat,frame)
     dataMat = dataMat(frame:size(dataMat,1),:);
 
     % Get (x, y, z) coordinates from the torso at the frame
-    x = dataMat(1, 33);
-    y = dataMat(1, 34);
-    z = dataMat(1, 35);
+    x = dataMat(1, index_of_joint('torso')+0);
+    y = dataMat(1, index_of_joint('torso')+1);
+    z = dataMat(1, index_of_joint('torso')+2);
 
     % Translate the data to treat the torso as the origin
     for i = 0:14

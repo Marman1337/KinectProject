@@ -1,4 +1,4 @@
-function [ score_window, score_window_av, score_window_joint, score_arr , teacher, student ] = wrapper(input1, input2)
+function [ score_window, score_window_av, score_window_joint, score_arr , opt_teacher, opt_student ] = wrapper(input1, input2)
 
     % import data if not already in a matrix
     if(ischar(input1))
@@ -15,13 +15,13 @@ function [ score_window, score_window_av, score_window_joint, score_arr , teache
     % translate both files
     translated1 = translate(input1,frame1);
     translated2 = translate(input2,frame2);
-
+    
     % Find the estimate of the delay so that the signals can be aligned
     delay_est = delay_estimate(translated1, translated2);
     % shift one of the signals so that there is little mismatch between
     % them
     [teacher, student] = align_signals(translated1, translated2, delay_est); 
-    
+   
     % We give a maximum threshold of (+/-)1/3 seconds for the dances to be
     % apart. This is represented as 21 different delay values.
     score_arr = zeros(1, 21);

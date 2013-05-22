@@ -2,35 +2,35 @@ function [ index ] = index_of_joint( joint )
 % index =s index of joint specified
 
     switch joint
-        case 'head'           % 1
+        case 'head'           
             index = 1;
-        case 'neck'           % 2
+        case 'left_shoulder'           
             index = 5;
-        case 'left_shoulder'  % 3
+        case 'left_elbow'  
             index = 9;
-        case 'right_shoulder' % 4
+        case 'right_shoulder' 
             index = 13;
-        case 'left_elbow'     % 5
+        case 'right_elbow'     
             index = 17;
-        case 'right_elbow'    % 6
+        case 'left_hand'    
             index = 21;
-        case 'left_hand'      % 7
+        case 'right_hand'      
             index = 25;
-        case 'right_hand'     % 8
+        case 'torso'     
             index = 29;
-        case 'torso'          % 9
+        case 'left_hip'          
             index = 33;
-        case 'left_hip'       % 10
+        case 'right_hip'      
             index = 37;
-        case 'right_hip'      % 11
+        case 'left_knee'      
             index = 41;
-        case 'left_knee'      % 12
+        case 'left_foot'      
             index = 45;
-        case 'right_knee'     % 13
+        case 'right_knee'     
             index = 49;
-        case 'left_foot'      % 14
+        case 'neck'      
             index = 53;
-        case 'right_foot'     % 15
+        case 'right_foot'     
             index = 57;        
     end
 
