@@ -543,9 +543,12 @@ Figure \ref{post_translation_graph} shows the same signal after running it throu
 \clearpage
 \subsection{Scaling Module}
 \subsection{Data Alignment Module}
+\noindent
+The basic function of this module is to find the delay where the correlation coefficient is at a maximum at each joint. This is then averaged out over the number of joints taken into consideration to give an estimated delay. Finally, the signals for each of the joints of the student are shifted by the delay amount so that the signals are synchronised to the teacher. 
 \subsubsection{Algorithm Description}
 \noindent
-The basic function of this module is to find the delay where the correlation coefficient is at a maximum at each joint. This is then averaged out over the number of joints taken into consideration to give an estimated delay. The signals for each of the joints of the student are then shifted by the delay amount so that the signals are synchronised to the teacher. 
+\textbf{Not Done}
+
 
 \subsubsection{Testing \& Results}
 
@@ -567,16 +570,61 @@ This module had to be changed from its first iteration due to the fact that some
 
 \subsection{Data Analysis Module}
 \subsubsection{Algorithm Description}
-\subsubsection{Criteria for Scoring}
-\subsubsection{Testing \& Results}
-\subsubsection{Obstacles and Challenges}
+\subsubsection{Testing}
+\noindent
+The module has to pass various tests to be considered functional and reliable. To asses the performance, one subject is required to perform a simple ``dance'' using all limbs and then the same subject is required to repeat the moves but with different performance levels. The same subject is chosen to keep the experiment fair to as much of an extent as is possible. These repetitions have been divided into 4 different cases shown below. 
+
 \begin{itemize}
-\item{Sometimes signals aligned in some places and misaligned in others.}
-\item{Velocity gives absurd results sometimes.}
-\item{Torso automatically has a higher weighting.}
-\item{Need for windowing.}
+\item{Case 1: Student correctly repeats the dance.}
+\item{Case 2: Student correctly repeats for a large portion of the dance but makes a single mistake with only a few joints.}
+\item{Case 3: Student starts off okay but progressively gets worse.}
+\item{Case 4: Student makes dramatic errors throughout.}
 \end{itemize}
 
+\noindent
+The purpose of these test cases is to measure the effectiveness of the algorithm in different scenarios. First and foremost, the module should give a better score ( a lower error ) for students that more closely represent the dance as performed by the teacher. Furthermore, the algorithm should be able to identify upon receiving a low score,  the set of joints which is mostly responsible and the time frame in which the errors occured. It should also be able to give a very low score for anything that does not represent the dance at all, in all time frames. The tests will also help us to determine a threshold value for the score that is presented to the user, since the error is not a good measure as it is not bounded in any reasonable way. 
+
+\noindent
+
+\subsubsection{Obstacles and Challenges}
+
+\noindent
+Being the most complex and important module in the whole system many problems have had to be tackled whilst creating it and the algorithm has had to be rethought out a few times also.\\\\
+\noindent
+One of the first errors in the initial code is that the torso automatically has a higher normalised error than any other body part for the same absolute error. This is due to the fact that the torso is centred about 0, since it is considered the origin, and therefore when diving the sum of the error squared by the sum of the teacher's torso coordinate values squared any small error is hugely magnified in comparison to the same absolute error in the hand coordinate values for instance. This has been rectified however by first subtracting the mean of the signals before comparing them. In this way all the signals are centred about zero and any similar absolute error is treated in a much fairer way. The initial offset is also saved so that, if necessary, the initial starting positions can be compared and a weighting for the score can be given to that also.   
+\\\\
+\noindent
+Another problem that persisted is that, if the student performs well for a large portion of the dance but makes a huge error at some point, this information was not conveyed as an average was taken for the score and a single value was returned. This has been fixed however with the return of another vector of scores for each joint, in which the x, y, and z coordinates of the joint are each given a score and an average is taken. Additionally, this has been further improved by windowing the signal and giving a score for each joint and an average score for a specific time window. In this way the student can now know at what time period they have made an error and what body part has to improve. An example of such a case can be seen in Figure \ref{error_foot}. In this scenario the student performs two major errors which are reflected in the score of window 7 and 9. The window size (time period) can be determined by the teacher according to how high a resolution is necessary for the dance.
+\\\\
+\noindent
+Another issue is the fact that though the error may be considered a plausible measure for the correctness of a dance to an engineer or a scientist, this may not be the case for an artist such as the dance teacher. Even if the error squared or the correlation is a good enough measure, the relationship may not be linear and so some care must be taken when finding these thresholds.
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.3]{Data_Analysis_Error_Right_Foot.jpg}
+\caption{Right foot x-coordinate data of teacher and student. As it can be seen the student makes 2 errors, the greatest of which having a peak at about 70\% of the way.}
+\label{error_foot}
+\end{figure}
+
+\subsubsection{Results}
+\noindent
+The graphs in Figure \ref{error_score} show the results of test cases 1 to 4. As it is clear, the more closely the student represents the dance, the lower the error. This is both in the average score case, and in the time framed case. In Case 2 it can be seen that in two of the windows there is a large error, whereas in the rest of them the error is comparable to that of Case 1. This follows the video data as the student makes two errors with the arms within the periods of time that are represented by the windows. Added to that, we can see that in Case 3 the student starts off okay in the first half but in the second half the error increases greatly and as a consequence of the increased deviation from the teacher's dance. Finally, Case 4 shows an unacceptable error for all of the window frames as predicted. 
+
+\subsubsection{Feedback}
+\noindent
+These results show that there is a great need for user friendly feedback of the results. One thing to note is that firstly, the results are given in an unintuative scale for the regular daily user. Added to this is the fact that the results are not bounded in any way. Ideally, we would like for a good score to get something that appears to be close to 100\% and a bad score to get close to 0\%. To do this, we may use a variation of the sigmoid function that has these properties.
+\begin{equation}
+S = \frac{100}{1+e^{\left(as-b\right)}}
+\end{equation}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.2]{Data_Analysis_Overall_Score.jpg}
+\includegraphics[scale=0.2]{Data_Analysis_Four_Cases.jpg}
+
+\caption{Overall error of the four test cases (top) and error for four test cases split into 10 portions of time (bottom).}
+\label{error_score}
+\end{figure}
 
 
 \clearpage
