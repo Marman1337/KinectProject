@@ -557,15 +557,14 @@ The first algorithm, which was eventually modified, was of the form:
 	\item For every cross-correlation, identify the frame lag for which the cross-correlation has the biggest value.
 	\item Calculate the mean of the frame lags and return it as the most likely misalignment value.
 \end{itemize}
-This version of the algotithm caused problems described in Section 2.4.3 and therefore was changed to:
+This version of the algotithm caused problems described in Section 2.4.3 and therefore the last step was changed to:
 \begin{itemize}
 \setlength{\itemsep}{1pt}
 \setlength{\parskip}{0pt}
 \setlength{\parsep}{0pt}
-	\item Calculate the cross-correlation between the teacher and student for every joint's x and y dimension.
-	\item For every cross-correlation, identify the frame lag for which the cross-correlation has the biggest value.
-	\item Calculate the mean and standard deviation of the frame lags identified in the previous bullet point.
-	\item Calculate the mean of the frame lags which lie within one standard deviation of the mean, therefore eliminating outliers.
+	\item Calculate the mean and standard deviation of all frame lags for which the cross-correlation has the highest value.
+	\item Discard the frame lags which lie outside of one standard deviation of the mean.
+	\item Calculate the average value of all other frame lags and return it as the most likely misalignment value.
 \end{itemize}
 
 \subsubsection{Testing \& Results}
@@ -645,12 +644,20 @@ Another issue is the fact that though the error may be considered a plausible me
 \noindent
 The graphs in Figure \ref{error_score} show the results of test cases 1 to 4. As it is clear, the more closely the student represents the dance, the lower the error (top left) and the higher the score (top right). This is both in the average score case, and in the time framed case. In Case 1, though the student tries to replicate the dance the same, it can clearly be seen in the windowed results that this is not the case and once the window is identified, the joint(s) which made the error can also be identified. In this case it appears to be the x-coordinate of the left shoulder as can be seen in Figure \ref{error_left_shoulder}. Whether or not this should be penalised so much since the overall movement is quite similar, is not discussed here as this is more of a subjective issue. It is also clear that in the Case 2 and Case 3 scenario only some of the windows are given a low score, whereas in the rest of them the error is comparable to that of Case 1. This follows the video data as the student makes two errors with the arms within the periods of time that are represented by the windows. Finally, Case 4 shows a low score for almost all of the window frames as predicted. 
 
-\subsubsection{Feedback}
+\subsubsection{Score Function}
 \noindent
-These results show that there is a great need for user friendly feedback of the results. One thing to note is that firstly, the results are given in an unintuative scale for the regular daily user. Added to this is the fact that the results are not bounded in any way. Ideally, we would like for a good score to get something that appears to be close to 100\% and a bad score to get close to 0\%. To do this, we may use a variation of the sigmoid function that has these properties.
+These results show that there is a great need for user friendly feedback of the results. One thing to note is that firstly, the results are given in an unintuitive scale for the regular daily user. Added to this is the fact that the results are not bounded in any way. Ideally, we would like for a good score to get something that appears to be close to 100\% and a bad score to get close to 0\%. To do this, we may use a variation of the sigmoid function that has these properties.
 \begin{equation}
-S = \frac{100}{1+e^{\left(as-b\right)}}
+S(\epsilon) = 100\left[\underbrace{\frac{1}{1+e^{\left(a\epsilon-b\right)}}}_{SigmoidFunction} + \underbrace{\left(1 - \frac{1}{1 + e^{-b}}\right)}_{Offset}\right]
 \end{equation}
+
+	where the $Offset$ is added so that the scoring function $S$ is bounded in the range [0,100].
+\\\\
+\noindent
+By passing the estimated error $\epsilon$ through the modified sigmoid function $S$, we obtain a score in the range of $[0,100]$ which complies with most conventional scoring schemes and thus is more intuitive. Moreover, to retain a smooth transition along the range [20,80], we select the scaling and shifting factors, $a$ and $b$ respectively, in accordance to our tests' results. The final selected values are 10 and 3 for $a$ and $b$ respectively. The original as well as our calibrated sigmoid function can be seen below in Figure ...
+\\\\
+\noindent
+The following figure (Figure \ref{error_score}) illustrates the transformation of an unbounded and unintuitive error estimate $\epsilon$ to a user friendly score. The top left figure shows the overall error of the four test cases while the top right one shows the actual calculated score for these errors. The detailed score per window for each test case can be seen in the four bottom graphs.
 
 \begin{figure}[H]
 \centering
