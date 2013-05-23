@@ -1,4 +1,4 @@
-\documentclass[10pt]{article}
+\documentclass[a4paper]{article}
 \textwidth = 450pt
 \headsep = 2pt
 \headheight = 1pt
@@ -275,7 +275,7 @@ Slow & $-67.2$ & $-89.4$ & $24.8\%$ \\
 \caption{Perceived and actual angular velocities and percentage errors.}
 \end{table}
 
-As a result, ... % CHANGE
+
 
 \subsection{Camera Angle Relative to Subject}
 \noindent 
@@ -292,22 +292,26 @@ To test for this, the subject stands in front of the camera, lifting both arms f
  
 
 \subsection{Multiple People}
+
 \noindent
-In order to discover how many subject can be tracked by a single camera, we test with multiple people standing in front of it. The standard we have for a subject being fully visible is that the software \texttt{UserViewer} can identify all joints. Skeleton missing head or leg joints are invalid for our project. Improper results can be viewed in software as missing joints wrong identifications of skeleton for a subject, for example, one subject has part of its body skeleton actually belong to another subject. The test result is that 5 subjects is the maximum the camera and software can detect. Subjects are required to be in two rows, two in the front and three in the back so that they do not cover each other.\\
+It may be necessary and efficient to use one camera to track multiple people and then process all the data in that way. This way fewer cameras would be needed for a particular class size with greater complexity being passed to the data analysis stages. \\\\
+\noindent
+In order to discover how many subject can be tracked by a single camera, we incrementally increase the number of people standing in front of the camera until the results are unsatisfactory for at least one of the skeletons. Unsatisfactory implies a skeleton deviating away from the body or discontinuity in tracking any of the joints. NiTE officially claims that the library can track as many people as can possibly fit physically in the camera range. We find that the maximum number of people that can fit in the cameras field of view with all joints showing 5. \\
  
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.3]{multi_people1.jpg}
-\caption{Multiple people positioning.}
+\caption{Position of five students with respect to the camera.}
+\label{people_pos}
 \end{figure}
  
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.8]{multi_people2.jpg}
-\caption{Tracking of 5 people.}
+\caption{Five people being tracked in the configuration of Figure \ref{people_pos}.}
 \end{figure}
- 
-As mentioned before, a subject needs to be 2.5 to 4 metres away from the camera to be fully visible. After splitting up the area for 5 subjects, each one has less than 1 metre square which is not enough for dance. 3 is an optimal number of subjects for a single camera to track.\\
+\noindent
+However, as mentioned before, a subject needs to be 2.5 to 4 metres away from the camera to be fully visible. Added to this, since the application of our software is for dancers, we need to provide an adequate spacing between students to allow for the movements involved in their practice. After splitting up the area for 5 subjects, each one has less than $1m^2$ of free space which is not considered enough for dancers. With 3 people for each camera however it will be able to provide a wide enough radius for each of the students.\\
 
 
 \subsection{Multiple Cameras}
@@ -534,7 +538,7 @@ In order to test the algorithm, we record two videos, where the subject performs
 Figure \ref{pre_translation_graph} shows the original data from two recordings for the right hand joint. Clearly, in both recordings, near the end the subject performs the same movement which is indicated by a spike in signal's value from being relatively constant. However, the absolute values of both signals do not correspond.
 \\\\
 \noindent
-Figure \ref{post_translation_graph} shows the same signal after running it through the Translation Module. Now, the signal does not contain the initial calibration data any more, which is necessary so that the calibration data does not affect the results of the following modules. Additionally, both the shape and the absolute values of the signal are close to each other, which is the desired outcome.
+Figure \ref{post_translation_graph} shows the same signal after running it through the Translation Module. Now, the signal does not contain the initial calibration data any more. Additionally, both the shape and the absolute values of the signal are close to each other, which is the desired outcome.
 
 \clearpage
 \subsection{Scaling Module}
@@ -579,8 +583,6 @@ The main purpose of the Data Analysis Module is to identify parts in the student
 	where $len$ is the number of samples in the shorter signal, $t_s$ and $s_s$ are the teacher's and student's signals with their mean subtracted.
 	\item For the time lag with the best $SimpleScore$, perform the windowed analysis, which consists of splitting the signal into variable number of equal parts, and calculating the previously described score for each part and joint separately in order to give more insightful results.
 \end{itemize}
-
-\subsubsection{Criteria for Scoring}
 \subsubsection{Testing}
 \begin{itemize}
 \item{Case 1: Student correctly repeats the dance.}
@@ -621,7 +623,7 @@ Another issue is the fact that though the error may be considered a plausible me
 
 \subsubsection{Results}
 \noindent
-The graphs in Figure \ref{error_score} show the results of test cases 1 to 4. As it is clear, the more closely the student represents the dance, the lower the error. This is both in the average score case, and in the time framed case. In Case 2 it can be seen that in two of the windows there is a large error, whereas in the rest of them the error is comparable to that of Case 1. This follows the video data as the student makes two errors with the arms within the periods of time that are represented by the windows. Added to that, we can see that in Case 3 the student starts off okay in the first half but in the second half the error increases greatly and as a consequence of the increased deviation from the teacher's dance. Finally, Case 4 shows an unacceptable error for all of the window frames as predicted. 
+The graphs in Figure \ref{error_score} show the results of test cases 1 to 4. As it is clear, the more closely the student represents the dance, the lower the error (top left) and the higher the score (top right). This is both in the average score case, and in the time framed case. In Case 1, though the student tries to replicate the dance the same, it can clearly be seen in the windowed results that this is not the case and once the window is identified, the joint(s) which made the error can also be identified. In this case it appears to be the x-coordinate of the left shoulder as can be seen in Figure \ref{error_left_shoulder}. Whether or not this should be penalised so much since the overall movement is quite similar, is not discussed here as this is more of a subjective issue. It is also clear that in the Case 2 and Case 3 scenario only some of the windows are given a low score, whereas in the rest of them the error is comparable to that of Case 1. This follows the video data as the student makes two errors with the arms within the periods of time that are represented by the windows. Finally, Case 4 shows a low score for almost all of the window frames as predicted. 
 
 \subsubsection{Feedback}
 \noindent
