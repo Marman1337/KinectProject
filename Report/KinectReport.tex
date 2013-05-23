@@ -595,12 +595,13 @@ The main purpose of the Data Analysis Module is to identify parts in the student
 \setlength{\itemsep}{1pt}
 \setlength{\parskip}{0pt}
 \setlength{\parsep}{0pt}
-	\item Subtract the mean from both teacher's and student's data.	
-	\item Calculate the simple score for 21 different time lags $l \in [-10;10]$ according to the following formula:
-	$$SimpleScore = \dfrac{\sum\limits_{n=1}^{len}(t_s(n)-s_s(n))^2}{\sum\limits_{n=1}^{len}t_s(n)^2}$$
-
-	where $len$ is the number of samples in the shorter signal, $t_s$ and $s_s$ are the teacher's and student's signals with their mean subtracted.
-	\item For the time lag with the best $SimpleScore$, perform the windowed analysis, which consists of splitting the signal into variable number of equal parts, and calculating the previously described score for each part and joint separately in order to give more insightful results.
+	\item Make signals the same length using truncation.
+	\item Calculate the sum of the error squared for the student's data for all joint data.
+	\item Divide answer by number of samples and by the sum of the mean of every joint data for the teacher. 
+	\item Average all data for each joint to get 15 scores, one for each joint.
+	\item Calculate the simple score for 21 different time lags $l \in [-10;10]$ to get the highest score in a time frame of $\pm 0.333s$
+ according to the following formula:
+	\item For the time lag with the best, perform the windowed analysis, which consists of splitting the signal into variable number of equal parts, and calculating the previously described score for each part and joint separately in order to give more insightful results.
 \end{itemize}
 \subsubsection{Testing}
 \begin{itemize}
