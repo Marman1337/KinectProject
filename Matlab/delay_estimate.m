@@ -6,6 +6,10 @@ function [ delay_est ] = delay_estimate( data_joints_1, data_joints_2 )
     % For every joint
     delay_joints = zeros(1,60);
     for i = 1:60
+        % Skip correlation of z-dimension and the confidence vector
+        if(mod(i,4) ==  0 || mod(i,4) == 3)
+            continue;
+        end
         % Find the maximum value and the index of the correlation
         [~,index_of_max] = max(xcorr(data_joints_1(:,i),data_joints_2(:,i)));
         % Save into an estimate of delays for each joint
