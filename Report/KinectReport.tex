@@ -568,7 +568,7 @@ This module had to be changed from its first iteration due to the fact that some
 
 \subsection{Data Analysis Module}
 \noindent
-The main purpose of the Data Analysis Module is to identify parts in the student's performance which deviated from the teacher's. Therefore, some notion of signal similarity needs to be established. We decided that the approach would be to calculate the sum of squared errors  between the teacher's and student's performance, normalised by the sum of squared teacher's data. Since at this point the signals are already aligned, we are not performing any processing with time-lags spanning over the entire length of the signals any more. However, since we are aware of the potential small misalignment, we allow a 21-sample-wide window of error in which we perform the initial data analysis. After establishing the best score for the entire signal, we additionally perform a windowed analysis which considers only parts of the signals at a time.
+The main purpose of the Data Analysis Module is to identify parts in the student's performance which deviated from the teacher's. Therefore, a metric of signal similarity needs to be established. We decided that the approach would be to calculate the sum of squared errors  between the teacher's and student's performance, normalised by the sum of squared teacher's data. Since at this point the signals are already aligned as they have already passed through the alignment module, we are not performing any processing with time-lags spanning over the entire length of the signals any more. However, since we are aware of the potential small misalignment, we allow a 21-sample-wide window of error in which we perform the initial data analysis. After establishing the best score for the entire signal, we additionally perform a windowed analysis which considers only parts of the signals at a time.
 \subsubsection{Algorithm Description}
 \noindent
  The exact steps of the algorithm are:
@@ -577,11 +577,12 @@ The main purpose of the Data Analysis Module is to identify parts in the student
 \setlength{\parskip}{0pt}
 \setlength{\parsep}{0pt}
 	\item Subtract the mean from both teacher's and student's data.	
-	\item Calculate the simple score for 21 different time lags $l \in [-10;10]$ according to the following formula:
-	$$SimpleScore = \dfrac{\sum\limits_{n=1}^{len}(t_s(n)-s_s(n))^2}{\sum\limits_{n=1}^{len}t_s(n)^2}$$
+	\item Calculate the simple error for 21 different time lags $l \in [-10;10]$ according to the following formula:
+	$$SimpleError = \dfrac{\sum\limits_{n=1}^{len}(t_s(n)-s_s(n))^2}{len \sum\limits_{j \epsilon J}
+	\sum\limits_{i=x, y, z}|m_{t,j}(i)|}$$
 
-	where $len$ is the number of samples in the shorter signal, $t_s$ and $s_s$ are the teacher's and student's signals with their mean subtracted.
-	\item For the time lag with the best $SimpleScore$, perform the windowed analysis, which consists of splitting the signal into variable number of equal parts, and calculating the previously described score for each part and joint separately in order to give more insightful results.
+	where $len$ is the number of samples in the shorter signal, $t_s$ and $s_s$ are the teacher's and student's signals with their mean subtracted, $J$ is the sum of all skeleton joints and $m_{t,j}(i)$ is the mean of the $i_{th}$ coordinate of the $j_{th}$ joint of the teacher.
+	\item For the time lag with the lowest $SimpleError$, perform the windowed analysis, which consists of splitting the signal into variable number of equal parts, and calculating the previously described score for each part and joint separately in order to give more insightful results.
 \end{itemize}
 
 \subsubsection{Criteria for Scoring}
@@ -625,15 +626,14 @@ The graphs in Figure \ref{error_score} show the results of test cases 1 to 4. As
 
 \subsubsection{Feedback}
 \noindent
-These results show that there is a great need for user friendly feedback of the results. One thing to note is that firstly, the results are given in an unintuative scale for the regular daily user. Added to this is the fact that the results are not bounded in any way. Ideally, we would like for a good score to get something that appears to be close to 100\% and a bad score to get close to 0\%. To do this, we may use a variation of the sigmoid function that has these properties.
+These results show that there is a great need for user friendly feedback of the results. One thing to note is that firstly, the results are given in an unintuitive scale for the regular daily user. Added to this is the fact that the results are not bounded in any way. Ideally, we would like for a good score to get something that appears to be close to 100\% and a bad score to get close to 0\%. To do this, we may use a variation of the sigmoid function that has these properties.
 \begin{equation}
 S = \frac{100}{1+e^{\left(as-b\right)}}
 \end{equation}
 
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.2]{Data_Analysis_Overall_Score.jpg}
-\includegraphics[scale=0.2]{Data_Analysis_Four_Cases.jpg}
+% ADD FIGURES
 
 \caption{Overall error of the four test cases (top) and error for four test cases split into 10 portions of time (bottom).}
 \label{error_score}
