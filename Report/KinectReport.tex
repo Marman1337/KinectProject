@@ -655,8 +655,14 @@ S(\epsilon) = 100\left[\underbrace{\frac{1}{1+e^{\left(a\epsilon-b\right)}}}_{Si
 	where the $Offset$ is added so that the scoring function $S$ is bounded in the range [0,100].
 \\\\
 \noindent
-By passing the estimated error $\epsilon$ through the modified sigmoid function $S$, we obtain a score in the range of $[0,100]$ which complies with most conventional scoring schemes and thus is more intuitive. Moreover, to retain a smooth transition along the range [20,80], we select the scaling and shifting factors, $a$ and $b$ respectively, in accordance to our tests' results. The final selected values are 10 and 3 for $a$ and $b$ respectively. The original as well as our calibrated sigmoid function can be seen below in Figure ...
-\\\\
+By passing the estimated error $\epsilon$ through the modified sigmoid function $S$, we obtain a score in the range of $[0,100]$ which complies with most conventional scoring schemes and thus is more intuitive. Moreover, to retain a smooth transition along the range [20,80], we select the scaling and shifting factors, $a$ and $b$ respectively, in accordance to our tests' results. The final selected values are 10 and 3 for $a$ and $b$ respectively. The calibrated sigmoid function can be seen below in Figure \ref{score_function}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{Score_Function.jpg}
+\caption{Graph of scoring function.}
+\label{score_function}
+\end{figure}
 \noindent
 The following figure (Figure \ref{error_score}) illustrates the transformation of an unbounded and unintuitive error estimate $\epsilon$ to a user friendly score. The top left figure shows the overall error of the four test cases while the top right one shows the actual calculated score for these errors. The detailed score per window for each test case can be seen in the four bottom graphs.
 
