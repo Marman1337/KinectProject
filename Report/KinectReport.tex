@@ -557,14 +557,11 @@ The first algorithm, which was eventually modified, was of the form:
 	\item For every cross-correlation, identify the frame lag for which the cross-correlation has the biggest value.
 	\item Calculate the mean of the frame lags and return it as the most likely misalignment value.
 \end{itemize}
-This version of the algotithm caused problems described in Section 2.4.3 and therefore was changed to:
+This version of the algotithm caused problems described in Section 2.4.3 and therefore the last step was changed to:
 \begin{itemize}
 \setlength{\itemsep}{1pt}
 \setlength{\parskip}{0pt}
 \setlength{\parsep}{0pt}
-	\item Calculate the cross-correlation between the teacher and student for every joint's x and y dimension.
-	\item For every cross-correlation, identify the frame lag for which the cross-correlation has the biggest value.
-	\item Calculate the mean and standard deviation of the frame lags identified in the previous bullet point.
 	\item Calculate the mean of the frame lags which lie within one standard deviation of the mean, therefore eliminating outliers.
 \end{itemize}
 
