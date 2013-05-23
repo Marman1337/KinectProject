@@ -543,10 +543,30 @@ Figure \ref{post_translation_graph} shows the same signal after running it throu
 \clearpage
 \subsection{Scaling Module}
 \subsection{Data Alignment Module}
+\noindent
+The purpose of the Data Alignment Module is to identify the frame shift between two similar dance moves and then align the signals, making it possible for them to be compared. The raw data will always be significantly misaligned, since it is virtually impossible for two people to start performing the dance at the exact same fraction of a second. The problem is visualised in figure \ref{pre_post_alginment} which shows the initial misalignment between two signals as well as the result of passing them through the Data Alignment Module.
+
 \subsubsection{Algorithm Description}
 \noindent
-\textbf{Not Done}
-
+The first algorithm, which was eventually modified, was of the form:
+\begin{itemize}
+\setlength{\itemsep}{1pt}
+\setlength{\parskip}{0pt}
+\setlength{\parsep}{0pt}
+	\item Calculate the cross-correlation between the teacher and student for every joint's x and y dimension.
+	\item For every cross-correlation, identify the frame lag for which the cross-correlation has the biggest value.
+	\item Calculate the mean of the frame lags and return it as the most likely misalignment value.
+\end{itemize}
+This version of the algotithm caused problems described in Section 2.4.3 and therefore was changed to:
+\begin{itemize}
+\setlength{\itemsep}{1pt}
+\setlength{\parskip}{0pt}
+\setlength{\parsep}{0pt}
+	\item Calculate the cross-correlation between the teacher and student for every joint's x and y dimension.
+	\item For every cross-correlation, identify the frame lag for which the cross-correlation has the biggest value.
+	\item Calculate the mean and standard deviation of the frame lags identified in the previous bullet point.
+	\item Calculate the mean of the frame lags which lie within one standard deviation of the mean, therefore eliminating outliers.
+\end{itemize}
 
 \subsubsection{Testing \& Results}
 
