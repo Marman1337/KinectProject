@@ -373,7 +373,15 @@ In our experiment, the subject is asked to stand still in front of the camera wi
 As it can be seen above, both sets of data give very similar standard deviations and consequently the mean standard deviation with no interference, $\sigma_{ni}$, is 6.2412 units whereas when interference is present $\sigma_{i}$ is 5.8198 units. As the numbers indicate, both have roughly equal magnitude and given the small sample size, they can be considered equal. Moreover, as the dynamic range of an average signal is in the range of 400 to 800 units, the difference between the means is insignificantly small and, as a result, the interference introduced in this configuration is tolerable for the purpose of our application.
 
 \subsection{Analysis of Results}
-\textbf{Not Finished}
+\noindent
+During our preliminary tests, the camera range which allows subject tracking and skeleton fitting was determined to be within 1.2 - 4.1 metres. While it is more than enough for various video game applications, the range would clearly be a significant constraint when trying to implement the camera tracking in a dance studio. From this result we can immediately rule out the idea of placing multiple cameras in elevated positions of a room, since such positioning would further reduce the already small tracking range.
+
+\medskip \noindent While the lighting conditions of a room had absolutely no effect on the tracking capabilities of the camera, we determined that various objects in the vicinity to the subject can sometimes be wrongly identified as parts of the body. Additionally, the ones further away from the tracked person might disrupt the continuity of the skeleton tracking and the data reported from it. We determined, that the nubmer of people who can be actively tracked with the NiTE software is not restricted in any way other than how many can physically fit in the range of the camera, however any occlusion between them and the camera can create a serious challenge in assessing the performance of multiple dance students. In other words, it might be difficult to automatically assess the performance of multiple dancers in front of the same camera, due to the nature of this activity, during which the performers will inevitably obstruct themselves.
+
+\medskip \noindent We also determined that there is a significant correlation between the dancer's speed of movement and the error in the skeleton's data with respect to the actual position of the subject. During very fast moves, the skeleton sometimes lags significantly behind the subject, which may lead to losing some data precision. This will however depend strongly on the nature of the dance move and its effect on the assessment of the student is unclear at this point.
+
+\medskip \noindent As mentioned in the previous sections, some dance moves may require the performer to turn around and therefore cover some parts of their body from the camera. This unwanted, yet also unavoidable issue can partially be resolved by placing multiple RGB-D devices close to each side of the subject. This however poses another problem of the interference between them. We will investigate the actual cost/performance ratio of this solution in the following sections, when we will evaluate the performance of the automatic scoring algorithms with respect to the data from multiple cameras.
+
 \clearpage
 
 \section{Automatic Evaluation of Students}
@@ -408,7 +416,7 @@ The initial algorithm is of the form:
 \item If they do not all match, take the majority. 
 \end{itemize}
 \noindent
-We test this in the following ways.
+To test this we perfom various tests.
 \subsubsection{Test for One Joint}
 The first step is to check that the algorithm works for only one joint, chosen to be the right hand. The subject moves the right hand until the \texttt{UserViewer} calibrates and starts tracking, then holds the hand in a certain position for a minimum of 1 second, and then moves it again. The data from all the points is then printed to a file, in a form that can be loaded by Matlab into a matrix and our algorithm is used to find the stationary point. \\\\
 \noindent
@@ -530,8 +538,107 @@ Figure \ref{post_translation_graph} shows the same signal after running it throu
 
 \clearpage
 \subsection{Scaling Module}
-\subsection{Initial Frame Detector}
+\subsection{Data Alignment Module}
+\subsubsection{Algorithm Description}
+\noindent
+\textbf{Not Done}
+
+
+\subsubsection{Testing \& Results}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.2]{Initial_Frame_Det_Before.jpg}
+\includegraphics[scale=0.2]{Initial_Frame_Det_After.jpg}
+\caption{Right hand data from two recordings before alignment (top) and after alignment (bottom).}
+\label{pre_post_alginment}
+\end{figure}
+\noindent
+To test the algorithm, we take 2 subjects and make them perform the same ``dance'' move. This consists of moving to the left while raising both arms $90^o$ in the upward direction and then dropping them, and then repeating whilst moving to the right. 
+As it can be seen in figure \ref{pre_post_alginment}, before being aligned the signals of the right hand are about 45 frames out of sync (1.5 seconds), but after passing through the alignment module it can be seen that the signals are roughly aligned to an accurate degree. 
+
+\clearpage
+\subsubsection{Obstacles Encountered}
+\noindent
+This module had to be changed from its first iteration due to the fact that some signals were giving the wrong delay estimate. This is perfectly understandable by an example. Consider a joint which does not really change during the dance move, only due to noise, this signal will give a delay estimate that is completely random. These wrong estimate results were affecting the results for the averaged out delay estimate. To overcome this, the algorithm now calculates the sample mean and sample standard deviation of all the delay estimates for every joint. It then only takes into account samples that lie within one standard deviation of the mean and calculates their average. In this way outliers do not affect the results and resulting in a more accurate alignment of the two signals.  
+
 \subsection{Data Analysis Module}
+\noindent
+The main purpose of the Data Analysis Module is to identify parts in the student's performance which deviated from the teacher's. Therefore, some notion of signal similarity needs to be established. We decided that the approach would be to calculate the sum of squared errors  between the teacher's and student's performance, normalised by the sum of squared teacher's data. Since at this point the signals are already aligned, we are not performing any processing with time-lags spanning over the entire length of the signals any more. However, since we are aware of the potential small misalignment, we allow a 21-sample-wide window of error in which we perform the initial data analysis. After establishing the best score for the entire signal, we additionally perform a windowed analysis which considers only parts of the signals at a time.
+\subsubsection{Algorithm Description}
+\noindent
+ The exact steps of the algorithm are:
+\begin{itemize}
+\setlength{\itemsep}{1pt}
+\setlength{\parskip}{0pt}
+\setlength{\parsep}{0pt}
+	\item Subtract the mean from both teacher's and student's data.	
+	\item Calculate the simple score for 21 different time lags $l \in [-10;10]$ according to the following formula:
+	$$SimpleScore = \dfrac{\sum\limits_{n=1}^{len}(t_s(n)-s_s(n))^2}{\sum\limits_{n=1}^{len}t_s(n)^2}$$
+
+	where $len$ is the number of samples in the shorter signal, $t_s$ and $s_s$ are the teacher's and student's signals with their mean subtracted.
+	\item For the time lag with the best $SimpleScore$, perform the windowed analysis, which consists of splitting the signal into variable number of equal parts, and calculating the previously described score for each part and joint separately in order to give more insightful results.
+\end{itemize}
+
+\subsubsection{Criteria for Scoring}
+\subsubsection{Testing}
+\begin{itemize}
+\item{Case 1: Student correctly repeats the dance.}
+\item{Case 2: Student correctly repeats for a first portion of the dance but makes a single mistake with only a few joints close to the end.}
+\item{Case 3: Student makes a mistake at the beginning but recovers.}
+\item{Case 4: Student makes dramatic errors throughout.}
+\end{itemize}
+
+\noindent
+The purpose of these test cases is to measure the effectiveness of the algorithm in different scenarios. First and foremost, the module should give a better score ( a lower error ) for students that more closely represent the dance as performed by the teacher. Furthermore, the algorithm should be able to identify upon receiving a low score,  the set of joints which is mostly responsible and the time frame in which the errors occurred. It should also be able to give a very low score for anything that does not represent the dance at all, in all time frames.
+
+\noindent
+
+\subsubsection{Obstacles and Challenges}
+
+\noindent
+Being the most complex and important module in the whole system many problems have had to be tackled whilst creating it and the algorithm has had to be rethought out a few times also.\\\\
+\noindent
+Initially, the algorithm used the following formula to give a measure of the error.
+
+\begin{equation}
+Error = \dfrac{\sum\limits_{n=1}^{L}(t(n)-s(n))^2}{\sum\limits_{n=1}^{L}t(n)^2}
+\end{equation}
+where $L$ is the number of samples in the shorter signal, $t(n)$ and $s(n)$ are the teacher's and student's signals respectively. In this way, it was thought that the error could be normalised to some extent, however it was later discovered that in the initial code the torso automatically has a higher normalised error than any other body part for the same absolute error. This is due to the fact that the torso is centred about 0, since it is considered the origin, and therefore when diving the sum of the error squared by the sum of the teacher's torso coordinate values squared any small error is hugely magnified in comparison to the same absolute error in the hand coordinate values for instance. This had thought to be rectified however by first subtracting the mean of the signals before comparing them. In this way all the signals are centred about zero and any similar absolute error is treated in a much fairer way with no bias for specific joints. The initial offset was also saved so that, if necessary, the initial starting positions can be compared and a weighting for the score can be given to that also. This also presented problems though since in this way no bias was given to different body parts but bias was given to different frames of the signal. Frames where the values of the teacher were closer to 0 gave larger errors. Also by subtracting the sample mean of the whole signal, signals that may have been close to each other at some parts in the original signals may have strayed from each other after. The final algorithm has now been corrected by purely taking the absolute error squaring it and normalising it to the absolute value of the sum of the means of the joints. This is arbitrary but gives a much more intuative value for the error as it is relative to the absolute values of the coordinates of other joints. The value calculated is then divided by the number of frames to get an average error measure per frame.    
+\\\\
+\noindent
+Another problem that persisted is that, if the student performs well for a large portion of the dance but makes a huge error at some point, this information was not conveyed as an average was taken for the score and a single value was returned. This has been fixed however with the return of another vector of scores for each joint, in which the x, y, and z coordinates of the joint are each given a score and an average is taken. Additionally, this has been further improved by windowing the signal and giving a score for each joint and an average score for a specific time window. In this way the student can now know at what time period they have made an error and what body part has to improve. An example of such a case can be seen in Figure \ref{error_left_shoulder}. In this scenario the student performs two errors which are reflected in the score of windows 4, 7 and 8 (see Figure \ref{error_score}). The window size (time period) can be determined by the teacher according to how high a resolution is necessary for the dance.
+\\\\
+\noindent
+Another issue is the fact that though the error may be considered a plausible measure for the correctness of a dance to an engineer or a scientist, this may not be the case for an artist such as the dance teacher. Added to this, the relationship may not be linear and so some care must be taken when finding a function to translate this into a score for the regular individual.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{Data_Analysis_LS_Correct.jpg}
+\caption{Left Shoulder x-coordinate data of teacher and student. As it can be seen the student makes an error at roughly frame 50 and is also off from about frame 120 to 160.}
+\label{error_left_shoulder}
+\end{figure}
+
+\subsubsection{Results}
+\noindent
+The graphs in Figure \ref{error_score} show the results of test cases 1 to 4. As it is clear, the more closely the student represents the dance, the lower the error. This is both in the average score case, and in the time framed case. In Case 2 it can be seen that in two of the windows there is a large error, whereas in the rest of them the error is comparable to that of Case 1. This follows the video data as the student makes two errors with the arms within the periods of time that are represented by the windows. Added to that, we can see that in Case 3 the student starts off okay in the first half but in the second half the error increases greatly and as a consequence of the increased deviation from the teacher's dance. Finally, Case 4 shows an unacceptable error for all of the window frames as predicted. 
+
+\subsubsection{Feedback}
+\noindent
+These results show that there is a great need for user friendly feedback of the results. One thing to note is that firstly, the results are given in an unintuative scale for the regular daily user. Added to this is the fact that the results are not bounded in any way. Ideally, we would like for a good score to get something that appears to be close to 100\% and a bad score to get close to 0\%. To do this, we may use a variation of the sigmoid function that has these properties.
+\begin{equation}
+S = \frac{100}{1+e^{\left(as-b\right)}}
+\end{equation}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.2]{Data_Analysis_Average_Score.jpg}
+\includegraphics[scale=0.2]{Data_Analysis_Window_Score.jpg}
+
+\caption{Overall error of the four test cases (top left) and score calculated for these errors (top right). Score calculated for four test cases split into 10 portions of time (bottom four graphs).}
+\label{error_score}
+\end{figure}
+
 
 \clearpage
 \section*{Appendix}
