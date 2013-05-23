@@ -562,7 +562,9 @@ This version of the algotithm caused problems described in Section 2.4.3 and the
 \setlength{\itemsep}{1pt}
 \setlength{\parskip}{0pt}
 \setlength{\parsep}{0pt}
-	\item Calculate the mean of the frame lags which lie within one standard deviation of the mean, therefore eliminating outliers.
+	\item Calculate the mean and standard deviation of all frame lags for which the cross-correlation has the highest value.
+	\item Discard the frame lags which lie outside of one standard deviation of the mean.
+	\item Calculate the average value of all other frame lags and return it as the most likely misalignment value.
 \end{itemize}
 
 \subsubsection{Testing \& Results}
