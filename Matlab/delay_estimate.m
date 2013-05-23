@@ -6,6 +6,10 @@ function [ delay_est ] = delay_estimate( data_joints_1, data_joints_2 )
     % For every joint
     delay_joints = zeros(1,60);
     for i = 1:60
+        % Skip correlation of z-dimension and the confidence vector
+        if(mod(i,4) ==  0 || mod(i,4) == 3)
+            continue;
+        end
         % Find the maximum value and the index of the correlation
         [~,index_of_max] = max(xcorr(data_joints_1(:,i),data_joints_2(:,i)));
         % Save into an estimate of delays for each joint
@@ -28,12 +32,16 @@ function [ delay_est ] = delay_estimate( data_joints_1, data_joints_2 )
     % remove the cross-correlation offset
     x_delay = x_delay - offset_pt;
     y_delay = y_delay - offset_pt;
-    
+
+    % Calculate the mean and std of the delay offsets, and use them later
+    % to estimate the delay only using the values which lie within one
+    % standard deviation from the mean, i.e. eliminate outliers
     x_mean = mean(x_delay);
     y_mean = mean(y_delay);
     x_std = std(x_delay);
     y_std = std(y_delay);
 
+    % Identify outliers, accumulate the delays which are within one std
     sum_del = 0;
     count_el = 0;
     for i = 1:15
@@ -47,9 +55,7 @@ function [ delay_est ] = delay_estimate( data_joints_1, data_joints_2 )
         end
     end
     
+    % Estimate the frame shift by averaging
     delay_est = round(sum_del / count_el);
-    % calculate overall average delay
-    %delay_est = round((sum(x_delay)/numel(x_delay) + sum(y_delay)/numel(y_delay))/2);
 
 end
-
