@@ -174,5 +174,69 @@ ScoreProcessor ScoreProcessor::operator=(ScoreProcessor &c)
 		this->coordinateScoreWindowed = c.coordinateScoreWindowed;
 		this->jointScoreWindowed = c.jointScoreWindowed;
 		this->avgTotalScore = c.avgTotalScore;
+		return *this;
 	}
+}
+
+double ScoreProcessor::getScore(Skeleton teacherInterim, Skeleton studentInterim)
+{
+	// Align signals HERE
+
+	// Truncate the longer signal to the length of the shorter one
+	int length = this->findShorterLength(teacherInterim, studentInterim);
+	teacherInterim = this->truncate(teacherInterim, length);
+	studentInterim = this->truncate(studentInterim, length);
+
+	// Get the scaling factor of error
+	double scalingFactor = this->getScalingFactor(teacherInterim);
+
+	// Find simple score  for the entire signal using error squared
+	mat errorMat = teacherInterim.getData() - studentInterim.getData();
+	errorMat = errorMat % errorMat;
+	rowvec sumErrSqVec = sum(errorMat,0);
+	sumErrSqVec = sumErrSqVec / (scalingFactor * length);
+
+	// Score based on on position for each joint
+	rowvec errorJointVec(15);
+	double accumulate = 0;
+	for(int i = 0; i < Skeleton::numberOfColumns; i = i+Skeleton::nextJoint)
+	{
+		accumulate  = sumErrSqVec(i+0);
+		accumulate += sumErrSqVec(i+1);
+		accumulate += sumErrSqVec(i+2);
+		errorJointVec(i/4) = accumulate / 3;
+	}
+
+	return sum(errorJointVec)/15;
+}
+
+int ScoreProcessor::findShorterLength(Skeleton teacherInterim, Skeleton studentInterim)
+{
+	if(teacherInterim.getData().n_rows >= studentInterim.getData().n_rows)
+	{
+		return studentInterim.getData().n_rows;
+	}
+	else
+	{
+		return teacherInterim.getData().n_rows;
+	}
+}
+
+Skeleton ScoreProcessor::truncate(Skeleton data, int length)
+{
+	return data.getData().submat(0,0,length-1,Skeleton::numberOfColumns-1);
+}
+
+double ScoreProcessor::getScalingFactor(Skeleton data)
+{
+	double accumulate = 0;
+
+	for(int i = 0; i < Skeleton::numberOfColumns; i = i+Skeleton::nextJoint)
+	{
+		accumulate += mean(data.getJoint(i+0));
+		accumulate += mean(data.getJoint(i+1));
+		accumulate += mean(data.getJoint(i+2));
+	}
+
+	return abs(accumulate);
 }

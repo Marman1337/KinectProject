@@ -17,7 +17,13 @@ private:
 	Skeleton alignedStudent; // aligned student data
 	mat coordinateScoreWindowed; // windowed score for EVERY coordinate
 	mat jointScoreWindowed; // windowed score for each separate joint
-	int avgTotalScore; // average simple score for the entire dance
+	double avgTotalScore; // average simple score for the entire dance
+
+	// Data analysis functions
+	double getScore(Skeleton teacherInterim, Skeleton studentInterim); // add delay estimate
+	int findShorterLength(Skeleton teacherInterim, Skeleton studentInterim);
+	Skeleton truncate(Skeleton data, int length);
+	double getScalingFactor(Skeleton data);
 
 public:
 	// Constructors
@@ -49,8 +55,6 @@ public:
 
 	// Assignment operator
 	ScoreProcessor operator=(ScoreProcessor &c);
-
-	// Data analysis functions
 
 };
 

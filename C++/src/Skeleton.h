@@ -31,6 +31,7 @@ public:
 
 	// Get the next joint
 	static const int nextJoint;
+	static const int numberOfColumns;
 
 	// Constructors
 	Skeleton(void);
@@ -46,7 +47,7 @@ public:
 	mat getData(void);
 
 	// Get joint functions
-	mat getJoint(int indexOfJoint);
+	colvec getJoint(int indexOfJoint);
 
 	// Assignment operator
 	Skeleton operator=(Skeleton &c);

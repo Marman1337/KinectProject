@@ -1,6 +1,7 @@
 #include "Skeleton.h"
 
 const int Skeleton::nextJoint = 4;
+const int Skeleton::numberOfColumns = 60;
 
 Skeleton::Skeleton(void)
 {
@@ -48,7 +49,7 @@ Skeleton Skeleton::operator=(Skeleton &c)
 	return *this;
 }
 
-mat Skeleton::getJoint(int indexOfJoint)
+colvec Skeleton::getJoint(int indexOfJoint)
 {
 	return this->data.col(indexOfJoint);
 }
