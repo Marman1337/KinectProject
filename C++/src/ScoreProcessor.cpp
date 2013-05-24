@@ -224,7 +224,7 @@ int ScoreProcessor::findShorterLength(Skeleton teacherInterim, Skeleton studentI
 
 Skeleton ScoreProcessor::truncate(Skeleton data, int length)
 {
-	return Skeleton(data.getData().submat(0,0,length-1,Skeleton::numberOfColumns-1));
+	return Skeleton(data.getData().submat( 0 , 0 , length-1 , Skeleton::numberOfColumns-1 ));
 }
 
 double ScoreProcessor::getScalingFactor(Skeleton data)
@@ -239,4 +239,23 @@ double ScoreProcessor::getScalingFactor(Skeleton data)
 	}
 
 	return abs(accumulate);
+}
+
+Skeleton ScoreProcessor::translate(Skeleton data, int frame)
+{
+	mat dataMat = data.getData();
+	dataMat = dataMat.submat( frame-1 , 0 , data.getData().n_rows-1 , Skeleton::numberOfColumns-1 ); //they might return either a FRAME NUMBER or index of the frame, in which case it will be frame-1
+
+	double x = dataMat.at(0 , Skeleton::TORSO+0);
+	double y = dataMat.at(0 , Skeleton::TORSO+1);
+	double z = dataMat.at(0 , Skeleton::TORSO+2);
+
+	for(int i = 0; i < Skeleton::numberOfColumns; i = i+Skeleton::nextJoint)
+	{
+		dataMat.col(i+0) -= x;
+		dataMat.col(i+1) -= y;
+		dataMat.col(i+2) -= z;
+	}
+
+	return Skeleton(dataMat);
 }

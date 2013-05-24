@@ -24,6 +24,7 @@ private:
 	int findShorterLength(Skeleton teacherInterim, Skeleton studentInterim);
 	Skeleton truncate(Skeleton data, int length);
 	double getScalingFactor(Skeleton data);
+	Skeleton translate(Skeleton data, int frame);
 
 public:
 	// Constructors
