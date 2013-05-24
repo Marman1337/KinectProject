@@ -2,19 +2,19 @@
 #define SCORE_PROC_H
 
 #include <iostream>
-#include <string>
 #include <fstream>
 #include "armadillo"
+#include "Skeleton.h"
 using namespace arma;
 using namespace std;
 
 class ScoreProcessor
 {
 private:
-	mat teacher; // raw teacher data
-	mat student; // raw student data
-	mat alignedTeacher; // aligned teacher data
-	mat alignedStudent; // aligned student data
+	Skeleton teacher; // raw teacher data
+	Skeleton student; // raw student data
+	Skeleton alignedTeacher; // aligned teacher data
+	Skeleton alignedStudent; // aligned student data
 	mat coordinateScoreWindowed; // windowed score for EVERY coordinate
 	mat jointScoreWindowed; // windowed score for each separate joint
 	int avgTotalScore; // average simple score for the entire dance
@@ -22,8 +22,8 @@ private:
 public:
 	// Constructors
 	ScoreProcessor(void);
-	ScoreProcessor(mat teach, mat stud);
-	ScoreProcessor(string file_teach, string file_stud);
+	ScoreProcessor(Skeleton teach, Skeleton stud);
+	ScoreProcessor(const char *file_teach, const char *file_stud);
 	ScoreProcessor(ifstream &file_teach, ifstream &file_stud);
 	ScoreProcessor(ScoreProcessor &c);
 
@@ -31,18 +31,18 @@ public:
 	~ScoreProcessor(void);
 
 	// Setters
-	void setTeacher(mat teach);
-	void setTeacher(string file_teach);
+	void setTeacher(Skeleton teach);
+	void setTeacher(const char *file_teach);
 	void setTeacher(ifstream &file_teach);
-	void setStudent(mat stud);
-	void setStudent(string file_stud);
+	void setStudent(Skeleton stud);
+	void setStudent(const char *file_stud);
 	void setStudent(ifstream &file_stud);
 
 	// Getters
-	mat getTeacher(void);
-	mat getStudent(void);
-	mat getAlignedTeacher(void);
-	mat getAlignedStudent(void);
+	Skeleton getTeacher(void);
+	Skeleton getStudent(void);
+	Skeleton getAlignedTeacher(void);
+	Skeleton getAlignedStudent(void);
 	mat getCoordinateWindowedScore(void);
 	mat getJointWindowedScore(void);
 	int getAvgTotalScore(void);
