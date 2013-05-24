@@ -38,7 +38,7 @@ public:
 	Skeleton(mat dataMat);
 	Skeleton(const char *file);
 	Skeleton(ifstream &file);
-	Skeleton(Skeleton &c);
+	Skeleton(const Skeleton &c);
 
 	// Destructor
 	~Skeleton(void);
@@ -50,7 +50,7 @@ public:
 	colvec getJoint(int indexOfJoint);
 
 	// Assignment operator
-	Skeleton operator=(Skeleton &c);
+	Skeleton operator=(const Skeleton &c);
 };
 
 #endif /* SKELETON_H */

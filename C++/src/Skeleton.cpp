@@ -23,7 +23,7 @@ Skeleton::Skeleton(ifstream &file)
 	this->data.load(file, raw_ascii);
 }
 
-Skeleton::Skeleton(Skeleton &c)
+Skeleton::Skeleton(const Skeleton &c)
 {
 	this->data = c.data;
 }
@@ -35,7 +35,7 @@ mat Skeleton::getData(void)
 	return this->data;
 }
 
-Skeleton Skeleton::operator=(Skeleton &c)
+Skeleton Skeleton::operator=(const Skeleton &c)
 {
 	if(this == &c)
 	{

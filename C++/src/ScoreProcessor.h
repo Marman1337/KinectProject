@@ -31,7 +31,7 @@ public:
 	ScoreProcessor(Skeleton teach, Skeleton stud);
 	ScoreProcessor(const char *file_teach, const char *file_stud);
 	ScoreProcessor(ifstream &file_teach, ifstream &file_stud);
-	ScoreProcessor(ScoreProcessor &c);
+	ScoreProcessor(const ScoreProcessor &c);
 
 	// Destructor
 	~ScoreProcessor(void);
@@ -54,7 +54,7 @@ public:
 	int getAvgTotalScore(void);
 
 	// Assignment operator
-	ScoreProcessor operator=(ScoreProcessor &c);
+	ScoreProcessor operator=(const ScoreProcessor &c);
 
 };
 

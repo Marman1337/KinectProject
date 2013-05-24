@@ -44,7 +44,7 @@ ScoreProcessor::ScoreProcessor(ifstream &file_teach, ifstream &file_stud)
 	this->avgTotalScore = NULL;
 }
 
-ScoreProcessor::ScoreProcessor(ScoreProcessor &c)
+ScoreProcessor::ScoreProcessor(const ScoreProcessor &c)
 {
 	this->teacher = c.teacher;
 	this->student = c.student;
@@ -159,7 +159,7 @@ int ScoreProcessor::getAvgTotalScore(void)
 	return this->avgTotalScore;
 }
 
-ScoreProcessor ScoreProcessor::operator=(ScoreProcessor &c)
+ScoreProcessor ScoreProcessor::operator=(const ScoreProcessor &c)
 {
 	if(this == &c)
 	{
@@ -224,7 +224,7 @@ int ScoreProcessor::findShorterLength(Skeleton teacherInterim, Skeleton studentI
 
 Skeleton ScoreProcessor::truncate(Skeleton data, int length)
 {
-	return data.getData().submat(0,0,length-1,Skeleton::numberOfColumns-1);
+	return Skeleton(data.getData().submat(0,0,length-1,Skeleton::numberOfColumns-1));
 }
 
 double ScoreProcessor::getScalingFactor(Skeleton data)
