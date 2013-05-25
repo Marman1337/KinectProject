@@ -2,6 +2,7 @@
 
 const int Skeleton::nextJoint = 4;
 const int Skeleton::numberOfColumns = 60;
+const int Skeleton::numberOfJoints = 15;
 
 Skeleton::Skeleton(void)
 {

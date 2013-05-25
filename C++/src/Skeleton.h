@@ -32,6 +32,7 @@ public:
 	// Get the next joint
 	static const int nextJoint;
 	static const int numberOfColumns;
+	static const int numberOfJoints;
 
 	// Constructors
 	Skeleton(void);

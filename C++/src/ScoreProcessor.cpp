@@ -154,7 +154,7 @@ mat ScoreProcessor::getJointWindowedScore(void)
 	return this->jointScoreWindowed;
 }
 
-int ScoreProcessor::getAvgTotalScore(void)
+double ScoreProcessor::getAvgTotalScore(void)
 {
 	return this->avgTotalScore;
 }
@@ -178,7 +178,7 @@ ScoreProcessor ScoreProcessor::operator=(const ScoreProcessor &c)
 	}
 }
 
-double ScoreProcessor::getScore(Skeleton teacherInterim, Skeleton studentInterim)
+double ScoreProcessor::calculateScore(Skeleton teacherInterim, Skeleton studentInterim)
 {
 	// Align signals HERE
 
@@ -188,7 +188,7 @@ double ScoreProcessor::getScore(Skeleton teacherInterim, Skeleton studentInterim
 	studentInterim = this->truncate(studentInterim, length);
 
 	// Get the scaling factor of error
-	double scalingFactor = this->getScalingFactor(teacherInterim);
+	double scalingFactor = this->calculateScalingFactor(teacherInterim);
 
 	// Find simple score  for the entire signal using error squared
 	mat errorMat = teacherInterim.getData() - studentInterim.getData();
@@ -197,7 +197,7 @@ double ScoreProcessor::getScore(Skeleton teacherInterim, Skeleton studentInterim
 	sumErrSqVec = sumErrSqVec / (scalingFactor * length);
 
 	// Score based on on position for each joint
-	rowvec errorJointVec(15);
+	rowvec errorJointVec(Skeleton::numberOfJoints);
 	double accumulate = 0;
 	for(int i = 0; i < Skeleton::numberOfColumns; i = i+Skeleton::nextJoint)
 	{
@@ -207,7 +207,54 @@ double ScoreProcessor::getScore(Skeleton teacherInterim, Skeleton studentInterim
 		errorJointVec(i/4) = accumulate / 3;
 	}
 
-	return sum(errorJointVec)/15;
+	return sum(errorJointVec)/Skeleton::numberOfJoints;
+}
+
+mat ScoreProcessor::calculateCoordinateScoreWindow(Skeleton teacherInterim, Skeleton studentInterim)
+{
+	int length = this->findShorterLength(teacherInterim, studentInterim);
+	teacherInterim = this->truncate(teacherInterim, length);
+	studentInterim = this->truncate(studentInterim, length);
+
+	double scalingFactor = this->calculateScalingFactor(teacherInterim); 
+	
+	int windowLength = int(length/NUM_WINDOWS); // floor
+
+	mat coordinateError(NUM_WINDOWS,Skeleton::numberOfColumns);
+	mat errorMat;
+	rowvec errorVec(Skeleton::numberOfColumns);
+
+	for(int i = 0; i < NUM_WINDOWS; i++)
+	{
+		errorMat = teacherInterim.getData()(span(i*windowLength,(i+1)*windowLength-1),span::all) -
+			studentInterim.getData()(span(i*windowLength,(i+1)*windowLength-1),span::all);
+		errorMat = errorMat % errorMat;
+		errorVec = sum(errorMat,0);
+		coordinateError.row(i) = errorVec / (scalingFactor*windowLength);
+	}
+
+	return coordinateError;
+}
+
+mat ScoreProcessor::calculateJointScoreWindow(mat coordinateScore)
+{
+	mat jointError(NUM_WINDOWS,Skeleton::numberOfJoints);
+	colvec sumError(NUM_WINDOWS);
+
+	for(int i = 0; i < Skeleton::numberOfColumns; i = i + Skeleton::nextJoint)
+	{
+		sumError  = coordinateScore.col(i+0);
+		sumError += coordinateScore.col(i+1);
+		sumError += coordinateScore.col(i+2);
+		jointError.col(i/4) = sumError/3;
+	}
+
+	return jointError;
+}
+
+colvec ScoreProcessor::calculateAvgScoreWindow(mat jointScore)
+{
+	return colvec(sum(jointScore,1)/Skeleton::numberOfJoints);
 }
 
 int ScoreProcessor::findShorterLength(Skeleton teacherInterim, Skeleton studentInterim)
@@ -227,7 +274,7 @@ Skeleton ScoreProcessor::truncate(Skeleton data, int length)
 	return Skeleton(data.getData().submat( 0 , 0 , length-1 , Skeleton::numberOfColumns-1 ));
 }
 
-double ScoreProcessor::getScalingFactor(Skeleton data)
+double ScoreProcessor::calculateScalingFactor(Skeleton data)
 {
 	double accumulate = 0;
 

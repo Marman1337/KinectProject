@@ -8,6 +8,8 @@
 using namespace arma;
 using namespace std;
 
+#define NUM_WINDOWS 10
+
 class ScoreProcessor
 {
 private:
@@ -15,16 +17,27 @@ private:
 	Skeleton student; // raw student data
 	Skeleton alignedTeacher; // aligned teacher data
 	Skeleton alignedStudent; // aligned student data
-	mat coordinateScoreWindowed; // windowed score for EVERY coordinate
-	mat jointScoreWindowed; // windowed score for each separate joint
+	mat coordinateScoreWindowed; // windowed score for every coordinate (10x60)
+	mat jointScoreWindowed; // windowed score for each separate joint (10x15)
+	mat avgScoreWindowed; // average score for each window (10x1)
 	double avgTotalScore; // average simple score for the entire dance
 
 	// Data analysis functions
-	double getScore(Skeleton teacherInterim, Skeleton studentInterim); // add delay estimate
+	// Calculates a simple score for the entire dance
+	double calculateScore(Skeleton teacherInterim, Skeleton studentInterim);
+
+	// Calculates a windowed score for every joint's coordinate; (10x60)
+	mat calculateCoordinateScoreWindow(Skeleton teacherInterim, Skeleton studentInterim);
+	// Calculates an average windowed score for every joint; (10x15)
+	mat calculateJointScoreWindow(mat coordinateScore);
+	// Calculates an average score for each window; (10x1)
+	colvec calculateAvgScoreWindow(mat jointScore);
+
 	int findShorterLength(Skeleton teacherInterim, Skeleton studentInterim);
 	Skeleton truncate(Skeleton data, int length);
-	double getScalingFactor(Skeleton data);
+	double calculateScalingFactor(Skeleton data);
 	Skeleton translate(Skeleton data, int frame);
+
 
 public:
 	// Constructors
@@ -52,7 +65,7 @@ public:
 	Skeleton getAlignedStudent(void);
 	mat getCoordinateWindowedScore(void);
 	mat getJointWindowedScore(void);
-	int getAvgTotalScore(void);
+	double getAvgTotalScore(void);
 
 	// Assignment operator
 	ScoreProcessor operator=(const ScoreProcessor &c);
