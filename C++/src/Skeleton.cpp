@@ -31,6 +31,11 @@ Skeleton::Skeleton(const Skeleton &c)
 
 Skeleton::~Skeleton(void) {}
 
+void Skeleton::setData(mat dataMat)
+{
+	this->data = dataMat;
+}
+
 mat Skeleton::getData(void)
 {
 	return this->data;

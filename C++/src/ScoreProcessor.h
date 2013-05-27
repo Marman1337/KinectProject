@@ -24,7 +24,7 @@ private:
 
 	// Data analysis functions
 	// Calculates a simple score for the entire dance
-	double calculateScore(Skeleton teacherInterim, Skeleton studentInterim);
+	double calculateScore(Skeleton teacherInterim, Skeleton studentInterim, int delay);
 
 	// Calculates a windowed score for every joint's coordinate; (10x60)
 	mat calculateCoordinateScoreWindow(Skeleton teacherInterim, Skeleton studentInterim);
@@ -38,6 +38,13 @@ private:
 	double calculateScalingFactor(Skeleton data);
 	Skeleton translate(Skeleton data, int frame);
 
+	// New functions
+	int motionlessFrameOverall(Skeleton data, const int windowLen);
+	int motionlessFrame(colvec coordData, const int windowLen);
+	mat differenceMatrix(mat inputMatrix);
+	int delayEstimate(Skeleton data1, Skeleton data2);
+	void zeroPad(mat &inputSignal1, mat &inputSignal2);
+	void align(Skeleton data1, Skeleton data2, int delayEstimate, mat &correctSignal1, mat &correctSignal2);
 
 public:
 	// Constructors
@@ -65,11 +72,14 @@ public:
 	Skeleton getAlignedStudent(void);
 	mat getCoordinateWindowedScore(void);
 	mat getJointWindowedScore(void);
+	mat getAvgWindowedScore(void);
 	double getAvgTotalScore(void);
 
 	// Assignment operator
 	ScoreProcessor operator=(const ScoreProcessor &c);
 
+	// Analyse
+	void analyse();
 };
 
 #endif /* SCORE_PROC_H */

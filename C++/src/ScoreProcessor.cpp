@@ -154,6 +154,11 @@ mat ScoreProcessor::getJointWindowedScore(void)
 	return this->jointScoreWindowed;
 }
 
+mat ScoreProcessor::getAvgWindowedScore(void)
+{
+	return this->avgScoreWindowed;
+}
+
 double ScoreProcessor::getAvgTotalScore(void)
 {
 	return this->avgTotalScore;
@@ -178,9 +183,13 @@ ScoreProcessor ScoreProcessor::operator=(const ScoreProcessor &c)
 	}
 }
 
-double ScoreProcessor::calculateScore(Skeleton teacherInterim, Skeleton studentInterim)
+double ScoreProcessor::calculateScore(Skeleton teacherInterim, Skeleton studentInterim, int delay)
 {
-	// Align signals HERE
+	// Align signals
+	mat alignedTeacher, alignedStudent;
+	this->align(teacherInterim, studentInterim, delay, alignedTeacher, alignedStudent);
+	teacherInterim.setData(alignedTeacher);
+	studentInterim.setData(alignedStudent);
 
 	// Truncate the longer signal to the length of the shorter one
 	int length = this->findShorterLength(teacherInterim, studentInterim);
@@ -217,7 +226,7 @@ mat ScoreProcessor::calculateCoordinateScoreWindow(Skeleton teacherInterim, Skel
 	studentInterim = this->truncate(studentInterim, length);
 
 	double scalingFactor = this->calculateScalingFactor(teacherInterim); 
-	
+
 	int windowLength = int(length/NUM_WINDOWS); // floor
 
 	mat coordinateError(NUM_WINDOWS,Skeleton::numberOfColumns);
@@ -291,7 +300,7 @@ double ScoreProcessor::calculateScalingFactor(Skeleton data)
 Skeleton ScoreProcessor::translate(Skeleton data, int frame)
 {
 	mat dataMat = data.getData();
-	dataMat = dataMat.submat( frame-1 , 0 , data.getData().n_rows-1 , Skeleton::numberOfColumns-1 ); //they might return either a FRAME NUMBER or index of the frame, in which case it will be frame-1
+	dataMat = dataMat.submat( frame , 0 , data.getData().n_rows-1 , Skeleton::numberOfColumns-1 ); //they might return either a FRAME NUMBER or index of the frame, in which case it will be frame-1
 
 	double x = dataMat.at(0 , Skeleton::TORSO+0);
 	double y = dataMat.at(0 , Skeleton::TORSO+1);
@@ -305,4 +314,295 @@ Skeleton ScoreProcessor::translate(Skeleton data, int frame)
 	}
 
 	return Skeleton(dataMat);
+}
+
+mat ScoreProcessor::differenceMatrix(mat inputMatrix)
+{
+	// Get length of the input matrix
+	int numRows = inputMatrix.n_rows;
+	int numCols = inputMatrix.n_cols;
+
+	if(numRows == 1)
+	{
+		inputMatrix = inputMatrix.t();
+		int temp = numRows;
+		numRows = numCols;
+		numCols = temp;
+	}
+
+	// Difference array will have one less element.
+	mat differenceMat = zeros(numRows-1, numCols);
+	for(int i = 0; i < numRows-1; i++)
+	{
+		for(int j = 0; j < numCols; j++)
+		{
+			differenceMat(i,j) = inputMatrix(i,j) - inputMatrix(i+1,j);
+			if(differenceMat(i,j) == 0)
+			{
+				differenceMat(i,j) = 100000;
+			}
+		}
+	}
+
+	return differenceMat;
+}
+
+int ScoreProcessor::motionlessFrame(colvec coordData, const int windowLen)
+{
+	// Find the number of frames left after windowing the data.
+	int numFrameLeft = coordData.n_elem % windowLen;
+	// Remove the last frames in order to have an exact fit of windows.
+	coordData = coordData.rows(0, coordData.n_elem - 1 - numFrameLeft);
+
+	int minWindowIndex = 0;
+	double minCost = 0;
+
+	const int numFramesInitInterv = 450; // Number of frames in 15 seconds, assuming 30fps.
+	int numWindowsInitInterv = (int)(numFramesInitInterv/windowLen);
+	int numWindows = coordData.n_elem/windowLen;
+	// For each window in the data for 15 seconds.
+	for(int i = 0; i < min(numWindowsInitInterv, numWindows); i++)
+	{
+		// Get the new window.
+		colvec currentWindow = coordData.rows(i*windowLen, ((i+1)*windowLen-1));
+		// Get cost of window.
+		rowvec costVec = sum(abs(differenceMatrix(currentWindow)));
+		double cost = sum(costVec);
+
+		// Find minimum window cost.
+		if(i == 0)
+		{
+			minCost = cost;
+		}
+		else{
+			if(cost < minCost)
+			{
+				minCost = cost;
+				minWindowIndex = i;
+			}
+
+		}
+	}
+
+	// Return the index of the frame with the lowest cost.
+	return minWindowIndex * windowLen;
+
+}
+
+int ScoreProcessor::motionlessFrameOverall(Skeleton data, const int windowLen)
+{
+	/* Find the motionless frame using function motionlessframe() on limb joints
+	and finding the value with highest absolute frequency
+	*/
+
+	const int numCoords = 3; // total number of coords x,y,z.					
+	const int numJointsCoords = 24;
+	vec values = zeros(numJointsCoords);
+
+	// Find motionless frame for subset of joints
+	// for all coordinates
+	mat inputSignal = data.getData();
+	for(int i = 0; i < numCoords; i++)
+	{
+		// left elbow
+		values(i) = motionlessFrame(inputSignal.col(Skeleton::LEFT_ELBOW + i),windowLen);
+		// right elbow
+		values(i+3) = motionlessFrame(inputSignal.col(Skeleton::RIGHT_ELBOW + i),windowLen);
+		// left hand
+		values(i+6) = motionlessFrame(inputSignal.col(Skeleton::LEFT_HAND + i),windowLen);
+		// right hand
+		values(i+9) = motionlessFrame(inputSignal.col(Skeleton::RIGHT_HAND + i),windowLen);
+		// left knee
+		values(i+12) = motionlessFrame(inputSignal.col(Skeleton::LEFT_KNEE + i),windowLen);
+		// left foot
+		values(i+15) = motionlessFrame(inputSignal.col(Skeleton::LEFT_FOOT + i),windowLen);
+		// right knee
+		values(i+18) = motionlessFrame(inputSignal.col(Skeleton::RIGHT_KNEE + i),windowLen);
+		// right foot
+		values(i+21) = motionlessFrame(inputSignal.col(Skeleton::RIGHT_FOOT + i),windowLen);
+	}
+
+	// Get unique frame indices.
+	vec uniqueValues = unique(values);
+
+	// Get frequency count of each value.
+	uvec freqCount = histc(values,uniqueValues);
+
+	// Get the most frequently occuring frame's index.
+	uword maxFreqIndex;
+	freqCount.max(maxFreqIndex);
+
+	return int(uniqueValues(maxFreqIndex));
+}
+
+int ScoreProcessor::delayEstimate(Skeleton data1, Skeleton data2)
+{
+	/**
+	* Align signals with zero padding 
+	* and reverse the second signal in order
+	* to calculate the cross-correlation using
+	* the convolution.
+	*/
+	// Align signals by zero padding the shortest.
+	mat inputSignal1 = data1.getData();
+	mat inputSignal2 = data2.getData();
+
+	this->zeroPad(inputSignal1, inputSignal2);
+	// Reverse signal.
+	mat inputSignal2Reversed = flipud(inputSignal2);
+
+	vec xcorrResult;
+	vec delayJoints = zeros(Skeleton::numberOfColumns);
+	for(int i = 0; i < Skeleton::numberOfColumns; i++)
+	{
+		// Skip z-coordinate and confidence level
+		if(i % 4 == 2 || i % 4 == 3)
+		{
+			continue;
+		}
+		// Calculate the cross-correlation of the signals.
+		xcorrResult = conv(inputSignal1.col(i),inputSignal2Reversed.col(i));
+		// Collect the delay between two signals for all coordinates.
+		uword maxIndex = 0;
+		xcorrResult.max(maxIndex);
+		delayJoints(i) =  maxIndex;
+	}
+
+	//const int numJoints = 15;
+	vec xDelay = zeros(Skeleton::numberOfJoints);
+	vec yDelay = zeros(Skeleton::numberOfJoints);	
+
+
+	// Extract delays for x and y coordinates for all joints.
+	for(Skeleton::Joint i = Skeleton::HEAD; i <= Skeleton::RIGHT_FOOT; i = (Skeleton::Joint) (i + Skeleton::nextJoint))
+	{
+		xDelay(i/4) = delayJoints(i+0);
+		yDelay(i/4) = delayJoints(i+1);
+	}
+
+	// Subtract the cross correlation offset.
+	int xcorrLen = xcorrResult.n_elem;
+	int offsetPoint = int(xcorrLen/2 + 0.5);
+
+	xDelay = xDelay - offsetPoint;
+	yDelay = yDelay - offsetPoint;
+
+	/* Calculate the mean and standard deviation of delay offsets,
+	and use them later to estimate the delay only using values
+	which lie within one standard deviation from the mean, 
+	i.e. eliminate outliers
+	*/
+	double xMean = mean(xDelay);
+	double yMean = mean(yDelay);
+	double xStd = stddev(xDelay);
+	double yStd = stddev(yDelay);
+
+	// Identify outliers, accumulate the delays
+	// which are within one standard deviation from mean
+	double delaySum = 0;
+	double elementsCount = 0;
+	for(int i = 0; i < Skeleton::numberOfJoints; i++)
+	{
+		if( xMean - xStd < xDelay(i) && xDelay(i) < xMean + xStd)
+		{
+			delaySum = delaySum + xDelay(i);
+			elementsCount++;
+		}
+
+		if( yMean - yStd < yDelay(i) && yDelay(i) < yMean + yStd)
+		{
+			delaySum = delaySum + yDelay(i);
+			elementsCount++;
+		}
+	}
+
+	// Estimate the frame shift by averaging.
+	int delayEstimate = 0;
+	if(elementsCount != 0)
+	{
+		delayEstimate = int( delaySum/elementsCount + 0.5);
+	}
+
+	return delayEstimate;
+}
+
+void ScoreProcessor::zeroPad( mat &inputSignal1, mat &inputSignal2 )
+{
+	// Calculate the difference in number of frames of two signals.
+	int diffNumFrames = inputSignal1.n_rows - inputSignal2.n_rows;
+
+	// Zero pad the shorter signal.
+	if( 0 < diffNumFrames )
+	{
+		mat zeroMat = zeros(diffNumFrames,inputSignal1.n_cols);
+		inputSignal2 = join_cols(inputSignal2, zeroMat);
+	}
+	else if( diffNumFrames < 0)
+	{
+		mat zeroMat = zeros( -diffNumFrames,inputSignal1.n_cols);
+		inputSignal1 = join_cols(inputSignal1, zeroMat);	
+	}
+}
+
+void ScoreProcessor::align(
+	Skeleton data1, 
+	Skeleton data2, 
+	int delayEstimate,
+	mat &correctSignal1, 
+	mat &correctSignal2
+	)
+{
+	mat inputSignal1 = data1.getData();
+	mat inputSignal2 = data2.getData();
+	// If delay is positive, shift the first signal and vice versa.
+	if(0 < delayEstimate)
+	{
+		correctSignal1 = inputSignal1.rows(delayEstimate, inputSignal1.n_rows-1);
+		correctSignal2 = inputSignal2;
+	}
+	else if(delayEstimate < 0)
+	{
+		correctSignal2 = inputSignal2.rows(-delayEstimate, inputSignal2.n_rows-1);
+		correctSignal1 = inputSignal1;
+	}
+	else
+	{
+		correctSignal1 = inputSignal1;
+		correctSignal2 = inputSignal2;
+	}
+}
+
+void ScoreProcessor::analyse()
+{
+	int teachMotionless = this->motionlessFrameOverall(this->teacher, 30);
+	int studeMotionless = this->motionlessFrameOverall(this->student,30);
+
+	Skeleton teacherInterim = this->translate(this->teacher, teachMotionless);
+	Skeleton studentInterim = this->translate(this->student, studeMotionless);
+
+	int delayEstimate = this->delayEstimate(teacherInterim, studentInterim);
+
+	mat teacherAligned, studentAligned;
+	this->align(teacherInterim, studentInterim, delayEstimate, teacherAligned, studentAligned);
+	teacherInterim.setData(teacherAligned);
+	studentInterim.setData(studentAligned);
+
+	rowvec errorArr(21);
+	for(int delay = -10; delay < 11; delay++)
+	{
+		errorArr(delay+10) = this->calculateScore(teacherInterim, studentInterim, delay);
+	}
+
+	uword index;
+	errorArr.min(index);
+	index = index - 10;
+
+	mat optTeacher, optStudent;
+	this->align(teacherInterim, studentInterim, index, optTeacher, optStudent);
+	this->alignedTeacher.setData(optTeacher);
+	this->alignedStudent.setData(optStudent);
+
+	this->coordinateScoreWindowed = this->calculateCoordinateScoreWindow(alignedTeacher, alignedStudent);
+	this->jointScoreWindowed = this->calculateJointScoreWindow(this->coordinateScoreWindowed);
+	this->avgScoreWindowed = this->calculateAvgScoreWindow(this->jointScoreWindowed);
 }
