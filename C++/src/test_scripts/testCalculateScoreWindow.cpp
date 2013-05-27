@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "ScoreProcessor.h"
+#include "../ScoreProcessor.h"
 
 using namespace std;
 using namespace arma;

@@ -11,10 +11,10 @@ ScoreProcessor::ScoreProcessor(void)
 	this->avgTotalScore = NULL;
 }
 
-ScoreProcessor::ScoreProcessor(Skeleton teach, Skeleton stud)
+ScoreProcessor::ScoreProcessor(Skeleton teacherSkeleton, Skeleton studentSkeleton)
 {
-	this->teacher = teach;
-	this->student = stud;
+	this->teacher = teacherSkeleton;
+	this->student = studentSkeleton;
 	this->alignedTeacher = Skeleton();
 	this->alignedStudent = Skeleton();
 	this->coordinateScoreWindowed = mat(0,0);
@@ -216,7 +216,12 @@ double ScoreProcessor::calculateScore(Skeleton teacherInterim, Skeleton studentI
 		errorJointVec(i/4) = accumulate / 3;
 	}
 
+	// Changed this
+	//double xScale = 10;
+	//double xOffset = 3;
+
 	return sum(errorJointVec)/Skeleton::numberOfJoints;
+	//return errorToScore(xScale, xOffset, sum(errorJointVec)/Skeleton::numberOfJoints);
 }
 
 mat ScoreProcessor::calculateCoordinateScoreWindow(Skeleton teacherInterim, Skeleton studentInterim)
@@ -242,7 +247,16 @@ mat ScoreProcessor::calculateCoordinateScoreWindow(Skeleton teacherInterim, Skel
 		coordinateError.row(i) = errorVec / (scalingFactor*windowLength);
 	}
 
+	double xScale = 10;
+	double xOffset = 3;
+
+	// This works fine, but because of the order that the score is taken
+	// from the error, the results are different to matlab. The score is 
+	// taken first for all the coordinates, and then the average is taken, 
+	// giving a much more granular score for each window. 
+	//return errorToScore(xScale, xOffset, coordinateError);
 	return coordinateError;
+
 }
 
 mat ScoreProcessor::calculateJointScoreWindow(mat coordinateScore)
@@ -258,12 +272,19 @@ mat ScoreProcessor::calculateJointScoreWindow(mat coordinateScore)
 		jointError.col(i/4) = sumError/3;
 	}
 
+	double xScale = 10;
+	double xOffset = 3;
+
 	return jointError;
 }
 
 colvec ScoreProcessor::calculateAvgScoreWindow(mat jointScore)
 {
+	double xScale = 10;
+	double xOffset = 3;
+
 	return colvec(sum(jointScore,1)/Skeleton::numberOfJoints);
+
 }
 
 int ScoreProcessor::findShorterLength(Skeleton teacherInterim, Skeleton studentInterim)
@@ -435,7 +456,7 @@ int ScoreProcessor::motionlessFrameOverall(Skeleton data, const int windowLen)
 	return int(uniqueValues(maxFreqIndex));
 }
 
-int ScoreProcessor::delayEstimate(Skeleton data1, Skeleton data2)
+int ScoreProcessor::delayEstimate(Skeleton skeleton1, Skeleton skeleton2)
 {
 	/**
 	* Align signals with zero padding 
@@ -443,9 +464,10 @@ int ScoreProcessor::delayEstimate(Skeleton data1, Skeleton data2)
 	* to calculate the cross-correlation using
 	* the convolution.
 	*/
+
 	// Align signals by zero padding the shortest.
-	mat inputSignal1 = data1.getData();
-	mat inputSignal2 = data2.getData();
+	mat inputSignal1 = skeleton1.getData();
+	mat inputSignal2 = skeleton2.getData();
 
 	this->zeroPad(inputSignal1, inputSignal2);
 	// Reverse signal.
@@ -545,15 +567,15 @@ void ScoreProcessor::zeroPad( mat &inputSignal1, mat &inputSignal2 )
 }
 
 void ScoreProcessor::align(
-	Skeleton data1, 
-	Skeleton data2, 
+	Skeleton skeleton1, 
+	Skeleton skeleton2, 
 	int delayEstimate,
 	mat &correctSignal1, 
 	mat &correctSignal2
 	)
 {
-	mat inputSignal1 = data1.getData();
-	mat inputSignal2 = data2.getData();
+	mat inputSignal1 = skeleton1.getData();
+	mat inputSignal2 = skeleton2.getData();
 	// If delay is positive, shift the first signal and vice versa.
 	if(0 < delayEstimate)
 	{
@@ -570,6 +592,27 @@ void ScoreProcessor::align(
 		correctSignal1 = inputSignal1;
 		correctSignal2 = inputSignal2;
 	}
+}
+
+mat ScoreProcessor::errorToScore(double xScale, double xOffset, mat errorMat)
+{
+	double yOffset = 100*(1 - 1/(1 + exp(-xOffset)));
+	return 100 / (1 + exp(xScale*errorMat - xOffset)) + yOffset;
+}
+
+double ScoreProcessor::errorToScore(double xScale, double xOffset, double errorMat)
+{
+	double yOffset = 100*(1 - 1/(1 + exp(-xOffset)));
+	return 100 / (1 + exp(xScale*errorMat - xOffset)) + yOffset;
+}
+
+void ScoreProcessor::calculateAvgTotalScore(void)
+{
+	double xScale = 10;
+	double xOffset = 3;
+
+	this->avgTotalScore = mean(errorToScore(xScale, xOffset, this->avgScoreWindowed).col(0));
+
 }
 
 void ScoreProcessor::analyse()
@@ -594,6 +637,7 @@ void ScoreProcessor::analyse()
 	}
 
 	uword index;
+	// Changed this
 	errorArr.min(index);
 	index = index - 10;
 
@@ -605,4 +649,5 @@ void ScoreProcessor::analyse()
 	this->coordinateScoreWindowed = this->calculateCoordinateScoreWindow(alignedTeacher, alignedStudent);
 	this->jointScoreWindowed = this->calculateJointScoreWindow(this->coordinateScoreWindowed);
 	this->avgScoreWindowed = this->calculateAvgScoreWindow(this->jointScoreWindowed);
+	this->calculateAvgTotalScore();
 }
