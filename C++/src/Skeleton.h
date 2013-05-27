@@ -47,6 +47,9 @@ public:
 	// Getters
 	mat getData(void);
 
+	// Setter
+	void setData(mat dataMat);
+
 	// Get joint functions
 	colvec getJoint(int indexOfJoint);
 
