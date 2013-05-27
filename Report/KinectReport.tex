@@ -675,6 +675,36 @@ The following figure (Figure \ref{error_score}) illustrates the transformation o
 \label{error_score}
 \end{figure}
 
+\clearpage
+\section{Porting to C++}
+\noindent
+To make the code quicker and to make the whole application integrate more easily it has been chosen to port all the code, written initially in Matlab, to C++. 
+\subsection{Linear Algeabra Library Choice}
+This has been made much more time efficient by the use of the external library chosen for linear algeabra called Armadillo.  The reason this library has been chosen is due to its similarity in syntax to Matlab but also due to its speed. Armadillo claims on its website \textbf{(Add reference http://arma.sourceforge.net/speed.html)} to be approximately up to 15 times faster for the operations that are needed for our algorithms than two competing libraries IT++ and NEWMAT. Also being well established and well documented, the transition has been fairly simple.  
+\subsection{Design}
+\begin{itemize}
+\item Abstraction.
+\item Two Classes.
+\item Public and Private.
+\end{itemize}
+\subsection{Development}
+\noindent
+\subsubsection{Unit Testing}
+\noindent 
+The code has been tested on a unit bases. Every method created in C++ has been tested against its Matlab counterpart. The development is as follows:
+\begin{itemize}
+\item For each method. 
+\item Write small programme in C++ that calls method (before being created) and prints results in a text file in the Matlab DataFiles directory able to be loaded into Matlab.
+\item Write the method in C++.
+\item Write a script in Matlab that calls the corresponding Matlab function and then loads the text file created by the C++ program and compares the two results.
+\end{itemize}
+\noindent
+This way the possibility of finding an error before it is buried deep within the code is minimised and the process of testing is automised. Added to this, the code can be easily divided between different pairs as the code can be decoupled. As long as the specification of each function is clear including what must be returned for each of the methods, each pair can easily test and debug their part of the code without the need to wait for previous code to be made.
+
+\subsubsection{Integration}
+\noindent
+The final code is tested by making a test program that calls the analyse procedure in C++ and prints all the member variables to text files. This again is tested agains the Matlab results using a script in the same way as in the unit testing.   
+
 
 \clearpage
 \section*{Appendix}
