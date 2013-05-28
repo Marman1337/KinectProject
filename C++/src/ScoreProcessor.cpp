@@ -399,7 +399,7 @@ mat ScoreProcessor::calculateCoordinateScoreWindow(Skeleton teacherInterim, Skel
 	// taken first for all the coordinates, and then the average is taken, 
 	// giving a much more granular score for each window. 
 	//return errorToScore(xScale, xOffset, coordinateError);
-	return coordinateError;
+	return errorToScore(10, 3, coordinateError);
 }
 
 /**
@@ -894,9 +894,9 @@ void ScoreProcessor::analyse()
 	this->jointScoreWindowed = this->calculateJointScoreWindow(this->coordinateScoreWindowed);
 	this->avgScoreWindowed = this->calculateAvgScoreWindow(this->jointScoreWindowed);
 	// To replicate the Matlab results
-	this->coordinateScoreWindowed = errorToScore(10, 3, this->coordinateScoreWindowed);
-	this->jointScoreWindowed = errorToScore(10, 3, this->jointScoreWindowed);
-	this->avgScoreWindowed = errorToScore(10, 3, this->avgScoreWindowed);
+	//this->coordinateScoreWindowed = errorToScore(10, 3, this->coordinateScoreWindowed);
+	//this->jointScoreWindowed = errorToScore(10, 3, this->jointScoreWindowed);
+	//this->avgScoreWindowed = errorToScore(10, 3, this->avgScoreWindowed);
 	this->calculateAvgTotalScore();
 	this->undoTranslate();
 }
