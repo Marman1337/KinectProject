@@ -1,5 +1,9 @@
 #include "ScoreProcessor.h"
 
+/************************************************
+** Constructors
+*************************************************/
+
 ScoreProcessor::ScoreProcessor(void)
 {
 	this->teacher = Skeleton();
@@ -11,10 +15,10 @@ ScoreProcessor::ScoreProcessor(void)
 	this->avgTotalScore = NULL;
 }
 
-ScoreProcessor::ScoreProcessor(Skeleton teach, Skeleton stud)
+ScoreProcessor::ScoreProcessor(Skeleton teacherSkeleton, Skeleton studentSkeleton)
 {
-	this->teacher = teach;
-	this->student = stud;
+	this->teacher = teacherSkeleton;
+	this->student = studentSkeleton;
 	this->alignedTeacher = Skeleton();
 	this->alignedStudent = Skeleton();
 	this->coordinateScoreWindowed = mat(0,0);
@@ -123,6 +127,10 @@ void ScoreProcessor::setStudent(ifstream &file_stud)
 	this->avgTotalScore = NULL;
 }
 
+/************************************************
+** Getters
+*************************************************/
+
 Skeleton ScoreProcessor::getTeacher(void)
 {
 	return this->teacher;
@@ -164,6 +172,10 @@ double ScoreProcessor::getAvgTotalScore(void)
 	return this->avgTotalScore;
 }
 
+/************************************************
+** Operators
+*************************************************/
+
 ScoreProcessor ScoreProcessor::operator=(const ScoreProcessor &c)
 {
 	if(this == &c)
@@ -182,6 +194,14 @@ ScoreProcessor ScoreProcessor::operator=(const ScoreProcessor &c)
 		return *this;
 	}
 }
+
+/************************************************
+** Analysis Methods
+*************************************************/
+
+/**
+*	Calculates simple (error) score for the whole signal. Not windowed.
+*/
 
 double ScoreProcessor::calculateScore(Skeleton teacherInterim, Skeleton studentInterim, int delay)
 {
@@ -216,8 +236,18 @@ double ScoreProcessor::calculateScore(Skeleton teacherInterim, Skeleton studentI
 		errorJointVec(i/4) = accumulate / 3;
 	}
 
+	// Changed this
+	//double xScale = 10;
+	//double xOffset = 3;
+
 	return sum(errorJointVec)/Skeleton::numberOfJoints;
+	//return errorToScore(xScale, xOffset, sum(errorJointVec)/Skeleton::numberOfJoints);
 }
+
+/**
+*	Calculates score for each coordinate in a windowed manner.
+* Returns a 10x60 Matrix.
+*/
 
 mat ScoreProcessor::calculateCoordinateScoreWindow(Skeleton teacherInterim, Skeleton studentInterim)
 {
@@ -242,8 +272,22 @@ mat ScoreProcessor::calculateCoordinateScoreWindow(Skeleton teacherInterim, Skel
 		coordinateError.row(i) = errorVec / (scalingFactor*windowLength);
 	}
 
+	double xScale = 10;
+	double xOffset = 3;
+
+	// This works fine, but because of the order that the score is taken
+	// from the error, the results are different to matlab. The score is 
+	// taken first for all the coordinates, and then the average is taken, 
+	// giving a much more granular score for each window. 
+	//return errorToScore(xScale, xOffset, coordinateError);
 	return coordinateError;
+
 }
+
+/**
+*	Calculates score for each joint in a windowed manner.
+* Returns a 10x15 Matrix.
+*/
 
 mat ScoreProcessor::calculateJointScoreWindow(mat coordinateScore)
 {
@@ -258,13 +302,29 @@ mat ScoreProcessor::calculateJointScoreWindow(mat coordinateScore)
 		jointError.col(i/4) = sumError/3;
 	}
 
+	double xScale = 10;
+	double xOffset = 3;
+
 	return jointError;
 }
 
+/**
+*	Calculates average score for each window.
+* Returns a 10x1 Matrix.
+*/
+
 colvec ScoreProcessor::calculateAvgScoreWindow(mat jointScore)
 {
+	double xScale = 10;
+	double xOffset = 3;
+
 	return colvec(sum(jointScore,1)/Skeleton::numberOfJoints);
+
 }
+
+/**
+*	Returns the length of the shortest data signal corresponding to the two skeletons.
+*/
 
 int ScoreProcessor::findShorterLength(Skeleton teacherInterim, Skeleton studentInterim)
 {
@@ -278,10 +338,18 @@ int ScoreProcessor::findShorterLength(Skeleton teacherInterim, Skeleton studentI
 	}
 }
 
+/**
+*	Truncates the signal so that it is the length provided and returns it.
+*/
+
 Skeleton ScoreProcessor::truncate(Skeleton data, int length)
 {
 	return Skeleton(data.getData().submat( 0 , 0 , length-1 , Skeleton::numberOfColumns-1 ));
 }
+
+/**
+*	Calculates the scaling factor that the error will be divided by to 'normalise' it.
+*/
 
 double ScoreProcessor::calculateScalingFactor(Skeleton data)
 {
@@ -296,6 +364,10 @@ double ScoreProcessor::calculateScalingFactor(Skeleton data)
 
 	return abs(accumulate);
 }
+
+/**
+*	Returns a Skeleton that is translated in such a way that the torso is given as the origin.
+*/
 
 Skeleton ScoreProcessor::translate(Skeleton data, int frame)
 {
@@ -315,6 +387,11 @@ Skeleton ScoreProcessor::translate(Skeleton data, int frame)
 
 	return Skeleton(dataMat);
 }
+
+/**
+*	Returns a matrix that has the same number of columns as the input matrix and one less row. 
+* Represents the difference of rows in series.
+*/
 
 mat ScoreProcessor::differenceMatrix(mat inputMatrix)
 {
@@ -346,6 +423,13 @@ mat ScoreProcessor::differenceMatrix(mat inputMatrix)
 
 	return differenceMat;
 }
+
+/**
+*	Returns the frame which corresponds to corresponds to motionless activity for 
+* a single coordinate. 
+* The larger the window length, the longer the student must stand still but the
+* more accurate the result.
+*/
 
 int ScoreProcessor::motionlessFrame(colvec coordData, const int windowLen)
 {
@@ -388,6 +472,13 @@ int ScoreProcessor::motionlessFrame(colvec coordData, const int windowLen)
 	return minWindowIndex * windowLen;
 
 }
+
+/**
+*	Returns the frame which corresponds to corresponds to motionless activity for 
+* the whole Skeleton. 
+* The larger the window length, the longer the student must stand still but the
+* more accurate the result.
+*/
 
 int ScoreProcessor::motionlessFrameOverall(Skeleton data, const int windowLen)
 {
@@ -435,7 +526,11 @@ int ScoreProcessor::motionlessFrameOverall(Skeleton data, const int windowLen)
 	return int(uniqueValues(maxFreqIndex));
 }
 
-int ScoreProcessor::delayEstimate(Skeleton data1, Skeleton data2)
+/**
+*	Returns the estimated delay between the two input signals as a number of frames.
+*/
+
+int ScoreProcessor::delayEstimate(Skeleton skeleton1, Skeleton skeleton2)
 {
 	/**
 	* Align signals with zero padding 
@@ -443,9 +538,10 @@ int ScoreProcessor::delayEstimate(Skeleton data1, Skeleton data2)
 	* to calculate the cross-correlation using
 	* the convolution.
 	*/
+
 	// Align signals by zero padding the shortest.
-	mat inputSignal1 = data1.getData();
-	mat inputSignal2 = data2.getData();
+	mat inputSignal1 = skeleton1.getData();
+	mat inputSignal2 = skeleton2.getData();
 
 	this->zeroPad(inputSignal1, inputSignal2);
 	// Reverse signal.
@@ -526,6 +622,10 @@ int ScoreProcessor::delayEstimate(Skeleton data1, Skeleton data2)
 	return delayEstimate;
 }
 
+/**
+*	Zero pads the matrix with the least frames.
+*/
+
 void ScoreProcessor::zeroPad( mat &inputSignal1, mat &inputSignal2 )
 {
 	// Calculate the difference in number of frames of two signals.
@@ -544,16 +644,22 @@ void ScoreProcessor::zeroPad( mat &inputSignal1, mat &inputSignal2 )
 	}
 }
 
+/**
+*	Aligns the two signals and returns them in the two input matrices 
+* passed by reference. The delay estimate is used as the number of 
+* frames that they are out of sync. 
+*/
+
 void ScoreProcessor::align(
-	Skeleton data1, 
-	Skeleton data2, 
+	Skeleton skeleton1, 
+	Skeleton skeleton2, 
 	int delayEstimate,
 	mat &correctSignal1, 
 	mat &correctSignal2
 	)
 {
-	mat inputSignal1 = data1.getData();
-	mat inputSignal2 = data2.getData();
+	mat inputSignal1 = skeleton1.getData();
+	mat inputSignal2 = skeleton2.getData();
 	// If delay is positive, shift the first signal and vice versa.
 	if(0 < delayEstimate)
 	{
@@ -571,6 +677,42 @@ void ScoreProcessor::align(
 		correctSignal2 = inputSignal2;
 	}
 }
+
+/**
+*	Returns the score of a whole matrix based on the score function. 
+*/
+
+mat ScoreProcessor::errorToScore(double xScale, double xOffset, mat errorMat)
+{
+	double yOffset = 100*(1 - 1/(1 + exp(-xOffset)));
+	return 100 / (1 + exp(xScale*errorMat - xOffset)) + yOffset;
+}
+
+/**
+*	Returns the score of a single value based on the score function. 
+*/
+
+double ScoreProcessor::errorToScore(double xScale, double xOffset, double errorMat)
+{
+	double yOffset = 100*(1 - 1/(1 + exp(-xOffset)));
+	return 100 / (1 + exp(xScale*errorMat - xOffset)) + yOffset;
+}
+
+/**
+*	Calculates the average total score. 
+*/
+
+void ScoreProcessor::calculateAvgTotalScore(void)
+{
+	double xScale = 10;
+	double xOffset = 3;
+
+	this->avgTotalScore = mean(errorToScore(xScale, xOffset, this->avgScoreWindowed).col(0));
+}
+
+/**
+*	A wrapper function that can be used to set all the member variables. 
+*/
 
 void ScoreProcessor::analyse()
 {
@@ -594,6 +736,7 @@ void ScoreProcessor::analyse()
 	}
 
 	uword index;
+	// Changed this
 	errorArr.min(index);
 	index = index - 10;
 
@@ -605,4 +748,9 @@ void ScoreProcessor::analyse()
 	this->coordinateScoreWindowed = this->calculateCoordinateScoreWindow(alignedTeacher, alignedStudent);
 	this->jointScoreWindowed = this->calculateJointScoreWindow(this->coordinateScoreWindowed);
 	this->avgScoreWindowed = this->calculateAvgScoreWindow(this->jointScoreWindowed);
+	// To replicate the Matlab results
+	this->coordinateScoreWindowed = errorToScore(10, 3, this->coordinateScoreWindowed);
+	this->jointScoreWindowed = errorToScore(10, 3, this->jointScoreWindowed);
+	this->avgScoreWindowed = errorToScore(10, 3, this->avgScoreWindowed);
+	this->calculateAvgTotalScore();
 }

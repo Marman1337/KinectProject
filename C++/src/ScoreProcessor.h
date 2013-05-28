@@ -5,6 +5,7 @@
 #include <fstream>
 #include "armadillo"
 #include "Skeleton.h"
+#include <cmath>
 using namespace arma;
 using namespace std;
 
@@ -42,14 +43,18 @@ private:
 	int motionlessFrameOverall(Skeleton data, const int windowLen);
 	int motionlessFrame(colvec coordData, const int windowLen);
 	mat differenceMatrix(mat inputMatrix);
-	int delayEstimate(Skeleton data1, Skeleton data2);
+	int delayEstimate(Skeleton skeleton1, Skeleton skeleton2);
 	void zeroPad(mat &inputSignal1, mat &inputSignal2);
-	void align(Skeleton data1, Skeleton data2, int delayEstimate, mat &correctSignal1, mat &correctSignal2);
+	void align(Skeleton skeleton1, Skeleton skeleton2, int delayEstimate, mat &correctSignal1, mat &correctSignal2);
+	void calculateAvgTotalScore(void);
+	mat errorToScore(double xScale, double xOffset, mat errorMat);
+	double errorToScore(double xScale, double xOffset, double error);
+
 
 public:
 	// Constructors
 	ScoreProcessor(void);
-	ScoreProcessor(Skeleton teach, Skeleton stud);
+	ScoreProcessor(Skeleton teacherSkeleton, Skeleton studentSkeleton);
 	ScoreProcessor(const char *file_teach, const char *file_stud);
 	ScoreProcessor(ifstream &file_teach, ifstream &file_stud);
 	ScoreProcessor(const ScoreProcessor &c);
@@ -80,6 +85,10 @@ public:
 
 	// Analyse
 	void analyse();
+
+	// Tests
+	//mat errorToScore(double xScale, double xOffset, mat errorMat);
+
 };
 
 #endif /* SCORE_PROC_H */
