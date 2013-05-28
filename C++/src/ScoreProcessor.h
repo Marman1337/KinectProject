@@ -11,6 +11,30 @@ using namespace std;
 
 #define NUM_WINDOWS 10
 
+struct jointData
+{
+	float x, y, z, confidence;
+};
+
+struct skeletonData
+{
+	vector<jointData> head;
+	vector<jointData> left_shoulder;
+	vector<jointData> left_elbow;
+	vector<jointData> left_foot;
+	vector<jointData> left_hand;
+	vector<jointData> left_knee;
+	vector<jointData> left_hip;
+	vector<jointData> neck;
+	vector<jointData> right_shoulder;
+	vector<jointData> right_elbow;
+	vector<jointData> right_foot;
+	vector<jointData> right_hand;
+	vector<jointData> right_knee;
+	vector<jointData> right_hip;
+	vector<jointData> torso;
+};
+
 class ScoreProcessor
 {
 private:
@@ -51,6 +75,8 @@ private:
 	mat errorToScore(double xScale, double xOffset, mat errorMat);
 	double errorToScore(double xScale, double xOffset, double error);
 
+	// Conversion functions
+	skeletonData convertSkeleton(mat inputData);
 
 public:
 	// Constructors
@@ -81,6 +107,10 @@ public:
 	mat getAvgWindowedScore(void);
 	double getAvgTotalScore(void);
 	int getWindowLength(void);
+
+	// Conversion functions
+	skeletonData convertAlignedTeacher(void);
+	skeletonData convertAlignedStudent(void);
 
 	// Assignment operator
 	ScoreProcessor operator=(const ScoreProcessor &c);

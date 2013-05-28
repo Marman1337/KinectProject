@@ -163,6 +163,117 @@ Skeleton ScoreProcessor::getAlignedStudent(void)
 
 }
 
+skeletonData ScoreProcessor::convertSkeleton(mat inputData)
+{
+	skeletonData dataStruct;
+	jointData frame;
+
+	for(int i = 0; i < inputData.n_rows; i++)
+	{
+		frame.x = float(inputData.at(i, Skeleton::HEAD+0));
+		frame.y = float(inputData.at(i, Skeleton::HEAD+1));
+		frame.z = float(inputData.at(i, Skeleton::HEAD+2));
+		frame.confidence = float(inputData.at(i, Skeleton::HEAD+3));
+		dataStruct.head.push_back(frame);
+
+		frame.x = float(inputData.at(i, Skeleton::LEFT_SHOULDER+0));
+		frame.y = float(inputData.at(i, Skeleton::LEFT_SHOULDER+1));
+		frame.z = float(inputData.at(i, Skeleton::LEFT_SHOULDER+2));
+		frame.confidence = float(inputData.at(i, Skeleton::LEFT_SHOULDER+3));
+		dataStruct.left_shoulder.push_back(frame);
+
+		frame.x = float(inputData.at(i, Skeleton::LEFT_ELBOW+0));
+		frame.y = float(inputData.at(i, Skeleton::LEFT_ELBOW+1));
+		frame.z = float(inputData.at(i, Skeleton::LEFT_ELBOW+2));
+		frame.confidence = float(inputData.at(i, Skeleton::LEFT_ELBOW+3));
+		dataStruct.left_elbow.push_back(frame);
+
+		frame.x = float(inputData.at(i, Skeleton::LEFT_HAND+0));
+		frame.y = float(inputData.at(i, Skeleton::LEFT_HAND+1));
+		frame.z = float(inputData.at(i, Skeleton::LEFT_HAND+2));
+		frame.confidence = float(inputData.at(i, Skeleton::LEFT_HAND+3));
+		dataStruct.left_hand.push_back(frame);
+
+		frame.x = float(inputData.at(i, Skeleton::LEFT_FOOT+0));
+		frame.y = float(inputData.at(i, Skeleton::LEFT_FOOT+1));
+		frame.z = float(inputData.at(i, Skeleton::LEFT_FOOT+2));
+		frame.confidence = float(inputData.at(i, Skeleton::LEFT_FOOT+3));
+		dataStruct.left_foot.push_back(frame);
+
+		frame.x = float(inputData.at(i, Skeleton::LEFT_HIP+0));
+		frame.y = float(inputData.at(i, Skeleton::LEFT_HIP+1));
+		frame.z = float(inputData.at(i, Skeleton::LEFT_HIP+2));
+		frame.confidence = float(inputData.at(i, Skeleton::LEFT_HIP+3));
+		dataStruct.left_hip.push_back(frame);
+
+		frame.x = float(inputData.at(i, Skeleton::LEFT_KNEE+0));
+		frame.y = float(inputData.at(i, Skeleton::LEFT_KNEE+1));
+		frame.z = float(inputData.at(i, Skeleton::LEFT_KNEE+2));
+		frame.confidence = float(inputData.at(i, Skeleton::LEFT_KNEE+3));
+		dataStruct.left_knee.push_back(frame);
+
+		frame.x = float(inputData.at(i, Skeleton::TORSO+0));
+		frame.y = float(inputData.at(i, Skeleton::TORSO+1));
+		frame.z = float(inputData.at(i, Skeleton::TORSO+2));
+		frame.confidence = float(inputData.at(i, Skeleton::TORSO+3));
+		dataStruct.torso.push_back(frame);
+
+		frame.x = float(inputData.at(i, Skeleton::NECK+0));
+		frame.y = float(inputData.at(i, Skeleton::NECK+1));
+		frame.z = float(inputData.at(i, Skeleton::NECK+2));
+		frame.confidence = float(inputData.at(i, Skeleton::NECK+3));
+		dataStruct.neck.push_back(frame);
+
+		frame.x = float(inputData.at(i, Skeleton::RIGHT_SHOULDER+0));
+		frame.y = float(inputData.at(i, Skeleton::RIGHT_SHOULDER+1));
+		frame.z = float(inputData.at(i, Skeleton::RIGHT_SHOULDER+2));
+		frame.confidence = float(inputData.at(i, Skeleton::RIGHT_SHOULDER+3));
+		dataStruct.right_shoulder.push_back(frame);
+
+		frame.x = float(inputData.at(i, Skeleton::RIGHT_ELBOW+0));
+		frame.y = float(inputData.at(i, Skeleton::RIGHT_ELBOW+1));
+		frame.z = float(inputData.at(i, Skeleton::RIGHT_ELBOW+2));
+		frame.confidence = float(inputData.at(i, Skeleton::RIGHT_ELBOW+3));
+		dataStruct.right_elbow.push_back(frame);
+
+		frame.x = float(inputData.at(i, Skeleton::RIGHT_HAND+0));
+		frame.y = float(inputData.at(i, Skeleton::RIGHT_HAND+1));
+		frame.z = float(inputData.at(i, Skeleton::RIGHT_HAND+2));
+		frame.confidence = float(inputData.at(i, Skeleton::RIGHT_HAND+3));
+		dataStruct.right_hand.push_back(frame);
+
+		frame.x = float(inputData.at(i, Skeleton::RIGHT_FOOT+0));
+		frame.y = float(inputData.at(i, Skeleton::RIGHT_FOOT+1));
+		frame.z = float(inputData.at(i, Skeleton::RIGHT_FOOT+2));
+		frame.confidence = float(inputData.at(i, Skeleton::RIGHT_FOOT+3));
+		dataStruct.right_foot.push_back(frame);
+
+		frame.x = float(inputData.at(i, Skeleton::RIGHT_KNEE+0));
+		frame.y = float(inputData.at(i, Skeleton::RIGHT_KNEE+1));
+		frame.z = float(inputData.at(i, Skeleton::RIGHT_KNEE+2));
+		frame.confidence = float(inputData.at(i, Skeleton::RIGHT_KNEE+3));
+		dataStruct.right_knee.push_back(frame);
+
+		frame.x = float(inputData.at(i, Skeleton::RIGHT_HIP+0));
+		frame.y = float(inputData.at(i, Skeleton::RIGHT_HIP+1));
+		frame.z = float(inputData.at(i, Skeleton::RIGHT_HIP+2));
+		frame.confidence = float(inputData.at(i, Skeleton::RIGHT_HIP+3));
+		dataStruct.right_hip.push_back(frame);
+	}
+
+	return dataStruct;
+}
+
+skeletonData ScoreProcessor::convertAlignedTeacher(void)
+{
+	return this->convertSkeleton(this->alignedTeacher.getData());
+}
+
+skeletonData ScoreProcessor::convertAlignedStudent(void)
+{
+	return this->convertSkeleton(this->alignedStudent.getData());
+}
+
 mat ScoreProcessor::getCoordinateWindowedScore(void)
 {
 	return this->coordinateScoreWindowed;
