@@ -10,6 +10,7 @@ ScoreProcessor::ScoreProcessor(void)
 	this->student = Skeleton();
 	this->alignedTeacher = Skeleton();
 	this->alignedStudent = Skeleton();
+	this->windowLength = 1;
 	this->coordinateScoreWindowed = mat(0,0);
 	this->jointScoreWindowed = mat(0,0);
 	this->avgTotalScore = NULL;
@@ -21,6 +22,7 @@ ScoreProcessor::ScoreProcessor(Skeleton teacherSkeleton, Skeleton studentSkeleto
 	this->student = studentSkeleton;
 	this->alignedTeacher = Skeleton();
 	this->alignedStudent = Skeleton();
+	this->windowLength = 1;	
 	this->coordinateScoreWindowed = mat(0,0);
 	this->jointScoreWindowed = mat(0,0);
 	this->avgTotalScore = NULL;
@@ -32,6 +34,7 @@ ScoreProcessor::ScoreProcessor(const char *file_teach, const char *file_stud)
 	this->student = Skeleton(file_stud);
 	this->alignedTeacher = Skeleton();
 	this->alignedStudent = Skeleton();
+	this->windowLength = 1;	
 	this->coordinateScoreWindowed = mat(0,0);
 	this->jointScoreWindowed = mat(0,0);
 	this->avgTotalScore = NULL;
@@ -43,6 +46,7 @@ ScoreProcessor::ScoreProcessor(ifstream &file_teach, ifstream &file_stud)
 	this->student = Skeleton(file_stud);
 	this->alignedTeacher = Skeleton();
 	this->alignedStudent = Skeleton();
+	this->windowLength = 1;	
 	this->coordinateScoreWindowed = mat(0,0);
 	this->jointScoreWindowed = mat(0,0);
 	this->avgTotalScore = NULL;
@@ -54,6 +58,7 @@ ScoreProcessor::ScoreProcessor(const ScoreProcessor &c)
 	this->student = c.student;
 	this->alignedTeacher = c.alignedTeacher;
 	this->alignedStudent = c.alignedStudent;
+	this->windowLength = c.windowLength;
 	this->coordinateScoreWindowed = c.coordinateScoreWindowed;
 	this->jointScoreWindowed = c.jointScoreWindowed;
 	this->avgTotalScore = c.avgTotalScore;
@@ -67,6 +72,7 @@ void ScoreProcessor::setTeacher(Skeleton teach)
 	// Since the teacher has changed, reset all members which contain results of data analyis
 	this->alignedTeacher = Skeleton();
 	this->alignedStudent = Skeleton();
+	this->windowLength = 1;
 	this->coordinateScoreWindowed = mat(0,0);
 	this->jointScoreWindowed = mat(0,0);
 	this->avgTotalScore = NULL;
@@ -78,6 +84,7 @@ void ScoreProcessor::setTeacher(const char *file_teach)
 	// Since the teacher has changed, reset all members which contain results of data analyis
 	this->alignedTeacher = Skeleton();
 	this->alignedStudent = Skeleton();
+	this->windowLength = 1;
 	this->coordinateScoreWindowed = mat(0,0);
 	this->jointScoreWindowed = mat(0,0);
 	this->avgTotalScore = NULL;
@@ -89,6 +96,7 @@ void ScoreProcessor::setTeacher(ifstream &file_teach)
 	// Since the teacher has changed, reset all members which contain results of data analyis
 	this->alignedTeacher = Skeleton();
 	this->alignedStudent = Skeleton();
+	this->windowLength = 1;
 	this->coordinateScoreWindowed = mat(0,0);
 	this->jointScoreWindowed = mat(0,0);
 	this->avgTotalScore = NULL;
@@ -100,6 +108,7 @@ void ScoreProcessor::setStudent(Skeleton stud)
 	// Since the student has changed, reset all members which contain results of data analyis
 	this->alignedTeacher = Skeleton();
 	this->alignedStudent = Skeleton();
+	this->windowLength = 1;
 	this->coordinateScoreWindowed = mat(0,0);
 	this->jointScoreWindowed = mat(0,0);
 	this->avgTotalScore = NULL;
@@ -111,6 +120,7 @@ void ScoreProcessor::setStudent(const char *file_stud)
 	// Since the student has changed, reset all members which contain results of data analyis
 	this->alignedTeacher = Skeleton();
 	this->alignedStudent = Skeleton();
+	this->windowLength = 1;
 	this->coordinateScoreWindowed = mat(0,0);
 	this->jointScoreWindowed = mat(0,0);
 	this->avgTotalScore = NULL;
@@ -122,6 +132,7 @@ void ScoreProcessor::setStudent(ifstream &file_stud)
 	// Since the student has changed, reset all members which contain results of data analyis
 	this->alignedTeacher = Skeleton();
 	this->alignedStudent = Skeleton();
+	this->windowLength = 1;
 	this->coordinateScoreWindowed = mat(0,0);
 	this->jointScoreWindowed = mat(0,0);
 	this->avgTotalScore = NULL;
@@ -171,6 +182,12 @@ double ScoreProcessor::getAvgTotalScore(void)
 {
 	return this->avgTotalScore;
 }
+
+int ScoreProcessor::getWindowLength(void)
+{
+	return this->windowLength;
+}
+
 
 /************************************************
 ** Operators
@@ -254,7 +271,7 @@ mat ScoreProcessor::calculateCoordinateScoreWindow(Skeleton teacherInterim, Skel
 
 	double scalingFactor = this->calculateScalingFactor(teacherInterim); 
 
-	int windowLength = int(length/NUM_WINDOWS); // floor
+	this->windowLength = int(length/NUM_WINDOWS); // floor
 
 	mat coordinateError(NUM_WINDOWS,Skeleton::numberOfColumns);
 	mat errorMat;
@@ -262,11 +279,11 @@ mat ScoreProcessor::calculateCoordinateScoreWindow(Skeleton teacherInterim, Skel
 
 	for(int i = 0; i < NUM_WINDOWS; i++)
 	{
-		errorMat = teacherInterim.getData()(span(i*windowLength,(i+1)*windowLength-1),span::all) -
-			studentInterim.getData()(span(i*windowLength,(i+1)*windowLength-1),span::all);
+		errorMat = teacherInterim.getData()(span(i*this->windowLength,(i+1)*this->windowLength-1),span::all) -
+			studentInterim.getData()(span(i*this->windowLength,(i+1)*this->windowLength-1),span::all);
 		errorMat = errorMat % errorMat;
 		errorVec = sum(errorMat,0);
-		coordinateError.row(i) = errorVec / (scalingFactor*windowLength);
+		coordinateError.row(i) = errorVec / (scalingFactor*this->windowLength);
 	}
 
 	// This works fine, but because of the order that the score is taken

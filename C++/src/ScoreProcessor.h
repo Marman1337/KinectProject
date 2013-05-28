@@ -14,14 +14,15 @@ using namespace std;
 class ScoreProcessor
 {
 private:
-	Skeleton teacher; // raw teacher data
-	Skeleton student; // raw student data
-	Skeleton alignedTeacher; // aligned teacher data
-	Skeleton alignedStudent; // aligned student data
-	mat coordinateScoreWindowed; // windowed score for every coordinate (10x60)
-	mat jointScoreWindowed; // windowed score for each separate joint (10x15)
-	mat avgScoreWindowed; // average score for each window (10x1)
-	double avgTotalScore; // average simple score for the entire dance
+	Skeleton teacher; 				// raw teacher data
+	Skeleton student; 				// raw student data
+	Skeleton alignedTeacher; 		// aligned teacher data
+	Skeleton alignedStudent; 		// aligned student data
+	int windowLength; 				// the window length given as number of frames
+	mat coordinateScoreWindowed; 	// windowed score for every coordinate (10x60)
+	mat jointScoreWindowed; 		// windowed score for each separate joint (10x15)
+	mat avgScoreWindowed; 			// average score for each window (10x1)
+	double avgTotalScore; 			// average simple score for the entire dance
 
 	// Data analysis functions
 	// Calculates a simple score for the entire dance
@@ -79,6 +80,7 @@ public:
 	mat getJointWindowedScore(void);
 	mat getAvgWindowedScore(void);
 	double getAvgTotalScore(void);
+	int getWindowLength(void);
 
 	// Assignment operator
 	ScoreProcessor operator=(const ScoreProcessor &c);
