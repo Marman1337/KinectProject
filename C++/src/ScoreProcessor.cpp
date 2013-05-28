@@ -748,5 +748,9 @@ void ScoreProcessor::analyse()
 	this->coordinateScoreWindowed = this->calculateCoordinateScoreWindow(alignedTeacher, alignedStudent);
 	this->jointScoreWindowed = this->calculateJointScoreWindow(this->coordinateScoreWindowed);
 	this->avgScoreWindowed = this->calculateAvgScoreWindow(this->jointScoreWindowed);
+	// To replicate the Matlab results
+	this->coordinateScoreWindowed = errorToScore(10, 3, this->coordinateScoreWindowed);
+	this->jointScoreWindowed = errorToScore(10, 3, this->jointScoreWindowed);
+	this->avgScoreWindowed = errorToScore(10, 3, this->avgScoreWindowed);
 	this->calculateAvgTotalScore();
 }
