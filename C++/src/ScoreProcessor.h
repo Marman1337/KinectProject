@@ -43,6 +43,12 @@ private:
 	Skeleton alignedTeacher; 		// aligned teacher data
 	Skeleton alignedStudent; 		// aligned student data
 	int windowLength; 				// the window length given as number of frames
+	double xTranslationTeacher;
+	double yTranslationTeacher;
+	double zTranslationTeacher;
+	double xTranslationStudent;
+	double yTranslationStudent;
+	double zTranslationStudent;	
 	mat coordinateScoreWindowed; 	// windowed score for every coordinate (10x60)
 	mat jointScoreWindowed; 		// windowed score for each separate joint (10x15)
 	mat avgScoreWindowed; 			// average score for each window (10x1)
@@ -62,7 +68,8 @@ private:
 	int findShorterLength(Skeleton teacherInterim, Skeleton studentInterim);
 	Skeleton truncate(Skeleton data, int length);
 	double calculateScalingFactor(Skeleton data);
-	Skeleton translate(Skeleton data, int frame);
+	Skeleton translate(Skeleton data, int frame, bool isTeacher);
+	void undoTranslate(void);
 
 	// New functions
 	int motionlessFrameOverall(Skeleton data, const int windowLen);

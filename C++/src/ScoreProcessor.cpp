@@ -160,7 +160,6 @@ Skeleton ScoreProcessor::getAlignedTeacher(void)
 Skeleton ScoreProcessor::getAlignedStudent(void)
 {
 	return this->alignedStudent;
-
 }
 
 skeletonData ScoreProcessor::convertSkeleton(mat inputData)
@@ -364,8 +363,6 @@ double ScoreProcessor::calculateScore(Skeleton teacherInterim, Skeleton studentI
 		errorJointVec(i/4) = accumulate / 3;
 	}
 
-
-
 	return sum(errorJointVec)/Skeleton::numberOfJoints;
 }
 
@@ -403,7 +400,6 @@ mat ScoreProcessor::calculateCoordinateScoreWindow(Skeleton teacherInterim, Skel
 	// giving a much more granular score for each window. 
 	//return errorToScore(xScale, xOffset, coordinateError);
 	return coordinateError;
-
 }
 
 /**
@@ -484,23 +480,63 @@ double ScoreProcessor::calculateScalingFactor(Skeleton data)
 *	Returns a Skeleton that is translated in such a way that the torso is given as the origin.
 */
 
-Skeleton ScoreProcessor::translate(Skeleton data, int frame)
+Skeleton ScoreProcessor::translate(Skeleton skeleton1, int frame, bool isTeacher)
 {
-	mat dataMat = data.getData();
-	dataMat = dataMat.submat( frame , 0 , data.getData().n_rows-1 , Skeleton::numberOfColumns-1 ); //they might return either a FRAME NUMBER or index of the frame, in which case it will be frame-1
+	mat dataMat = skeleton1.getData();
+	dataMat = dataMat.submat( frame , 0 , skeleton1.getData().n_rows-1 , Skeleton::numberOfColumns-1 ); //they might return either a FRAME NUMBER or index of the frame, in which case it will be frame-1
 
-	double x = dataMat.at(0 , Skeleton::TORSO+0);
-	double y = dataMat.at(0 , Skeleton::TORSO+1);
-	double z = dataMat.at(0 , Skeleton::TORSO+2);
-
-	for(int i = 0; i < Skeleton::numberOfColumns; i = i+Skeleton::nextJoint)
+	if (isTeacher)
 	{
-		dataMat.col(i+0) -= x;
-		dataMat.col(i+1) -= y;
-		dataMat.col(i+2) -= z;
+		this->xTranslationTeacher = dataMat.at(0 , Skeleton::TORSO+0);
+		this->yTranslationTeacher = dataMat.at(0 , Skeleton::TORSO+1);
+		this->zTranslationTeacher = dataMat.at(0 , Skeleton::TORSO+2);
+		
+		for(int i = 0; i < Skeleton::numberOfColumns; i = i+Skeleton::nextJoint)
+		{
+			dataMat.col(i+0) -= this->xTranslationTeacher;
+			dataMat.col(i+1) -= this->yTranslationTeacher;
+			dataMat.col(i+2) -= this->zTranslationTeacher;
+		}
+	}
+	else
+	{
+		this->xTranslationStudent = dataMat.at(0 , Skeleton::TORSO+0);
+		this->yTranslationStudent = dataMat.at(0 , Skeleton::TORSO+1);
+		this->zTranslationStudent = dataMat.at(0 , Skeleton::TORSO+2);
+		
+		for(int i = 0; i < Skeleton::numberOfColumns; i = i+Skeleton::nextJoint)
+		{
+			dataMat.col(i+0) -= this->xTranslationStudent;
+			dataMat.col(i+1) -= this->yTranslationStudent;
+			dataMat.col(i+2) -= this->zTranslationStudent;
+		}
 	}
 
 	return Skeleton(dataMat);
+}
+
+/**
+*	Returns a Skeleton that is translated back to the original signal's position.
+*/
+
+void ScoreProcessor::undoTranslate(void)
+{
+	mat teacherData = this->alignedTeacher.getData();
+	mat studentData = this->alignedStudent.getData();
+
+	for(int i = 0; i < Skeleton::numberOfColumns; i = i+Skeleton::nextJoint)
+	{
+		teacherData.col(i+0) += this->xTranslationTeacher;
+		teacherData.col(i+1) += this->yTranslationTeacher;
+		teacherData.col(i+2) += this->zTranslationTeacher;
+
+		studentData.col(i+0) += this->xTranslationStudent;
+		studentData.col(i+1) += this->yTranslationStudent;
+		studentData.col(i+2) += this->zTranslationStudent;
+	}
+
+	this->alignedTeacher.setData(teacherData);
+	this->alignedStudent.setData(studentData);
 }
 
 /**
@@ -573,7 +609,8 @@ int ScoreProcessor::motionlessFrame(colvec coordData, const int windowLen)
 		{
 			minCost = cost;
 		}
-		else{
+		else
+		{
 			if(cost < minCost)
 			{
 				minCost = cost;
@@ -585,7 +622,6 @@ int ScoreProcessor::motionlessFrame(colvec coordData, const int windowLen)
 
 	// Return the index of the frame with the lowest cost.
 	return minWindowIndex * windowLen;
-
 }
 
 /**
@@ -765,13 +801,7 @@ void ScoreProcessor::zeroPad( mat &inputSignal1, mat &inputSignal2 )
 * frames that they are out of sync. 
 */
 
-void ScoreProcessor::align(
-	Skeleton skeleton1, 
-	Skeleton skeleton2, 
-	int delayEstimate,
-	mat &correctSignal1, 
-	mat &correctSignal2
-	)
+void ScoreProcessor::align(Skeleton skeleton1, Skeleton skeleton2, int delayEstimate, mat &correctSignal1, mat &correctSignal2)
 {
 	mat inputSignal1 = skeleton1.getData();
 	mat inputSignal2 = skeleton2.getData();
@@ -834,8 +864,8 @@ void ScoreProcessor::analyse()
 	int teachMotionless = this->motionlessFrameOverall(this->teacher, 30);
 	int studeMotionless = this->motionlessFrameOverall(this->student,30);
 
-	Skeleton teacherInterim = this->translate(this->teacher, teachMotionless);
-	Skeleton studentInterim = this->translate(this->student, studeMotionless);
+	Skeleton teacherInterim = this->translate(this->teacher, teachMotionless, 1);
+	Skeleton studentInterim = this->translate(this->student, studeMotionless, 0);
 
 	int delayEstimate = this->delayEstimate(teacherInterim, studentInterim);
 
@@ -868,4 +898,5 @@ void ScoreProcessor::analyse()
 	this->jointScoreWindowed = errorToScore(10, 3, this->jointScoreWindowed);
 	this->avgScoreWindowed = errorToScore(10, 3, this->avgScoreWindowed);
 	this->calculateAvgTotalScore();
+	this->undoTranslate();
 }
