@@ -236,12 +236,9 @@ double ScoreProcessor::calculateScore(Skeleton teacherInterim, Skeleton studentI
 		errorJointVec(i/4) = accumulate / 3;
 	}
 
-	// Changed this
-	//double xScale = 10;
-	//double xOffset = 3;
+
 
 	return sum(errorJointVec)/Skeleton::numberOfJoints;
-	//return errorToScore(xScale, xOffset, sum(errorJointVec)/Skeleton::numberOfJoints);
 }
 
 /**
@@ -272,9 +269,6 @@ mat ScoreProcessor::calculateCoordinateScoreWindow(Skeleton teacherInterim, Skel
 		coordinateError.row(i) = errorVec / (scalingFactor*windowLength);
 	}
 
-	double xScale = 10;
-	double xOffset = 3;
-
 	// This works fine, but because of the order that the score is taken
 	// from the error, the results are different to matlab. The score is 
 	// taken first for all the coordinates, and then the average is taken, 
@@ -302,9 +296,6 @@ mat ScoreProcessor::calculateJointScoreWindow(mat coordinateScore)
 		jointError.col(i/4) = sumError/3;
 	}
 
-	double xScale = 10;
-	double xOffset = 3;
-
 	return jointError;
 }
 
@@ -315,11 +306,7 @@ mat ScoreProcessor::calculateJointScoreWindow(mat coordinateScore)
 
 colvec ScoreProcessor::calculateAvgScoreWindow(mat jointScore)
 {
-	double xScale = 10;
-	double xOffset = 3;
-
 	return colvec(sum(jointScore,1)/Skeleton::numberOfJoints);
-
 }
 
 /**
