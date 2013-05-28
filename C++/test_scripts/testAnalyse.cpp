@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "../ScoreProcessor.h"
+#include "../src/ScoreProcessor.h"
 
 using namespace std;
 using namespace arma;
@@ -19,18 +19,18 @@ using namespace arma;
 int main()
 {
   // Initialise an instance of the ScoreProcessor class
-	ScoreProcessor myScore("../teacher_new.txt","../case4_new.txt");
+	ScoreProcessor myScore("teacher_new.txt","case4_new.txt");
   myScore.analyse();
   // Write the results of the three different class members to three different files 
   // in the matlab test directory.
   mat score = myScore.getCoordinateWindowedScore();
-  score.save("../../../Matlab/DataFiles/coordinatScoreWindowed_results.txt", raw_ascii);  
+  score.save("../../Matlab/DataFiles/coordinatScoreWindowed_results.txt", raw_ascii);  
   score = myScore.getJointWindowedScore();
-  score.save("../../../Matlab/DataFiles/jointScoreWindowed_results.txt", raw_ascii);  
+  score.save("../../Matlab/DataFiles/jointScoreWindowed_results.txt", raw_ascii);  
   score = myScore.getAvgWindowedScore();
-  score.save("../../../Matlab/DataFiles/averageScoreWindowed_results.txt", raw_ascii);
+  score.save("../../Matlab/DataFiles/averageScoreWindowed_results.txt", raw_ascii);
   score = myScore.getAvgTotalScore();
-  score.save("../../../Matlab/DataFiles/averageTotalScore_results.txt", raw_ascii);
+  score.save("../../Matlab/DataFiles/averageTotalScore_results.txt", raw_ascii);
 
   return 0;
 }
