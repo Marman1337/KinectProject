@@ -298,7 +298,6 @@ int ScoreProcessor::getWindowLength(void)
 	return this->windowLength;
 }
 
-
 /************************************************
 ** Operators
 *************************************************/
@@ -343,14 +342,11 @@ double ScoreProcessor::calculateScore(Skeleton teacherInterim, Skeleton studentI
 	teacherInterim = this->truncate(teacherInterim, length);
 	studentInterim = this->truncate(studentInterim, length);
 
-	// Get the scaling factor of error
-	double scalingFactor = this->calculateScalingFactor(teacherInterim);
-
 	// Find simple score  for the entire signal using error squared
 	mat errorMat = teacherInterim.getData() - studentInterim.getData();
 	errorMat = errorMat % errorMat;
 	rowvec sumErrSqVec = sum(errorMat,0);
-	sumErrSqVec = sumErrSqVec / (scalingFactor * length);
+	sumErrSqVec = sumErrSqVec / length;
 
 	// Score based on on position for each joint
 	rowvec errorJointVec(Skeleton::numberOfJoints);
@@ -377,29 +373,63 @@ mat ScoreProcessor::calculateCoordinateScoreWindow(Skeleton teacherInterim, Skel
 	teacherInterim = this->truncate(teacherInterim, length);
 	studentInterim = this->truncate(studentInterim, length);
 
-	double scalingFactor = this->calculateScalingFactor(teacherInterim); 
-
 	this->windowLength = int(length/NUM_WINDOWS); // floor
 
 	mat coordinateError(NUM_WINDOWS,Skeleton::numberOfColumns);
 	mat errorMat;
 	rowvec errorVec(Skeleton::numberOfColumns);
+	rowvec currentVec(Skeleton::numberOfColumns);
+	double oldMean;
+	double currentMean;
 
 	for(int i = 0; i < NUM_WINDOWS; i++)
 	{
-		errorMat = teacherInterim.getData()(span(i*this->windowLength,(i+1)*this->windowLength-1),span::all) -
-			studentInterim.getData()(span(i*this->windowLength,(i+1)*this->windowLength-1),span::all);
-		errorMat = errorMat % errorMat;
-		errorVec = sum(errorMat,0);
-		coordinateError.row(i) = errorVec / (scalingFactor*this->windowLength);
+		oldMean = LONG_MAX;
+		for(int j = -10; j < 11; j++)
+		{
+			if(i*this->windowLength+j < 0 || (i+1)*this->windowLength-1+j > length-1)
+			{
+				continue;
+			}
+			errorMat = teacherInterim.getData()( span(i*this->windowLength , (i+1)*this->windowLength-1 ) , span::all ) -
+				studentInterim.getData()( span( i*this->windowLength+j , (i+1)*this->windowLength-1+j ) , span::all );
+			errorMat = errorMat % errorMat;
+			errorVec = sum(errorMat,0);
+			currentVec = errorVec / (SCALING_FACTOR * this->windowLength);
+			currentMean = mean(mean(this->removeConfidence(currentVec)));
+			if(currentMean*this->penalise(j) < oldMean)
+			{
+				oldMean = currentMean*this->penalise(j);
+				coordinateError.row(i) = currentVec*this->penalise(j);
+			}
+		}
 	}
 
-	// This works fine, but because of the order that the score is taken
-	// from the error, the results are different to matlab. The score is 
-	// taken first for all the coordinates, and then the average is taken, 
-	// giving a much more granular score for each window. 
-	//return errorToScore(xScale, xOffset, coordinateError);
-	return errorToScore(10, 3, coordinateError);
+	return coordinateError;
+}
+
+mat ScoreProcessor::removeConfidence(mat data)
+{
+	int rows = data.n_rows;
+	int cols = data.n_cols;
+	mat output(rows, 45);
+
+	int j = 0;
+	for(int i = 0; i < Skeleton::numberOfColumns; i++)
+	{
+		if(i % 4 != 3)
+		{
+			output.col(j) = data.col(i);
+			j++;
+		}
+	}
+
+	return output;
+}
+
+double ScoreProcessor::penalise(int i)
+{
+	return -0.5*exp(-std::pow(0.3*i,2)/2) + 1.5;
 }
 
 /**
@@ -459,24 +489,6 @@ Skeleton ScoreProcessor::truncate(Skeleton data, int length)
 }
 
 /**
-*	Calculates the scaling factor that the error will be divided by to 'normalise' it.
-*/
-
-double ScoreProcessor::calculateScalingFactor(Skeleton data)
-{
-	double accumulate = 0;
-
-	for(int i = 0; i < Skeleton::numberOfColumns; i = i+Skeleton::nextJoint)
-	{
-		accumulate += mean(data.getJoint(i+0));
-		accumulate += mean(data.getJoint(i+1));
-		accumulate += mean(data.getJoint(i+2));
-	}
-
-	return abs(accumulate);
-}
-
-/**
 *	Returns a Skeleton that is translated in such a way that the torso is given as the origin.
 */
 
@@ -485,12 +497,12 @@ Skeleton ScoreProcessor::translate(Skeleton skeleton1, int frame, bool isTeacher
 	mat dataMat = skeleton1.getData();
 	dataMat = dataMat.submat( frame , 0 , skeleton1.getData().n_rows-1 , Skeleton::numberOfColumns-1 ); //they might return either a FRAME NUMBER or index of the frame, in which case it will be frame-1
 
-	if (isTeacher)
+	if(isTeacher)
 	{
 		this->xTranslationTeacher = dataMat.at(0 , Skeleton::TORSO+0);
 		this->yTranslationTeacher = dataMat.at(0 , Skeleton::TORSO+1);
 		this->zTranslationTeacher = dataMat.at(0 , Skeleton::TORSO+2);
-		
+
 		for(int i = 0; i < Skeleton::numberOfColumns; i = i+Skeleton::nextJoint)
 		{
 			dataMat.col(i+0) -= this->xTranslationTeacher;
@@ -503,7 +515,7 @@ Skeleton ScoreProcessor::translate(Skeleton skeleton1, int frame, bool isTeacher
 		this->xTranslationStudent = dataMat.at(0 , Skeleton::TORSO+0);
 		this->yTranslationStudent = dataMat.at(0 , Skeleton::TORSO+1);
 		this->zTranslationStudent = dataMat.at(0 , Skeleton::TORSO+2);
-		
+
 		for(int i = 0; i < Skeleton::numberOfColumns; i = i+Skeleton::nextJoint)
 		{
 			dataMat.col(i+0) -= this->xTranslationStudent;
@@ -616,7 +628,6 @@ int ScoreProcessor::motionlessFrame(colvec coordData, const int windowLen)
 				minCost = cost;
 				minWindowIndex = i;
 			}
-
 		}
 	}
 
@@ -827,20 +838,47 @@ void ScoreProcessor::align(Skeleton skeleton1, Skeleton skeleton2, int delayEsti
 *	Returns the score of a whole matrix based on the score function. 
 */
 
-mat ScoreProcessor::errorToScore(double xScale, double xOffset, mat errorMat)
+mat ScoreProcessor::errorToScore(mat errorMat)
 {
-	double yOffset = 100*(1 - 1/(1 + exp(-xOffset)));
-	return 100 / (1 + exp(xScale*errorMat - xOffset)) + yOffset;
+	mat score = -this->raiseToPower(2, 6.652410119*(0.3*errorMat+0.8))+140;
+
+	for(int i = 0; i < score.n_rows; i++)
+	{
+		for(int j = 0; j < score.n_cols; j++)
+		{
+			if(score(i,j) < 0)
+			{
+				score(i,j) = 0;
+			}
+		}
+	}
+
+	return score;
 }
 
 /**
 *	Returns the score of a single value based on the score function. 
 */
 
-double ScoreProcessor::errorToScore(double xScale, double xOffset, double errorMat)
+double ScoreProcessor::errorToScore(double errorMat)
 {
-	double yOffset = 100*(1 - 1/(1 + exp(-xOffset)));
-	return 100 / (1 + exp(xScale*errorMat - xOffset)) + yOffset;
+	double score = -std::pow(2,6.652410119*(0.3*errorMat+0.8))+140;
+	return (score > 0) ? score : 0;
+}
+
+mat ScoreProcessor::raiseToPower(double base, mat exponent)
+{
+	mat output(exponent.n_rows, exponent.n_cols);
+
+	for(int i = 0; i < exponent.n_rows; i++)
+	{
+		for(int j = 0; j < exponent.n_cols; j++)
+		{
+			output.at(i,j) = std::pow(base,exponent.at(i,j));
+		}
+	}
+
+	return output;
 }
 
 /**
@@ -849,10 +887,7 @@ double ScoreProcessor::errorToScore(double xScale, double xOffset, double errorM
 
 void ScoreProcessor::calculateAvgTotalScore(void)
 {
-	double xScale = 10;
-	double xOffset = 3;
-
-	this->avgTotalScore = mean(errorToScore(xScale, xOffset, this->avgScoreWindowed).col(0));
+	this->avgTotalScore = mean(this->errorToScore(this->avgScoreWindowed).col(0));
 }
 
 /**
@@ -881,7 +916,6 @@ void ScoreProcessor::analyse()
 	}
 
 	uword index;
-	// Changed this
 	errorArr.min(index);
 	index = index - 10;
 
@@ -893,10 +927,11 @@ void ScoreProcessor::analyse()
 	this->coordinateScoreWindowed = this->calculateCoordinateScoreWindow(alignedTeacher, alignedStudent);
 	this->jointScoreWindowed = this->calculateJointScoreWindow(this->coordinateScoreWindowed);
 	this->avgScoreWindowed = this->calculateAvgScoreWindow(this->jointScoreWindowed);
-	// To replicate the Matlab results
-	//this->coordinateScoreWindowed = errorToScore(10, 3, this->coordinateScoreWindowed);
-	//this->jointScoreWindowed = errorToScore(10, 3, this->jointScoreWindowed);
-	//this->avgScoreWindowed = errorToScore(10, 3, this->avgScoreWindowed);
+
+	this->coordinateScoreWindowed = errorToScore(this->coordinateScoreWindowed);
+	this->jointScoreWindowed = errorToScore(this->jointScoreWindowed);
+	this->avgScoreWindowed = errorToScore(this->avgScoreWindowed);
+
 	this->calculateAvgTotalScore();
 	this->undoTranslate();
 }

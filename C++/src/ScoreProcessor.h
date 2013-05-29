@@ -10,6 +10,7 @@ using namespace arma;
 using namespace std;
 
 #define NUM_WINDOWS 10
+#define SCALING_FACTOR 30000
 
 struct jointData
 {
@@ -67,7 +68,6 @@ private:
 
 	int findShorterLength(Skeleton teacherInterim, Skeleton studentInterim);
 	Skeleton truncate(Skeleton data, int length);
-	double calculateScalingFactor(Skeleton data);
 	Skeleton translate(Skeleton data, int frame, bool isTeacher);
 	void undoTranslate(void);
 
@@ -79,8 +79,11 @@ private:
 	void zeroPad(mat &inputSignal1, mat &inputSignal2);
 	void align(Skeleton skeleton1, Skeleton skeleton2, int delayEstimate, mat &correctSignal1, mat &correctSignal2);
 	void calculateAvgTotalScore(void);
-	mat errorToScore(double xScale, double xOffset, mat errorMat);
-	double errorToScore(double xScale, double xOffset, double error);
+	mat errorToScore(mat errorMat);
+	double errorToScore(double error);
+	mat removeConfidence(mat data);
+	double penalise(int i);
+	mat raiseToPower(double base, mat exponent);
 
 	// Conversion functions
 	skeletonData convertSkeleton(mat inputData);
