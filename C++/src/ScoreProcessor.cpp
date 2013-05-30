@@ -604,7 +604,7 @@ int ScoreProcessor::motionlessFrame(colvec coordData, const int windowLen)
 	int minWindowIndex = 0;
 	double minCost = 0;
 
-	const int numFramesInitInterv = 450; // Number of frames in 15 seconds, assuming 30fps.
+	const int numFramesInitInterv = 150; // Number of frames in 5 seconds, assuming 30fps.
 	int numWindowsInitInterv = (int)(numFramesInitInterv/windowLen);
 	int numWindows = coordData.n_elem/windowLen;
 	// For each window in the data for 15 seconds.
