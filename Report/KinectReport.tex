@@ -492,7 +492,7 @@ z & 121 & 121 & 121 & 91 & 121 & 121 & 151 & 121\\
 Though there are quite a few different values returned, there are 2 or 3 ones that are in a significant majority in either case. These are usually only separated by a window or two at most which corresponds to the majority of the frames returned being in a period of three seconds from each other. Since the subject usually stands for about 3 to 4 seconds, in our specific scenario, these results are valid as confirmed below.
 \begin{figure}[h]
 \center
-\includegraphics[scale=0.3]{Motionless_R_Hand_L_Foot_X.jpg} 
+\includegraphics[scale=0.2]{Motionless_R_Hand_L_Foot_X.jpg} 
 \caption{The x-coordinate data plotted for the right hand and the left foot of Test Case 1. The frames which are returned from the algorithm are shown on the graph.}
 \label{motionless_rh_lf}
 \end{figure}
@@ -524,16 +524,11 @@ In order to test the algorithm, we record two videos, where the subject performs
 \\
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.3]{Non_Translated_R_H_Data.jpg}
-\caption{Right Hand data from two recordings before translation}
-\label{pre_translation_graph}
-\end{figure}
+\includegraphics[scale=0.16]{Non_Translated_R_H_Data.jpg}
+\includegraphics[scale=0.16]{R_H_Data_Relative_Torso.jpg}
 
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.3]{R_H_Data_Relative_Torso.jpg}
-\caption{Right Hand data from two recordings after translation}
-\label{post_translation_graph}
+\caption{Right Hand data from two recordings before translation (left) and after translation (right).}
+\label{pre_translation_graph}
 \end{figure}
 
 \noindent
@@ -573,8 +568,8 @@ This version of the algotithm caused problems described in Section 2.4.3 and the
 
 \begin{figure}[h]
 \centering
-\includegraphics[scale=0.2]{Initial_Frame_Det_Before.jpg}
-\includegraphics[scale=0.2]{Initial_Frame_Det_After.jpg}
+\includegraphics[scale=0.15]{Initial_Frame_Det_Before.jpg}
+\includegraphics[scale=0.15]{Initial_Frame_Det_After.jpg}
 \caption{Right hand data from two recordings before alignment (top) and after alignment (bottom).}
 \label{pre_post_alginment}
 \end{figure}
@@ -626,11 +621,11 @@ Being the most complex and important module in the whole system many problems ha
 Initially, the algorithm used the following formula to give a measure of the error.
 
 \begin{equation}
-e_{frame} = \frac{1}{L} \dfrac{\sum\limits_{n=1}^{L}(t(n)-s(n))^2}{\sum\limits_{n=1}^{L}t(n)^2}
+\epsilon_{frame} = \frac{1}{N} \dfrac{\sum\limits_{n=1}^{N}(t(n)-s(n))^2}{\sum\limits_{n=1}^{N}t(n)^2}
 \end{equation}
-where $L$ is the number of samples in the shorter signal, $t(n)$ and $s(n)$ are the teacher's and student's signals respectively. In this way, it was thought that the error could be normalised to some extent, however it was later discovered that in the initial code the torso automatically has a higher normalised error than any other body part for the same absolute error. This is due to the fact that the torso is centred about 0, since it is considered the origin, and therefore when diving the sum of the error squared by the sum of the teacher's torso coordinate values squared any small error is hugely magnified in comparison to the same absolute error in the hand coordinate values for instance. This had thought to be rectified however by first subtracting the mean of the signals before comparing them. In this way all the signals are centred about zero and any similar absolute error is treated in a much fairer way with no bias for specific joints. The initial offset was also saved so that, if necessary, the initial starting positions can be compared and a weighting for the score can be given to that also. This also presented problems though since in this way no bias was given to different body parts but bias was given to different frames of the signal. Frames where the values of the teacher were closer to 0 gave larger errors. Also by subtracting the sample mean of the whole signal, signals that may have been close to each other at some parts in the original signals may have strayed from each other after. The final algorithm has now been corrected by purely taking the absolute error squaring it and normalising it to an arbitrary constant, $\alpha$, which keeps all reasonable errors within the range $[0, 1]$, any error greater than this is effectively given the value 1. The way this has been chosen is by looking at errors in the video that seem to deserve a max error value of 1 and finding an average value of $\alpha$ that can achieve this. The value calculated is then divided by the number of frames to get an average error measure per frame. The new equation is given by Equation \eqref{error_eq}.
+where $N$ is the number of samples in the shorter signal, $t(n)$ and $s(n)$ are the teacher's and student's signals respectively. In this way, it was thought that the error could be normalised to some extent, however it was later discovered that in the initial code the torso automatically has a higher normalised error than any other body part for the same absolute error. This is due to the fact that the torso is centred about 0, since it is considered the origin, and therefore when diving the sum of the error squared by the sum of the teacher's torso coordinate values squared any small error is hugely magnified in comparison to the same absolute error in the hand coordinate values for instance. This had thought to be rectified however by first subtracting the mean of the signals before comparing them. In this way, all the signals are centred about zero and any similar absolute error is treated in a much fairer way with no bias for specific joints. The initial offset was also saved so that, if necessary, the initial starting positions can be compared and a weighting for the score can be given to that also. This also presented problems though since in this way no bias was given to different body parts but bias was given to different frames of the signal. Frames where the values of the teacher were closer to 0 gave larger errors. Also, by subtracting the sample mean of the whole signal, signals that may have been close to each other at some parts in the original signals may have strayed from each other after. The final algorithm has now been corrected by purely taking the absolute error squaring it and normalising it to an arbitrary constant, $\alpha$, which keeps all reasonable errors within the range $[0, 1]$, any error greater than this is effectively given the value 1. The way this has been chosen is by looking at errors in the video that seem to deserve a max error value of 1 and finding an average value of $\alpha$ that can achieve this. The value calculated is then divided by the number of frames to get an average error measure per frame. The new equation is given by Equation \eqref{error_eq}.
 \begin{equation}
-e_{frame} = \dfrac{\sum\limits_{n=1}^{L}(t(n)-s(n))^2}{\alpha L}
+\epsilon_{frame} = \dfrac{\sum\limits_{n=1}^{N}(t(n)-s(n))^2}{\alpha N}
 \label{error_eq}
 \end{equation}
 \\\\
@@ -638,11 +633,11 @@ e_{frame} = \dfrac{\sum\limits_{n=1}^{L}(t(n)-s(n))^2}{\alpha L}
 Another problem that persisted is that, if the student performs well for a large portion of the dance but makes a huge error at some point, this information was not conveyed as an average was taken for the score and a single value was returned. This has been fixed however with the return of another vector of scores for each joint, in which the x, y, and z coordinates of the joint are each given a score and an average is taken. Additionally, this has been further improved by windowing the signal and giving a score for each joint and an average score for a specific time window. In this way the student can now know at what time period they have made an error and what body part has to improve. An example of such a case can be seen in Figure \ref{error_left_shoulder}. In this scenario the student performs two errors which are reflected in the score of windows 4, 7 and 8 (see Figure \ref{error_score}). The window size (time period) can be determined by the teacher according to how high a resolution is necessary for the dance.
 \\\\
 \noindent
-Added to this, there have been small issues that have been apparent by the fact that the student may perform very similar movements to the teacher, but slightly out of synchronisation. This can be thought of as a slight jitter between the two signals. To illustrate this, a toy example can be seen in Figure \ref{jitter} of two signals. Let the window size be 5 frames and the signal length be 15 frames as shown. Clearly, the optimum alignment based on our specification is the alignment shown in the figure, however there clearly is a misalignment between the first ``dance move'' (this first window). It can be seen that having the first window as is would mean that the absolute error would be 3, whereas with a shift of just one frame the absolute error becomes 0. We have decided that this should be taken into consideration when giving a score to the student. As in a student should not get such a high error when within a certain shift the error would be vastly reduced. The student should however be penalised for the fact that they have not been perfectly on time. The way that we have taken this into consideration is by assigning to a window the minimum error of the following function:
+Added to this, there have been small issues that have been apparent by the fact that the student may perform very similar movements to the teacher, but slightly out of synchronisation. This can be thought of as a slight jitter between the two signals. To illustrate this, a toy example can be seen in Figure \ref{jitter} of two signals. Let the window size be 5 frames and the signal length be 15 frames as shown. Clearly, the optimum alignment based on our specification is the alignment shown in the figure, however there clearly is a misalignment between the first ``dance move'' (this first window). It can be seen that having the first window as is would mean that the absolute error would be 3, whereas with a shift of just one frame the absolute error becomes 0. We have decided that this should be taken into consideration when giving a score to the student. For instance, a student should not receive a low score for having a high error, if within a certain shift, the error could be vastly reduced. The student should however be penalised for the fact that they have not been perfectly on time. The way that we have taken this into consideration is by assigning to a window the minimum error of the following function:
 \begin{equation}
-min\left[p(s) \times e_{window}\right]
+min\left[p(s) \times \epsilon_{window}\right]
 \end{equation}
-where $e_window$ is the absolute error of the window and $p(s)$ is the penalisation function which takes as an argument $s$ the amount of lag between the two signals (higher absolute lags giving a higher value with 0 taking a value 1). It should be noted that in this scenario there would be no penalisation due to the fact that the error becomes zero after alignment, but this is almost impossible in practice. 
+where $\epsilon_window$ is the absolute error of the window and $p(s)$ is the penalisation function which takes as an argument $s$ the amount of lag between the two signals (higher absolute lags giving a higher value with 0 taking a value 1). It should be noted that in this scenario there would be no penalisation due to the fact that the error becomes zero after alignment, but this is almost impossible in practice. 
 
 
 \begin{figure}[H]
@@ -657,7 +652,7 @@ Another issue is the fact that though the error may be considered a plausible me
 
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.3]{Data_Analysis_LS_Correct.jpg}
+\includegraphics[scale=0.2]{Data_Analysis_LS_Correct.jpg}
 \caption{Left Shoulder x-coordinate data of teacher and student. As it can be seen the student makes an error at roughly frame 50 and is also off from about frame 120 to 160.}
 \label{error_left_shoulder}
 \end{figure}
