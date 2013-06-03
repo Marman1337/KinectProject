@@ -50,6 +50,14 @@ private:
 	double xTranslationStudent;
 	double yTranslationStudent;
 	double zTranslationStudent;	
+
+	// Data members to add
+	double headWeight;
+	double armWeight;
+	double legWeight;
+	double hipWeight;
+	double torsoWeight;
+
 	mat coordinateScoreWindowed; 	// windowed score for every coordinate (10x60)
 	mat jointScoreWindowed; 		// windowed score for each separate joint (10x15)
 	mat avgScoreWindowed; 			// average score for each window (10x1)
@@ -89,12 +97,17 @@ private:
 	skeletonData convertSkeleton(mat inputData);
 
 public:
-	// Constructors
+	// Constructors to change
 	ScoreProcessor(void);
 	ScoreProcessor(Skeleton teacherSkeleton, Skeleton studentSkeleton);
 	ScoreProcessor(const char *file_teach, const char *file_stud);
 	ScoreProcessor(ifstream &file_teach, ifstream &file_stud);
 	ScoreProcessor(const ScoreProcessor &c);
+
+	// Constructors to make
+	ScoreProcessor(Skeleton teacherSkeleton, Skeleton studentSkeleton, headWeight, armWeight, legWeight, hipWeight, torsoWeight);
+	ScoreProcessor(const char *file_teach, const char *file_stud, headWeight, armWeight, legWeight, hipWeight, torsoWeight);
+	ScoreProcessor(ifstream &file_teach, ifstream &file_stud, headWeight, armWeight, legWeight, hipWeight, torsoWeight);
 
 	// Destructor
 	~ScoreProcessor(void);
