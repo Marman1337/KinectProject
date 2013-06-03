@@ -2,7 +2,7 @@ function [ score_window, score_window_av, score_window_joint ] = get_score_windo
     
     % Truncate the longer signal to match the shorter one
     [teacher_pos, student_pos, signal_len] = truncate_signals(teacher_pos, student_pos);
-
+    
     % Windowed score for the number of windows
     window_len = floor(signal_len/num_windows);
     score_window = zeros(num_windows, 60);
@@ -25,17 +25,28 @@ function [ score_window, score_window_av, score_window_joint ] = get_score_windo
         end
     end
     
+    % Weighting provided by teacher for groups of body parts
+    head_weight = 1;
+    arm_weight = 3;
+    leg_weight = 3;
+    hip_weight = 2;
+    torso_weight = 2;
+
+    % Build weighting vector from user input
+    [ weighting_vector, sum_weighting ] = weight_vector(head_weight, arm_weight, leg_weight, hip_weight, torso_weight);
+    
     % Score based on position for each joint
     score_window_joint = zeros(num_windows,15); % preallocate
     for i = 0:14
         sum_score = score_window(:,4*i+1);
         sum_score = sum_score + score_window(:, 4*i+2);
         sum_score = sum_score + score_window(:, 4*i+3);  
-        score_window_joint(:, i+1) = sum_score/3;
+        score_window_joint(:, i+1) = weighting_vector(i+1) * sum_score/3;
     end    
 
     % Average score based on position
-    score_window_av = sum(score_window_joint, 2)/15;
+%     score_window_av = sum(score_window_joint, 2)/15;
+    score_window_av = sum(score_window_joint, 2)/sum_weighting;
 
 end
 
