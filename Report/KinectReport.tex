@@ -10,6 +10,8 @@
 
 \usepackage{changepage}
 \usepackage[hmargin=2cm, vmargin=2cm]{geometry}
+\usepackage{parskip}
+\setlength{\parskip}{5pt}
 \usepackage{fancyvrb}
 \usepackage{graphicx}
 \usepackage{amsmath}
@@ -19,6 +21,7 @@
 \usepackage{courier}
 \usepackage{float}
 \restylefloat{table}
+
 
 
 %%%%%%%%%%%%%%%%%%% Code %%%%%%%%%%%%%%%%%%%%%
@@ -206,10 +209,10 @@ Moreover, when a subject stands directly in front of another, NiTE is not always
 
 \subsection{Velocity of Movement}
 Another important criterion regarding the performance of both the Kinect camera and the NiTE software package is the accuracy and responsiveness of the skeleton fitting. Our evaluation procedure consists of the recording of a predefined movement which would provide us with the subject's velocity information and would allow us to estimate how accurately the fitted skeleton is able to follow the actual move, by calculating the error between the perceived and the actual movement. In particular, we would record a slower and a faster versions of the same movement and compare the corresponding errors.
-\\\\
+
 \noindent
 The subject's reference movement was determined to be a $180^o$ degrees right arm move starting from a vertical position with the hand facing the ceiling and following an arc. The testing procedure includes the modification of the \texttt{UserViewer} sample program in order to record twice the predefined movement as performed by the subject at high and low speeds. 
-\\\\
+ 
 \noindent
 By capturing the recorded passage with a Desktop camera at a rate of 24 frames per second(fps), we are able to extract individual frames from the recorded videos. At this point, we define a starting and an ending point of the subject's right arm and select the frames that more accurately correspond to these positions. After following this procedure for both recordings, we end up with 3 frames from the fast and 16 from the slow version. The starting and ending position frames for the slow and the fast versions are shown below on Figure \ref{start_pos}. The substantial deviation between the shoulder-elbow vertex of the skeleton and the arm indicate the important increased error when the subject performs a fast move.
 
@@ -267,7 +270,7 @@ The final step involved the estimation of the actual and perceived angular veloc
 
 \noindent where \[RotationalDisplacement = EndingAngle - StartingAngle\]
 and  $\omega$ stands for the angular velocity.
-\\\\
+ 
 \noindent 
 The angular velocities and the corresponding errors for both the slow and the fast recordings are presented on the following table.
 
@@ -289,7 +292,7 @@ Slow & $-67.2$ & $-89.4$ & $24.8\%$ \\
 \subsection{Camera Angle Relative to Subject}
 \noindent 
 The fact that the application is to be used for the purpose of dancing means that an investigation into how the angle between the camera and the subject affects the results can help draw useful conclusions. For instance, in a certain dance the subject may turn so that only the profile is visible to the camera. Doing so without losing any information due to occlusion because of on of the arms or legs being covered by the rest of the body, may prove to be vital for the software to work effectively. 
-\\\\
+ 
 \noindent
 To test for this, the subject stands in front of the camera, lifting both arms from the sides in the positive y direction up to $90^o$ and then back down. The subject then turns $90^o$ about the y-axis so that the right arm is in front of the camera, but the left arm is covered by the body. The results can be seen in Figure \ref{angle_camera}. As it can be seen here, at frame number 322 there is a peak in the y-coordinate of the right hand and the x-coordinate, but at frame 465 when the subject turns, only the y-coordinate changes. This is perfectly understandable since the the x-coordinate now stays roughly constant whilst the arm is raised. For the left arm however, both the x-coordinate and y-coordinate values are lost when the subject rotates, and thus there is a loss of information due to self occlusion. This may be a problem, however, as long as the teacher's information is also lost, it may not be.  
 \begin{figure}[H]
@@ -298,14 +301,13 @@ To test for this, the subject stands in front of the camera, lifting both arms f
 \caption{x and y coordinates plotted against frame number for the right hand and the left hand joints in experiment to see how angle to camera affects results.}
 \label{angle_camera}
 \end{figure}
- 
 
 \subsection{Multiple People}
-
 \noindent
-It may be necessary and efficient to use one camera to track multiple people and then process all the data in that way. This way fewer cameras would be needed for a particular class size with greater complexity being passed to the data analysis stages. \\\\
+It may be necessary and efficient to use one camera to track multiple people and then process all the data in that way. This way fewer cameras would be needed for a particular class size with greater complexity being passed to the data analysis stages. 
+ 
 \noindent
-In order to discover how many subject can be tracked by a single camera, we incrementally increase the number of people standing in front of the camera until the results are unsatisfactory for at least one of the skeletons. Unsatisfactory implies a skeleton deviating away from the body or discontinuity in tracking any of the joints. NiTE officially claims that the library can track as many people as can possibly fit physically in the camera range. We find that the maximum number of people that can fit in the cameras field of view with all joints showing 5. \\
+In order to discover how many subject can be tracked by a single camera, we incrementally increase the number of people standing in front of the camera until the results are unsatisfactory for at least one of the skeletons. Unsatisfactory implies a skeleton deviating away from the body or discontinuity in tracking any of the joints. NiTE officially claims that the library can track as many people as can possibly fit physically in the camera range. We find that the maximum number of people that can fit in the cameras field of view with all joints showing 5. 
  
 \begin{figure}[H]
 \centering
@@ -314,18 +316,15 @@ In order to discover how many subject can be tracked by a single camera, we incr
 \caption{Position of five students with respect to the camera (left) and the skeletons fitted to the five people.}
 \label{people_pos}
 \end{figure}
-
 \noindent
-However, as mentioned before, a subject needs to be 2.5 to 4 metres away from the camera to be fully visible. Added to this, since the application of our software is for dancers, we need to provide an adequate spacing between students to allow for the movements involved in their practice. After splitting up the area for 5 subjects, each one has less than $1m^2$ of free space which is not considered enough for dancers. With 3 people for each camera however it will be able to provide a wide enough radius for each of the students.\\
-
-
+However, as mentioned before, a subject needs to be 2.5 to 4 metres away from the camera to be fully visible. Added to this, since the application of our software is for dancers, we need to provide an adequate spacing between students to allow for the movements involved in their practice. After splitting up the area for 5 subjects, each one has less than $1m^2$ of free space which is not considered enough for dancers. With 3 people for each camera however it will be able to provide a wide enough radius for each of the students.
 \subsection{Multiple Cameras}
 \noindent
 Despite the various capabilities offered by a single Kinect camera, there are a number of weaknesses that can substantially limit the potential of its applications. Due to the active hacking community, the Kinect's specifications have been determined by reverse engineering the RGB camera, the IR laser projector and the 3-D depth sensor. An important result is that the angular field of view of the Kinect's RGB camera is limited to $62.7^o$ with the IR camera having a field of view of $57.8^o$. Given the aforementioned specifications and according to our testing, at an average working range of 2.5 meters, the depth image is only 3.5 meters wide. To overcome this obstacle and widen our field of view, additional Kinects can be used side by side. 
-\\\\
+ 
 \noindent
 Another limitation which motivates the use of multiple Kinects is the fact that as the depth data sensed by the IR sensor come from a single direction, more accurate data is captured when the subject is perpendicular to the camera's normal. In particular, for our application whenever the subject stands with a profile view to the camera, data is lost and thus the subject's tracking would be less accurate. With multiple Kinects, a mixture of data from different angles can be captured and combined as necessary to increase accuracy and produce a more complete scene.
-\\\\
+ 
 \noindent
 Nevertheless, the employment of multiple Kinects can lead to new obstacles. Research has suggested that using more than one camera with an overlapping region between them can lead to depth images that contain blind spots. To test whether this would be a problem in our application, we use the following initial setup.
 
@@ -339,7 +338,7 @@ Nevertheless, the employment of multiple Kinects can lead to new obstacles. Rese
 
 \noindent
 We first record the camera's reading without a subject in the scene. As Figure \ref{2_cameras_config1}. below shows, the IR interference caused by the Kinect on the opposite side of the room creates a substantial blind spot which confuses the algorithm that determines the depth and no useful depth data is captured.
-\\\\
+ 
 \noindent
 When a subject comes in the scene, although it is tracked, the interference still poses a problem by distorting the left hand of the subject as shown in Figure \ref{IR_interference_w_subject}. Such a distortion is intolerable to our application. 
 
@@ -364,7 +363,7 @@ A more useful configuration includes the placement of the second Kinect in such 
 
 \noindent
 In this case, a recording of the camera's view without a subject gives us a much lower level of interference compared to the initial configuration. This can be seen in Figure \ref{2_cameras_config2}.
-\\\\ 
+  
 \noindent
 In our experiment, the subject is asked to stand still in front of the camera with arms to the side for about 5 seconds. This is initially done four times with a single camera. The measured data is used as a reference when comparing to a two-cameras configuration. The same measurements are taken for two cameras placed in a $90^o$ angle. In this way, the effect of the interference can be quantified by comparing the two set of data. The method we follow to compare the sets of data is by comparing the mean of the standard deviations for each trial. This is illustrated in Figure \ref{Multiple_Std}. 
  
@@ -405,9 +404,11 @@ This section discusses the way in which the application will be used to evaluate
 
 \subsection{Motionless Activity Detector}
 \noindent 
-With the current design in mind the student will be asked to first move slightly so that the NiTE software can calibrate and start tracking. After this, the student will be required to stand still in a predefined position for a minimum amount of time, to be decided later, after which the student may start dancing. This will be the position that the next module will use to translate the coordinates with respect to a specific origin. The purpose of this module is to find a frame number during which the student will be in the standing still phase.\\\\
+With the current design in mind the student will be asked to first move slightly so that the NiTE software can calibrate and start tracking. After this, the student will be required to stand still in a predefined position for a minimum amount of time, to be decided later, after which the student may start dancing. This will be the position that the next module will use to translate the coordinates with respect to a specific origin. The purpose of this module is to find a frame number during which the student will be in the standing still phase. 
+
 \noindent 
-The algorithm is simple. Under the assumption that there is a time period in which there is relatively little movement the algorithm is only required to find a period with the least sum of the absolute change in all the coordinates. The aforementioned ``period'' takes the form of a non-overlapping sliding window over the joint data, for each joint. This sliding window has to contain the data of less than half the number of frames that are recorded in the minimum time period of motionless activity so that a frame within that period of time can be found, if the student did indeed stand still for the period of time. The window must be sufficiently large however to get a sum over a wide enough range of values so that momentarily motionless activity is not detected instead at some other point.\\\\
+The algorithm is simple. Under the assumption that there is a time period in which there is relatively little movement the algorithm is only required to find a period with the least sum of the absolute change in all the coordinates. The aforementioned ``period'' takes the form of a non-overlapping sliding window over the joint data, for each joint. This sliding window has to contain the data of less than half the number of frames that are recorded in the minimum time period of motionless activity so that a frame within that period of time can be found, if the student did indeed stand still for the period of time. The window must be sufficiently large however to get a sum over a wide enough range of values so that momentarily motionless activity is not detected instead at some other point. 
+
 \noindent
 The initial algorithm is of the form:
 \begin{itemize}
@@ -424,7 +425,8 @@ The initial algorithm is of the form:
 \noindent
 To test this we perfom various tests.
 \subsubsection{Test for One Joint}
-The first step is to check that the algorithm works for only one joint, chosen to be the right hand. The subject moves the right hand until the \texttt{UserViewer} calibrates and starts tracking, then holds the hand in a certain position for a minimum of 1 second, and then moves it again. The data from all the points is then printed to a file, in a form that can be loaded by Matlab into a matrix and our algorithm is used to find the stationary point. \\\\
+The first step is to check that the algorithm works for only one joint, chosen to be the right hand. The subject moves the right hand until the \texttt{UserViewer} calibrates and starts tracking, then holds the hand in a certain position for a minimum of 1 second, and then moves it again. The data from all the points is then printed to a file, in a form that can be loaded by Matlab into a matrix and our algorithm is used to find the stationary point.  
+
 \noindent
 To confirm our results, a plot of the graph for the coordinate's positions versus frames is created and the video is also watched with the frame number in the top left corner. If the frame number returned by the algorithm corresponds to a time period in which the subject is still, this is taken as a correct result. 
 \subsubsection{Test for Multiple Points}
@@ -433,13 +435,13 @@ In this test the subject walks in front of the camera moving their limbs until t
 
 \subsubsection{Obstacles Encountered}
 \noindent
-Various problems have arisen during the tests. The first problem is associated with the data itself. The data comes in a 4-tuple for each joint, representing the (x, y, z) coordinates and the fourth value is the confidence level. This is a basic measure for how reliable the reading is of a particular point. When the confidence level is equal to zero, the coordinates of the previous data point is used. This presents a problem for our initial algorithm however, because it works with differences between frames, and so if the confidence value is equal to zero, which happens often enough, the difference is also zero even when there is alot of activity taking place. To counter this, we change the algorithm so that, if two adjacent data points have the same value, a very large difference is associated to them. The probability of having results that are exactly equal is significantly low as the number of significant digits in the data is quite high, and empirically this has proven to be the case.\\\\
+Various problems have arisen during the tests. The first problem is associated with the data itself. The data comes in a 4-tuple for each joint, representing the (x, y, z) coordinates and the fourth value is the confidence level. This is a basic measure for how reliable the reading is of a particular point. When the confidence level is equal to zero, the coordinates of the previous data point is used. This presents a problem for our initial algorithm however, because it works with differences between frames, and so if the confidence value is equal to zero, which happens often enough, the difference is also zero even when there is alot of activity taking place. To counter this, we change the algorithm so that, if two adjacent data points have the same value, a very large difference is associated to them. The probability of having results that are exactly equal is significantly low as the number of significant digits in the data is quite high, and empirically this has proven to be the case. 
+
 \noindent
-Another issue is concerned with the number of frames to use for the window size. A large window size means that a much more reliable conclusion from the results can be drawn, as the sample size increases, but at a cost that the student has to stand still for a longer period of time, since the window size time should be less than twice the time period of no motion. This means a good balance has to be found. On the one hand, making the student stand still for too long deteriorates the user experience. On the other hand, the smaller the window size, the more susceptible to detecting temporary motionless activity within the dancing period. From the experiments, it has been found that a frame size of 30 frames makes the best compromise and means that the student must stand still for at least two seconds. This is not a problem, however, since other commercial software for different purposes requires a stand still period which is of a similar magnitude, such as facial recognition systems in airports. \\\\
+Another issue is concerned with the number of frames to use for the window size. A large window size means that a much more reliable conclusion from the results can be drawn, as the sample size increases, but at a cost that the student has to stand still for a longer period of time, since the window size time should be less than twice the time period of no motion. This means a good balance has to be found. On the one hand, making the student stand still for too long deteriorates the user experience. On the other hand, the smaller the window size, the more susceptible to detecting temporary motionless activity within the dancing period. From the experiments, it has been found that a frame size of 30 frames makes the best compromise and means that the student must stand still for at least two seconds. This is not a problem, however, since other commercial software for different purposes requires a stand still period which is of a similar magnitude, such as facial recognition systems in airports.  
+
 \noindent
 A further complication is that the number of frames shown in the .oni file recording is greater than that of the data in the file processed by Matlab. This means that the offset has to be found by writing to a separate file the starting frame when the first piece of data is written to the frame processed by Matlab. 
-
-
 
 \subsubsection{Results}
 
@@ -496,7 +498,7 @@ Though there are quite a few different values returned, there are 2 or 3 ones th
 \caption{The x-coordinate data plotted for the right hand and the left foot of Test Case 1. The frames which are returned from the algorithm are shown on the graph.}
 \label{motionless_rh_lf}
 \end{figure}
-\\\\
+ 
 \noindent
 As it can be seen from Figure \ref{motionless_rh_lf} though the frame numbers that are returned are different, both are in fact in a region of relatively little activity, and as confirmed by the video are within the period that the subject is standing still. 
 
@@ -521,7 +523,7 @@ The initial algorithm is of the form:
 \subsubsection{Testing}
 \noindent
 In order to test the algorithm, we record two videos, where the subject performs the same movement in completely different parts of the camera range. Because of that, we are expecting the original data to be of similar shape, but have different absolute values. After running the algorithm on the data, the offset should disappear and the signals should be similar in both their shape as well as in absolute values.
-\\
+
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.16]{Non_Translated_R_H_Data.jpg}
@@ -533,7 +535,7 @@ In order to test the algorithm, we record two videos, where the subject performs
 
 \noindent
 Figure \ref{pre_translation_graph} (left) shows the original data from two recordings for the right hand joint. Clearly, in both recordings, near the end the subject performs the same movement which is indicated by a spike in signal's value from being relatively constant. However, the absolute values of both signals do not correspond.
-\\\\
+ 
 \noindent
 Figure \ref{pre_translation_graph} (right) shows the same signal after running it through the Translation Module. Now, the signal does not contain the initial calibration data any more. Additionally, both the shape and the absolute values of the signal are close to each other, which is the desired outcome.
 
@@ -616,7 +618,8 @@ The purpose of these test cases is to measure the effectiveness of the algorithm
 \subsubsection{Obstacles and Challenges}
 
 \noindent
-Being the most complex and important module in the whole system many problems have had to be tackled whilst creating it and the algorithm has had to be rethought out a few times also.\\\\
+Being the most complex and important module in the whole system many problems have had to be tackled whilst creating it and the algorithm has had to be rethought out a few times also. 
+
 \noindent
 Initially, the algorithm used the following formula to give a measure of the error.
 
@@ -628,10 +631,10 @@ where $N$ is the number of samples in the shorter signal, $t(n)$ and $s(n)$ are 
 \epsilon_{frame} = \dfrac{\sum\limits_{n=1}^{N}(t(n)-s(n))^2}{\alpha N}
 \label{error_eq}
 \end{equation}
-\\\\
+ 
 \noindent
 Another problem that persisted is that, if the student performs well for a large portion of the dance but makes a huge error at some point, this information was not conveyed as an average was taken for the score and a single value was returned. This has been fixed however with the return of another vector of scores for each joint, in which the x, y, and z coordinates of the joint are each given a score and an average is taken. Additionally, this has been further improved by windowing the signal and giving a score for each joint and an average score for a specific time window. In this way the student can now know at what time period they have made an error and what body part has to improve. An example of such a case can be seen in Figure \ref{error_left_shoulder}. In this scenario the student performs two errors which are reflected in the score of windows 4, 7 and 8 (see Figure \ref{error_score}). The window size (time period) can be determined by the teacher according to how high a resolution is necessary for the dance.
-\\\\
+ 
 \noindent
 Added to this, there have been small issues that have been apparent by the fact that the student may perform very similar movements to the teacher, but slightly out of synchronisation. This can be thought of as a slight jitter between the two signals. To illustrate this, a toy example can be seen in Figure \ref{jitter} of two signals. Let the window size be 5 frames and the signal length be 15 frames as shown. Clearly, the optimum alignment based on our specification is the alignment shown in the figure, however there clearly is a misalignment between the first ``dance move'' (this first window). It can be seen that having the first window as is would mean that the absolute error would be 3, whereas with a shift of just one frame the absolute error becomes 0. We have decided that this should be taken into consideration when giving a score to the student. For instance, a student should not receive a low score for having a high error, if within a certain shift, the error could be vastly reduced. The student should however be penalised for the fact that they have not been perfectly on time. The way that we have taken this into consideration is by assigning to a window the minimum error of the following function:
 \begin{equation}
@@ -717,13 +720,14 @@ Given that the detailed low level design inside each method has been thoroughly 
 \item Write the method in C++.
 \item Write a script in Matlab that calls the corresponding fully tested Matlab function and then loads the text file that contains the outputs of the C++ program and compares the two results.
 \end{itemize}
+
 \noindent
 In this way, the process of testing is automated and the detection and removal of code defects can be done at the earliest possible stage. In addition, the code development can be easily divided among different pairs due to its decoupled modules. As long as the specifications and interface of each function is clearly defined, including its outputs, each pair can fully test and debug their part of the code without the need to wait for previous code to be developed.
 
 \subsubsection{Integration}
 \noindent
 The integration approach of our programs is the incremental combination of the separate software modules. An alternative method would be the combination of the components into a single system all at once. Nevertheless, such an approach would cause several problems. When multiple modules in our system are put together for the first time, new problems would appear and their simultaneous integration makes it harder to locate errors. In other words, an error could be in any of the new modules, in the interface between the new modules or in the interaction between the new modules and the core of the system. On the other hand, our incremental approach allows us to locate and remove defects easily as the integration of every new module with the core of our system is tested and debugged fully before the addition of any new modules.
-\\\\
+ 
 \noindent
 The architecture of our system includes the Presentation Layer with the Graphical User Interface and the Processing Layer where the algorithms are implemented. The integration of these two main components ..
 
@@ -768,7 +772,7 @@ The method chosen to do this is based on a well known machine learning method ca
 
 \noindent
 In this case $\boldsymbol \theta$ is the parameter vector, $\boldsymbol \epsilon$ is the polynomial vector and $\hat{S} $ is the estimated score using the given parameters. The idea is to find the parameters in the parameter matrix that give the best function to reduce the error squared. This can be extended to a polynomial of any size.
-\\\\
+ 
 \noindent
 The objective of linear regression is to minimize the cost function given by:
 
