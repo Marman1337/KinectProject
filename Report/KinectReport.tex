@@ -65,11 +65,13 @@ escapeinside={\%*}{*)} % if you want to add a comment within your code
 \pagenumbering{gobble}
 \newpage
 
+
+\section*{\center Executive Summary}
+\textbf{Not Done}
+\clearpage
+
 \pagenumbering{arabic}
 \setcounter{page}{1}
-\section*{\center Abstract}
-\textbf{Not Done}
-
 \section{Kinect \& NiTE Software Evaluation}
 \noindent
 To determine a method of evaluating the dance student, the limitations of the camera and the NiTE software must first be evaluated with respect to the criteria addressed below. To do this we use the UserViewer Application that comes as a sample with the NiTE software library with the camera elevated 75 cm above the ground, within the 60 cm to 180 cm range that is suggested by Microsoft for optimal tracking. 
@@ -717,7 +719,8 @@ To make the code quicker and to make the whole application integrate more easily
 This has been made much more time efficient by the use of the external library chosen for linear algebra called Armadillo.  The reason this library has been chosen is due to its similarity in syntax to Matlab but also due to its speed. Armadillo claims on its website \textbf{(Add reference http://arma.sourceforge.net/speed.html)} to be approximately up to 15 times faster for the operations that are needed for our algorithms than two competing libraries IT++ and NEWMAT. Also being well established and well documented, the transition has been fairly simple.  
 \subsection{Design}
 \begin{itemize}
-\item Abstraction.
+\subsubsection{High Level Design}
+\subsubsection{Classes}
 \item Two Classes.
 \item Public and Private.
 \end{itemize}
