@@ -74,7 +74,7 @@ escapeinside={\%*}{*)} % if you want to add a comment within your code
 \setcounter{page}{1}
 \section{Kinect \& NiTE Software Evaluation}
 \noindent
-To determine a method of evaluating the dance student, the limitations of the camera and the NiTE software must first be evaluated with respect to the criteria addressed below. To do this we use the UserViewer Application that comes as a sample with the NiTE software library with the camera elevated 75 cm above the ground, within the 60 cm to 180 cm range that is suggested by Microsoft for optimal tracking. 
+To determine a method of evaluating the dance student, the limitations of the camera and the NiTE software must first be evaluated with respect to the criteria addressed below. To do this, we use the UserViewer Application that comes as a sample with the NiTE software library with the camera elevated 75 cm above the ground, within the 60 cm to 180 cm range that is suggested by Microsoft for optimal tracking. 
 
 \subsection{Camera Range}
 \noindent 
@@ -196,19 +196,13 @@ In this experiment, the second person walks within different ranges of the camer
 \begin{figure}[H]
 \center
 \includegraphics[scale=0.2]{Occlusion1.jpg} 
-\caption{Adjacent dancers occlusion.}
+\includegraphics[scale=0.1822]{Occlusion2.jpg} 
+\caption{Adjacent dancers occlusion (left) and occlusion of person in front of another (right).}
 \label{occlusion1}
 \end{figure} 
 
 \noindent
-Moreover, when a subject stands directly in front of another, NiTE is not always able to distinguish between the two subjects and thus it appears as if they are one body. This is shown in Figure \ref{occlusion3} below.
-
-\begin{figure}[H]
-\center
-\includegraphics[scale=0.2]{Occlusion2.jpg} 
-\caption{NiTE mistaking two skeletons for one.}
-\label{occlusion3}
-\end{figure} 
+Moreover, when a subject stands directly in front of another, NiTE is not always able to distinguish between the two subjects and thus it appears as if they are one body. This is shown in Figure \ref{occlusion1}.
 
 \subsection{Velocity of Movement}
 Another important criterion regarding the performance of both the Kinect camera and the NiTE software package is the accuracy and responsiveness of the skeleton fitting. Our evaluation procedure consists of the recording of a predefined movement which would provide us with the subject's velocity information and would allow us to estimate how accurately the fitted skeleton is able to follow the actual move, by calculating the error between the perceived and the actual movement. In particular, we would record a slower and a faster versions of the same movement and compare the corresponding errors.
@@ -219,16 +213,16 @@ The subject's reference movement was determined to be a $180^o$ degrees right ar
 \noindent
 By capturing the recorded passage with a Desktop camera at a rate of 24 frames per second(fps), we are able to extract individual frames from the recorded videos. At this point, we define a starting and an ending point of the subject's right arm and select the frames that more accurately correspond to these positions. After following this procedure for both recordings, we end up with 3 frames from the fast and 16 from the slow version. The starting and ending position frames for the slow and the fast versions are shown below on Figure \ref{start_pos}. The substantial deviation between the shoulder-elbow vertex of the skeleton and the arm indicate the important increased error when the subject performs a fast move.
 
-\begin{figure}[h]
+\begin{figure}[H]
 \center
 \includegraphics[scale=0.5]{SlowStart.jpg} \includegraphics[scale=0.5]{FastStart.jpg}
 \caption{Slow and fast recordings starting position.}
 \label{start_pos}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
 \center
-\includegraphics[scale=0.5]{SlowEnd.jpg} \includegraphics[scale=0.5]{FastEnd.jpg}
+\includegraphics[scale=0.5]{SlowEnd.jpg} \includegraphics[scale=0.4925]{FastEnd.jpg}
 \caption{Slow and fast recordings ending position, with substantial error in the fast version's skeleton fitting.}
 \end{figure}
 
@@ -315,7 +309,7 @@ In order to discover how many subject can be tracked by a single camera, we incr
  
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.3]{multi_people1.jpg}
+\includegraphics[scale=0.25]{multi_people1.jpg}
 \includegraphics[scale=0.6]{multi_people2.jpg}
 \caption{Position of five students with respect to the camera (left) and the skeletons fitted to the five people.}
 \label{people_pos}
@@ -338,20 +332,14 @@ Nevertheless, the employment of multiple Kinects can lead to new obstacles. Rese
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.4]{figure_2cameras_opposite.jpg}
-\caption{Initial configuration of two Kinects placed on opposite sides.}
+\includegraphics[scale=0.16]{IR_Interference2.jpg}
+\caption{Initial configuration of two Kinects placed on opposite sides (left) and the interference between them (right).}
 \label{2_cameras_config1}
 \end{figure}
 
 \noindent
-We first record the camera's reading without a subject in the scene. As Figure \ref{IR_interference}. below shows, the IR interference caused by the Kinect on the opposite side of the room creates a substantial blind spot which confuses the algorithm that determines the depth and no useful depth data is captured.
-
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.2]{IR_Interference2.jpg}
-\caption{Interference between Kinects placed on opposite sides of the room.}
-\label{IR_interference}
-\end{figure}
-
+We first record the camera's reading without a subject in the scene. As Figure \ref{2_cameras_config1}. below shows, the IR interference caused by the Kinect on the opposite side of the room creates a substantial blind spot which confuses the algorithm that determines the depth and no useful depth data is captured.
+\\\\
 \noindent
 When a subject comes in the scene, although it is tracked, the interference still poses a problem by distorting the left hand of the subject as shown in Figure \ref{IR_interference_w_subject}. Such a distortion is intolerable to our application. 
 
@@ -368,20 +356,15 @@ A more useful configuration includes the placement of the second Kinect in such 
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.4]{figure_2cameras.jpg}
-\caption{Configuration of two Kinects in order to minimise overlap.}
+\includegraphics[scale=0.16]{IR_Interference90deg.jpg}
+
+\caption{Configuration of two Kinects in order to minimise overlap and the interference between them.}
 \label{2_cameras_config2}
 \end{figure}
 
 \noindent
-In this case, a recording of the camera's view without a subject gives us a much lower level of interference compared to the initial configuration. This can be seen in Figure \ref{IR_interference_90}.
-
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.2]{IR_Interference90deg.jpg}
-\caption{Interference between Kinects placed in a $90^o$ angle.}
-\label{IR_interference_90}
-\end{figure}
- 
+In this case, a recording of the camera's view without a subject gives us a much lower level of interference compared to the initial configuration. This can be seen in Figure \ref{2_cameras_config2}.
+\\\\ 
 \noindent
 In our experiment, the subject is asked to stand still in front of the camera with arms to the side for about 5 seconds. This is initially done four times with a single camera. The measured data is used as a reference when comparing to a two-cameras configuration. The same measurements are taken for two cameras placed in a $90^o$ angle. In this way, the effect of the interference can be quantified by comparing the two set of data. The method we follow to compare the sets of data is by comparing the mean of the standard deviations for each trial. This is illustrated in Figure \ref{Multiple_Std}. 
  
@@ -407,7 +390,7 @@ During our preliminary tests, the camera range which allows subject tracking and
 
 \clearpage
 
-\section{Automatic Evaluation of Students}
+\section{Automatic Evaluation of Student Performance}
 \noindent
 This section discusses the way in which the application will be used to evaluate the student's performance with respect to the teacher's. The software will have to detect errors that the student has made, detect time periods in which the student performed poorly as well as satisfactory and be able to give a few other useful statistics for the teacher to also grade the student. Using only information from the data points of the joints from NiTE and the RGB-D stream from OpenNI, various things need to be considered and multiple modules will need to be created to handle the data. 
 
@@ -749,7 +732,7 @@ The architecture of our system includes the Presentation Layer with the Graphica
 The final code is tested by making a test program that calls the \texttt{analyse()} procedure in C++ and prints all the member variables to text files. This again is tested against the Matlab results using a script in the same way as in the unit testing.
 
 \clearpage
-\section{Extensions}
+\section{Extensions: Improving Scoring Accuracy \& Credibility}
 \noindent
 After building the first prototype, it can be seen that various improvements can be made. These improvements can both enhance the user experience and at the same time increase the accuracy of the application and seeing that time has not been a limitation, we have decided to pursue a couple of extensions to the application to improve its overall performance.
 
