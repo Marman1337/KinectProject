@@ -755,6 +755,95 @@ After building the first prototype, it can be seen that various improvements can
 In order to make the scoring function more subjective to the user, different weights can be applied to different joints. As a result, the application can give score which depends on requirements from the teacher on a specific dance. We decided to have weighting factors for 5 sets of joints - head, arms, torso, hips and legs. The teacher can set each of them to "least important", "important" and "very important" according to the importance of the accuracy of this set of joints in a dance. Each level of importance corresponds to a numerical value of 1, 2 and 3 in the underlying code. Hence, the window score of a joint is  multiplied by its weighting factor. Finally, the overall window score is calculated after  normalising by dividing the sum of scores of all joints in a window with the sum of weighting factors. This extension is provided as an advanced setting which the teacher can decide whether to use or not. In the case when this option is not required, the average score is calculated without involving any weighting factors. 
 
 \subsection{Score Function Accuracy}
+\noindent
+The problem with our current score function, as discussed in the previous section (2.4.5), is that the maximum is 100\% and the minimum is 0\% but everything in between that is chosen quite arbitrarily without professional input. What would be best is for a few  teachers to grade a set of performances and for a score function to be chosen in such a way as to best fit the given data. This score function could then be used in the final product.
+\subsubsection{Method Description}
+\noindent
+The method chosen to do this is based on a well known machine learning method called Linear Regression. There are many variations and the method chosen in this case is based on Multivariant Linear Regression using polynomials. The basic concept can be described as such. Given a certain ordered polynomial, a line of best fit can be found for a given data set by reducing the error squared between the points and the line. For example, if the data seems to be able to be represented by a second order polynomial, this can be represented as such, where $\epsilon$ is the error and $S$ is the score.
+
+\begin{equation}
+\hat{S} = \begin{pmatrix}
+  \theta_0 &&
+  \theta_1 &&
+  \theta_2
+ \end{pmatrix}
+ \cdot
+ \begin{pmatrix}
+   1 \\
+   \epsilon\\
+   \epsilon^2
+ \end{pmatrix}
+\end{equation} 
+
+\begin{equation}
+\hat{S} = \boldsymbol \theta^T \cdot \boldsymbol \epsilon
+\end{equation} 
+
+
+\noindent
+In this case $\boldsymbol \theta$ is the parameter vector, $\boldsymbol \epsilon$ is the polynomial vector and $\hat{S} $ is the estimated score using the given parameters. The idea is to find the parameters in the parameter matrix that give the best function to reduce the error squared. This can be extended to a polynomial of any size.
+\\\\
+\noindent
+The objective of linear regression is to minimize the cost function given by:
+
+\begin{equation}
+J(\theta) = \frac{1}{2m} \sum_{i=1}^m \left( \boldsymbol \theta^T \cdot \boldsymbol \epsilon_i - S_i\right)^2  + \lambda \sum_{j=1}^n \theta_j^2
+\end{equation} 
+where $S_i$ is the actual score for the given error, $i$ is the data sample chosen and $m$ is the number of data samples in our training set. To avoid overfitting of the curve, which happens when the curve fits the training data very well but fails to make predictions well, we use the regulation constant $\lambda$, which penalises all $\theta_j$ up until n, the order of the polynomial, as they become too large. The way to choose the parameters for a certain order polynomial is to iteratively keep updating $\boldsymbol \theta$ in the following way until it converges.
+
+\begin{equation}
+  \theta_j :=
+\begin{cases}
+\theta_j  - \frac{\alpha}{m} \frac{\partial}{\partial \theta_j } J( \theta_j), & \text{if }j = 0 \\
+\theta_j \left(1- \frac{\alpha\lambda}{m} \right) - \frac{\alpha}{m} \frac{\partial}{\partial \theta_j } J( \theta_j), & \text{if }j > 0 \\
+\end{cases}
+\end{equation} 
+where $\alpha$ is the step size. It can be shown mathematically that the larger $\alpha$ is, the faster the rate of convergence, but the lower the accuracy and the higher the chance of divergence also. Moreover, if $\lambda$ is too large, it may also underfit the curve and if it is too small, it may not have a significant effect at all. Therefore, care needs to be taken in choosing $\alpha$ and $\lambda$. This, alongside the choice of which order should be chosen for the polynomial, is done in an iterative manner which first chooses the order of the polynomial for which the error is least and then chooses the value of $\lambda$ for which the cost is least when trying to predict the value of a separate data set. The code for this can be found in the Appendix.
+
+\subsubsection{Customising the Algorithm}
+\noindent
+Due to the necessary condition for our score function to have its max value at 100\%, some alterations to the algorithm have been introduced. In our case $\theta_0$ is initialised to 100 and is not updated during the algorithm. In this way the S-intercept is fixed at 100\% and the line of best fit has to only change the rest of the $\theta_i$'s. 
+
+\subsubsection{Testing and Results}
+% Choosing another 2nd order arbitrary function which has a max at 0 and a min at x = 1.
+%  Adding 
+\noindent 
+To test the final script which automatically chooses the order of the polynomial, the value of $\lambda$ and the value of the parameter vector $\boldsymbol \theta$, we first create our own training data set. We chose a second order polynomial that takes a value of 100\% when the error is equal to 0 and a value of 0\% when the error is equal to 1.
+The actual parameter vector is:
+
+\begin{equation}
+\boldsymbol \theta_{actual} = 
+\begin{pmatrix}
+100\\
+-20\\
+-80
+\end{pmatrix}
+\end{equation}
+We choose to take 41 points between 0 and 1 for the error values, equally spaced with 0.025 error difference between them. We then add some noise taken from a normal distribution with parameters $\mathcal{N}(0, 16)$. This helps to make the data more realistic as it is very unlikely that the teacher would give scores absolutely consistent with the curve chosen only based on the error. With this as the training set, the script is then run and finds the order that gives the least cost for the number of iterations and the value chosen for $\alpha$. It then finds the $\lambda$ that gives the lowest error for future predictions also and calculates the parameters for the chosen order of polynomial. The results can be seen in Figure \ref{machine_learning_results}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.15]{Score_Function_Machine_Learning.jpg}
+
+\caption{Results of machine learning algorithm trying to fit a curve (red) to the data points (blue) to reduce the cost function $J(\theta)$.}
+\label{machine_learning_results}
+\end{figure}
+
+\noindent 
+Upon termination the algorithm gives an order 4 polynomial with parameters:
+\begin{equation}
+\boldsymbol \theta_{estimate} = 
+\begin{pmatrix}
+100\\
+-34.65\\
+-31.99\\
+-23.04\\
+-15.83
+\end{pmatrix}
+\end{equation}
+\noindent 
+Though it has chosen a polynomial that is two orders higher than the initial formula used to create the test data, as it can be seen in the figure, in the selected region the curve seems to fit the data set very well. It can therefore be concluded that the score function could be calculated with this method and ported into the product before becoming commercial. A few professional dance teachers could be hired to score a large set of pre-recorded dances and the error vs score given by the teachers could be used as the training data for the algorithm. 
+
 
 \clearpage
 \section*{Appendix}
