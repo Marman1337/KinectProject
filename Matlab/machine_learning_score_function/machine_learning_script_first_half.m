@@ -20,7 +20,7 @@ plot(x, y, 'x');
 %% Find theta for different orders of hypothesis.
 max_order = 7;
 % Some gradient descent settings
-iterations = 1000000;
+iterations = 5000000;
 alpha = 0.001;
     
 [ theta_order_mat ] = theta_order_matrix_specialised( training_set, max_order, iterations, alpha );

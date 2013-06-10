@@ -1,16 +1,12 @@
 %% Input data: mx2 matrix of (x, y) tuples.
 close all;
-% x =  0:0.1:10;
-% y = build_polynomial([1 -2 +3]',x);
-% x = 0:0.125:1.25;
-x = 0:0.125:0.75;
-
-y = [100; 98.5; 95; 85; 70; 50; 30];
-% y = [100; 98.5; 95; 85; 70; 50; 30; 12.5; 5; 3; 2.2];
+x =  0:0.025:1;
 
 %% Add noise to data to resemble more realistic data.
-%y = y + 10*randn(size(y));
-data_set = [x' y];
+y = build_polynomial([100 -20 -80]', x);
+y = y + 4*randn(size(y));
+y(1) = 100;
+data_set = [x' y'];
 plot(x, y, 'x');
 
 %% Split data into 3 different sets for training, cross validation and
@@ -20,7 +16,7 @@ plot(x, y, 'x');
 %% Find theta for different orders of hypothesis.
 max_order = 7;
 % Some gradient descent settings
-iterations = 1000000;
+iterations = 200000;
 alpha = 0.001;
     
 [ theta_order_mat ] = theta_order_matrix_specialised( training_set, max_order, iterations, alpha );

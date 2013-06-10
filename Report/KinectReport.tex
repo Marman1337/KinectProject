@@ -88,13 +88,13 @@ Yijie Ge, \texttt{yg2510}, CID }
 \setcounter{page}{1}
 \section{Kinect \& NiTE Software Evaluation}
 \noindent
-To determine a method of evaluating the dance student, the limitations of the camera and the \texttt{NiTE} software must first be evaluated with respect to the criteria addressed below. To do this, we use the UserViewer Application that comes as a sample with the \texttt{NiTE} software library with the camera elevated 75 cm above the ground, within the 60 cm to 180 cm range that is suggested by Microsoft for optimal tracking. 
+To determine a method of evaluating the dance student, the limitations of the camera and the \texttt{NiTE} software must first be evaluated with respect to the criteria addressed below. To do this, we use the \texttt{UserViewer} Application that comes as a sample with the \texttt{NiTE} software library with the camera elevated 75 cm above the ground, within the 60 cm to 180 cm range that is suggested by Microsoft for optimal tracking. 
 
 \subsection{Camera Range}
 \noindent 
 To test for the camera's range, we lay a tape measure on the ground starting from directly below the camera up to 8 m away from the camera. We then use two subjects of different heights and body shapes to evaluate the performance of the camera and the software for tracking at different distances. The subject first starts within a few centimetres of the camera and slowly moves backwards until the camera calibrates and starts tracking and continues to do so until the tracking is lost. After this, the subject is required to start from the depths of the room, much further than the range of the camera, and to start walking slowly towards the camera, again taking a record of the following specifications. The results can be shown in Tables \ref{cam_range_180_away} to \ref{cam_range_150_toward}.
 \\
-\begin{table}[h]
+\begin{table}[H]
 \center
 \begin{tabular}{ | l | c |}
 \hline
@@ -109,7 +109,7 @@ Distance from Camera & Description of Performance \\
 \label{cam_range_180_away}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[H]
 \center
 \begin{tabular}{ | l | c |}
 \hline
@@ -124,7 +124,7 @@ Distance from Camera & Description of Performance \\
 \label{cam_range_180_toward}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[H]
 \center
 \begin{tabular}{ | l | c |}
 \hline
@@ -139,7 +139,7 @@ Distance from Camera & Description of Performance \\
 \label{cam_range_150_away}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[H]
 \center
 \begin{tabular}{ | l | c |}
 \hline
@@ -158,8 +158,8 @@ These results highlight the fact that the camera has a restricted field of view 
 
 \subsection{Effect of Varying Lighting Conditions}
 \noindent
-In order to evaulate the effect of varying lighting conditions on the tracking capabilities of the camera, we utilise a lux meter to determine the intensity of light in a room. The meter has been calibrated such that a complete darkness represents 0 lux. We then perform a series of tests to determine, if the varying lighting conditions have an effect on the tracking range of the camera. The table below presents the results of the tests:
-\begin{table}[h]
+In order to evaulate the effect of varying lighting conditions on the tracking capabilities of the camera, we utilise a lux meter to determine the intensity of light in a room. The meter has been calibrated such that a complete darkness represents 0 lux. We then perform a series of tests to determine, if the varying lighting conditions have an effect on the tracking range of the camera. Table \ref{cam_range_varying_light} illustrates the results:
+\begin{table}[H]
 \center
 \begin{tabular}{ | l | c |}
 \hline
@@ -177,7 +177,7 @@ Light intensity & Tracking range (starts - stops tracking) \\
 \end{table}
 
 \noindent
-Since the skeleton is primarily fitted using the depth sensor of the RGB-D camera, the light intensity was expected to have little, if any, effect on the tracking range of the camera. Initially, we were expecting that the higher intensity of light might have a negative impact on the effectiveness of the IR depth sensor, however this has not been the case. It has been confirmed that varying light intensity, within bounds that we were able to achieve, have no effect on the range of the camera and its tracking capabilities.
+Since the skeleton is primarily fitted using the depth sensor of the RGB-D camera, the light intensity was expected to have little, if any, effect on the tracking range of the camera. Initially, it was expected that the higher intensity of light might have a negative impact on the effectiveness of the IR depth sensor, however this has not been the case. It has been confirmed that varying light intensity, within bounds that we have been able to achieve, have no effect on the range of the camera and its tracking capabilities.
 
 \subsection{Obstruction in Range}
 \noindent
@@ -219,10 +219,10 @@ In this experiment, the second person walks within different ranges of the camer
 Moreover, when a subject stands directly in front of another, \texttt{NiTE} is not always able to distinguish between the two subjects and thus it appears as if they are one body. This is shown in Figure \ref{occlusion1}.
 
 \subsection{Velocity of Movement}
-Another important criterion regarding the performance of both the Kinect camera and the \texttt{NiTE} software package is the accuracy and responsiveness of the skeleton fitting. Our evaluation procedure consists of the recording of a predefined movement which would provide us with the subject's velocity information and would allow us to estimate how accurately the fitted skeleton is able to follow the actual move, by calculating the error between the perceived and the actual movement. In particular, we would record a slower and a faster versions of the same movement and compare the corresponding errors.
+Another important criterion regarding the performance of both the Kinect camera and the \texttt{NiTE} software package is the accuracy and responsiveness of the skeleton fitting. Our evaluation procedure consists of the recording of a predefined movement which provides us with the subject's velocity information and allows us to estimate how accurately the fitted skeleton is able to follow the actual move, by calculating the error between the perceived and the actual movement. In particular, we record a slower and a faster versions of the same movement and compare the corresponding errors.
 
 \noindent
-The subject's reference movement was determined to be a $180^o$ right arm move starting from a vertical position with the hand facing the ceiling and following an arc. The testing procedure includes the modification of the \texttt{UserViewer} sample program in order to record twice the predefined movement as performed by the subject at high and low speeds. 
+The subject's reference movement is determined to be a $180^o$ degrees right arm move starting from a vertical position with the hand facing the ceiling and following an arc. The testing procedure includes the modification of the \texttt{UserViewer} sample program in order to record twice the predefined movement as performed by the subject at high and low speeds. 
  
 \noindent
 By capturing the recorded passage with a Desktop camera at a rate of 24 frames per second (fps), we are able to extract individual frames from the recorded videos. At this point, we define a starting and an ending point of the subject's right arm and select the frames that more accurately correspond to these positions. After following this procedure for both recordings, we end up with 3 frames from the fast and 16 from the slow version. The starting and ending position frames for the slow and the fast versions are shown below on Figure \ref{start_pos}. The substantial deviation between the shoulder-elbow vertex of the skeleton and the arm indicate the important increased error when the subject performs a fast move.
@@ -249,8 +249,8 @@ By capturing the recorded passage with a Desktop camera at a rate of 24 frames p
 \hline
 Movement Speed & Number of Frames & Movement Duration\\
 \hline
-Fast & 3 & 0.083 s\\
-Slow & 16 & 0.670 s\\
+Fast & 3 & 0.125\\
+Slow & 16 & 0.670\\
 \hline
 \end{tabular}
 \caption{Movement duration for fast and slow versions, recorded at 24 fps.}
@@ -276,11 +276,11 @@ Slow & $4.4^o$ & $-49.2^o$ & $-64.0^o$\\
 \noindent
 The final step involved the estimation of the actual and perceived angular velocities based on the already obtained data and the calculation of the error as a consequence to the difference between them. By using the following formula, we estimate the angular velocities and the errors for both the slow and the fast recordings.
 \begin{equation}
-\omega = RotationalDisplacement * MovementDuration
+\omega = \frac{\theta_{displacement}}{t_{movement}} 
 \end{equation}
 
-\noindent where \[RotationalDisplacement = EndingAngle - StartingAngle\]
-and  $\omega$ stands for the angular velocity.
+\noindent where \[\theta_{displacement} = \theta_{end} - \theta_{start}\]
+$\theta$ represents the angle from the horizontal (positive direction being counter-clockwise) and $\omega$ stands for the angular velocity.
  
 \noindent 
 The angular velocities and the corresponding errors for both the slow and the fast recordings are presented on the following table.
@@ -289,10 +289,10 @@ The angular velocities and the corresponding errors for both the slow and the fa
 \center
 \begin{tabular}{| c | r | r | r |}
 \hline
-Movement Speed & Perceived Angular Velocity & Actual Angular Velocity & Error \\
+Movement Speed & Perceived Angular Velocity/$^o/s$ & Actual Angular Velocity/$^o/s$ & Error/\% \\
 \hline
-Fast & $-408.0 ^o/s$ & $-705.0 ^o/s$ & $42.12\%$ \\
-Slow & $-67.2 ^o/s$ & $-89.4 ^o/s$ & $24.8\%$ \\
+Fast & $-272.0$ & $-470.4$ & $42.1\%$ \\
+Slow & $-80.0$ & $-102.1$ & $24.8\%$ \\
 \hline
 \end{tabular}
 \caption{Perceived and actual angular velocities and percentage errors.}
@@ -302,7 +302,7 @@ Slow & $-67.2 ^o/s$ & $-89.4 ^o/s$ & $24.8\%$ \\
 
 \subsection{Camera Angle Relative to Subject}
 \noindent 
-The fact that the application is to be used for the purpose of dancing means that an investigation into how the angle between the camera and the subject affects the results can help draw useful conclusions. For instance, in a certain dance the subject may turn so that only the profile is visible to the camera. Doing so without losing any information due to occlusion because of on of the arms or legs being covered by the rest of the body, may prove to be vital for the software to work effectively. 
+The fact that the application is to be used for the purpose of dancing means that an investigation into how the angle between the camera and the subject affects the results can help draw useful conclusions. For instance, in a certain dance the subject may turn so that only the profile is visible to the camera. Doing so without losing any information, due to occlusion because of on of the arms or legs being covered by the rest of the body, may prove to be vital for the software to work effectively. 
  
 \noindent
 To test for this, the subject stands in front of the camera, lifting both arms from the sides in the positive y direction up to $90^o$ and then back down. The subject then turns $90^o$ about the y-axis so that the right arm is in front of the camera, but the left arm is covered by the body. The results can be seen in Figure \ref{angle_camera}. As it can be seen here, at frame number 322 there is a peak in the y-coordinate of the right hand and the x-coordinate, but at frame 465 when the subject turns, only the y-coordinate changes. This is perfectly understandable since the the x-coordinate now stays roughly constant whilst the arm is raised. For the left arm however, both the x-coordinate and y-coordinate values are lost when the subject rotates, and thus there is a loss of information due to self occlusion. This may be a problem, however, as long as the teacher's information is also lost, it may not be.  
@@ -318,7 +318,7 @@ To test for this, the subject stands in front of the camera, lifting both arms f
 It may be necessary and efficient to use one camera to track multiple people and then process all the data in that way. This way fewer cameras would be needed for a particular class size with greater complexity being passed to the data analysis stages. 
  
 \noindent
-In order to discover how many subject can be tracked by a single camera, we incrementally increase the number of people standing in front of the camera until the results are unsatisfactory for at least one of the skeletons. Unsatisfactory implies a skeleton deviating away from the body or discontinuity in tracking any of the joints. \texttt{NiTE} officially claims that the library can track as many people as can possibly fit physically in the camera range. We find that the maximum number of people that can fit in the cameras field of view with all joints showing 5. 
+In order to discover how many subject can be tracked by a single camera, we incrementally increase the number of people standing in front of the camera until the results are unsatisfactory for at least one of the skeletons. Unsatisfactory implies a skeleton deviating away from the body or discontinuity in tracking any of the joints. \texttt{NiTE} officially claims that the library can track as many people as can possibly fit physically in the camera range. We find that the maximum number of people that can fit in the cameras field of view with all joints showing to be 5. 
  
 \begin{figure}[H]
 \centering
@@ -396,7 +396,7 @@ During our preliminary tests, the camera range which allows subject tracking and
 
 \medskip \noindent We also determined that there is a significant correlation between the dancer's speed of movement and the error in the skeleton's data with respect to the actual position of the subject. During very fast moves, the skeleton sometimes lags significantly behind the subject, which may lead to losing some data precision. This will however depend strongly on the nature of the dance move and its effect on the assessment of the student is unclear at this point.
 
-\medskip \noindent As mentioned in the previous sections, some dance moves may require the performer to turn around and therefore cover some parts of their body from the camera. This unwanted, yet also unavoidable issue can partially be resolved by placing multiple RGB-D devices close to each side of the subject. This however poses another problem of the interference between them. We will investigate the actual cost/performance ratio of this solution in the following sections, when we will evaluate the performance of the automatic scoring algorithms with respect to the data from multiple cameras.
+\medskip \noindent As mentioned in the previous sections, some dance moves may require the performer to turn around and therefore cover some parts of their body from the camera. This unwanted, yet also unavoidable issue can partially be resolved by placing multiple RGB-D devices close to each side of the subject. This however poses another problem of the interference between them. %We will investigate the actual cost/performance ratio of this solution in the following sections, when we will evaluate the performance of the automatic scoring algorithms with respect to the data from multiple cameras.
 
 \clearpage
 
@@ -406,7 +406,7 @@ This section discusses the way in which the application will be used to evaluate
 
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.6]{data_analysis_modules.jpg}
+\includegraphics[scale=0.4]{data_analysis_modules.jpg}
 \caption{High level design of modules necessary for automatic evaluation of student data.}
 \label{modules}
 \end{figure}
@@ -426,7 +426,7 @@ The initial algorithm is of the form:
 \setlength{\itemsep}{1pt}
 \setlength{\parskip}{0pt}
 \setlength{\parsep}{0pt}
-	\item Make a sliding window of 10 to 14 frames.
+	\item Make a sliding window of $n_{f}$ number of frames.
 	\item Take the sum of the absolute difference between the frames for each of the coordinates (x, y, z).
 	\item Find the window with the minimum for the sum of absolute derivative of the positions of the coordinates between frames.
 	\item Get initial index of that frame.
@@ -516,7 +516,7 @@ As it can be seen from Figure \ref{motionless_rh_lf} though the frame numbers th
 \clearpage
 \subsection{Translation Module}
 \noindent
-The purpose of the Translation Module is to take the original joint's positions data and remove the information which only adds unnecessary complexity, such as the exact position of the subject in the view of the camera. This is needed, because when we are comparing two dance moves, we do not want the score to be affected by the position of the dancers in the range of the camera e.g. in one recording the subject is standing on the left, in the other on the right. In order words, the score should be based only on what moves the dancers perform, not where do they perform them. In order to achieve that, we are going to shift all joint's positions so that they are relative to the torso joint, which we treat as the origin of the coordinate system.
+The purpose of the Translation Module is to take the original jointss position data and remove the information which only adds unnecessary complexity, such as the exact position of the subject in the view of the camera. This is needed, because when we are comparing two dance moves, we do not want the score to be affected by the position of the dancers in the range of the camera e.g. in one recording the subject is standing on the left, in the other on the right. In order words, the score should be based only on what moves the dancers perform, not where do they perform them. In order to achieve that, we are going to shift all joint's positions so that they are relative to the torso joint, which we treat as the origin of the coordinate system.
 
 \subsubsection{Algorithm Description}
 \noindent
@@ -554,11 +554,11 @@ Figure \ref{pre_translation_graph} (right) shows the same signal after running i
 %\subsection{Scaling Module}
 \subsection{Data Alignment Module}
 \noindent
-The purpose of the Data Alignment Module is to identify the frame shift between two similar dance moves and then align the signals, making it possible for them to be compared. The raw data will always be significantly misaligned, since it is virtually impossible for two people to start performing the dance at the exact same fraction of a second. The problem is visualised in figure \ref{pre_post_alginment} which shows the initial misalignment between two signals as well as the result of passing them through the Data Alignment Module.
+The purpose of the Data Alignment Module is to identify the frame shift between two similar dance moves and then align the signals, making it possible for them to be compared. The raw data will always be significantly misaligned, since it is highly unlikely for two people to start performing the dance at the exact same fraction of a second. The problem is visualised in figure \ref{pre_post_alginment} which shows the initial misalignment between two signals as well as the result of passing them through the Data Alignment Module.
 
 \subsubsection{Algorithm Description}
 \noindent
-The first algorithm, which was eventually modified, was of the form:
+The first algorithm, which has been eventually modified, was of the form:
 \begin{compactitem}
 \setlength{\itemsep}{1pt}
 \setlength{\parskip}{0pt}
@@ -567,7 +567,7 @@ The first algorithm, which was eventually modified, was of the form:
 	\item For every cross-correlation, identify the frame lag for which the cross-correlation has the biggest value.
 	\item Calculate the mean of the frame lags and return it as the most likely misalignment value.
 \end{compactitem}
-This version of the algotithm caused problems described in Section 2.4.3 and therefore the last step was changed to:
+This version of the algotithm caused problems described in Section 2.4.3 and therefore the last step has been changed to:
 \begin{compactitem}
 \setlength{\itemsep}{1pt}
 \setlength{\parskip}{0pt}
@@ -597,7 +597,7 @@ This module had to be changed from its first iteration due to the fact that some
 
 \subsection{Data Analysis Module}
 \noindent
-The main purpose of the Data Analysis Module is to identify parts in the student's performance which deviated from the teacher's. Therefore, some notion of signal similarity needs to be established. We decided that the approach would be to calculate the sum of squared errors  between the teacher's and student's performance, normalised by some arbitrary value to keep ``reasonable'' errors within a predefined range. Since at this point the signals are already aligned, we are not performing any processing with time-lags spanning over the entire length of the signals any more. However, since we are aware of the potential small misalignment, we allow a 21-sample-wide window of error in which we perform the initial data analysis. After establishing the best score for the entire signal, we additionally perform a windowed analysis which considers only parts of the signals at a time.
+The main purpose of the Data Analysis Module is to identify parts in the student's performance which deviate from the teacher's. Therefore, some notion of signal similarity needs to be established. We have decided that the approach would be to calculate the sum of squared errors  between the teacher's and student's performance, normalised by some arbitrary value to keep ``reasonable'' errors within a predefined range. Since at this point the signals are already aligned, we are not performing any processing with time-lags spanning over the entire length of the signals any more. However, since we are aware of the potential small misalignment, we allow a 21-sample-wide window of error in which we perform the initial data analysis. After establishing the best score for the entire signal, we additionally perform a windowed analysis which considers only parts of the signals at a time.
 \subsubsection{Algorithm Description}
 \noindent
  The exact steps of the algorithm are:
@@ -610,7 +610,7 @@ The main purpose of the Data Analysis Module is to identify parts in the student
 	\item Divide answer by number of samples and by a value $\alpha$, where $\alpha$ is a number that keeps the error in the range of $[0, 1]$ for reasonable errors. 
 	\item Average all data for each joint to get 15 scores, one for each joint.
 	\item Calculate the simple score for 21 different time lags $l \in [-10;10]$ to get the highest score in a time frame of $\pm 0.333s$
- according to the following formula:
+ according to Equation \eqref{error_eq}.
 	\item For the time lag with the lowest average error per frame, perform the windowed analysis, which consists of splitting the signal into variable number of equal parts, and calculating the previously described score for each part and joint separately in order to give more insightful results. 
 \end{compactitem}
 \subsubsection{Testing}
@@ -861,6 +861,11 @@ Upon termination the algorithm gives an order 4 polynomial with parameters:
 \noindent 
 Though it has chosen a polynomial that is two orders higher than the initial formula used to create the test data, as it can be seen in the figure, in the selected region the curve seems to fit the data set very well. It can therefore be concluded that the score function could be calculated with this method and ported into the product before becoming commercial. A few professional dance teachers could be hired to score a large set of pre-recorded dances and the error vs score given by the teachers could be used as the training data for the algorithm. 
 
+
+%% Limitations of software
+%   If a dance is too fast, high errors will be incurred.
+%   Can't track dances in which there is too much interaction between 2 people e.g. salsa.
+%   Student cannot be too short or tall compared to teacher or may need scaling module also. 
 
 \clearpage
 \section*{Appendix}
