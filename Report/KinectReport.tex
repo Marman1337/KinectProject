@@ -1,4 +1,4 @@
-\documentclass[a4paper]{article}
+\documentclass[10pt,a4paper]{article}
 %\textheight = 630pt
 %\textwidth = 480pt
 %\topmargin = 3pt
@@ -7,6 +7,14 @@
 %\headheight = 1pt
 %\oddsidemargin = 1pt
 %\marginparwidth = 1pt
+
+%% Save space packages and settings %%
+\usepackage{paralist}
+\usepackage[compact]{titlesec}
+\titlespacing{\section}{0pt}{0.5ex}{0.5ex}
+\titlespacing{\subsection}{0pt}{0.5ex}{0ex}
+\titlespacing{\subsubsection}{0pt}{0.5ex}{0ex}
+\linespread{0.9}
 
 \usepackage{changepage}
 \usepackage[hmargin=2cm, vmargin=2cm]{geometry}
@@ -21,8 +29,6 @@
 \usepackage{courier}
 \usepackage{float}
 \restylefloat{table}
-
-
 
 %%%%%%%%%%%%%%%%%%% Code %%%%%%%%%%%%%%%%%%%%%
 \usepackage{color}
@@ -77,7 +83,7 @@ escapeinside={\%*}{*)} % if you want to add a comment within your code
 \setcounter{page}{1}
 \section{Kinect \& NiTE Software Evaluation}
 \noindent
-To determine a method of evaluating the dance student, the limitations of the camera and the NiTE software must first be evaluated with respect to the criteria addressed below. To do this, we use the UserViewer Application that comes as a sample with the NiTE software library with the camera elevated 75 cm above the ground, within the 60 cm to 180 cm range that is suggested by Microsoft for optimal tracking. 
+To determine a method of evaluating the dance student, the limitations of the camera and the \texttt{NiTE} software must first be evaluated with respect to the criteria addressed below. To do this, we use the UserViewer Application that comes as a sample with the \texttt{NiTE} software library with the camera elevated 75 cm above the ground, within the 60 cm to 180 cm range that is suggested by Microsoft for optimal tracking. 
 
 \subsection{Camera Range}
 \noindent 
@@ -172,12 +178,12 @@ Since the skeleton is primarily fitted using the depth sensor of the RGB-D camer
 \noindent
 To test for the possibility that obstructions could interfere with the fitting of the skeleton on the subject, we place a chair in various positions around the subject and in front of the subject. We then do the same with another person walking in the vicinity of the subject. This scenario is probably more relevant to the situations which may be encountered in a dance class room.  
 \subsubsection{Chair}
-\noindent Positioning the chair adjacent to the subject produces interesting results. When the subject is holding the chair, the NiTE software falsely identifies the chair as an extension of the subject's body and, thus, tries to fit a skeleton to the chair as well as the person. This can be seen in Figure \ref{lifting_chair}.
+\noindent Positioning the chair adjacent to the subject produces interesting results. When the subject is holding the chair, the \texttt{NiTE} software falsely identifies the chair as an extension of the subject's body and, thus, tries to fit a skeleton to the chair as well as the person. This can be seen in Figure \ref{lifting_chair}.
 
 \begin{figure}[H]
 \center
 \includegraphics[scale=0.2]{Head_Chair.jpg} 
-\caption{Subject is lifting the chair. NiTE cannot distinguish between the chair and the subject.}
+\caption{Subject is lifting the chair. \texttt{NiTE} cannot distinguish between the chair and the subject.}
 \label{lifting_chair}
 \end{figure}
 
@@ -205,10 +211,10 @@ In this experiment, the second person walks within different ranges of the camer
 \end{figure} 
 
 \noindent
-Moreover, when a subject stands directly in front of another, NiTE is not always able to distinguish between the two subjects and thus it appears as if they are one body. This is shown in Figure \ref{occlusion1}.
+Moreover, when a subject stands directly in front of another, \texttt{NiTE} is not always able to distinguish between the two subjects and thus it appears as if they are one body. This is shown in Figure \ref{occlusion1}.
 
 \subsection{Velocity of Movement}
-Another important criterion regarding the performance of both the Kinect camera and the NiTE software package is the accuracy and responsiveness of the skeleton fitting. Our evaluation procedure consists of the recording of a predefined movement which would provide us with the subject's velocity information and would allow us to estimate how accurately the fitted skeleton is able to follow the actual move, by calculating the error between the perceived and the actual movement. In particular, we would record a slower and a faster versions of the same movement and compare the corresponding errors.
+Another important criterion regarding the performance of both the Kinect camera and the \texttt{NiTE} software package is the accuracy and responsiveness of the skeleton fitting. Our evaluation procedure consists of the recording of a predefined movement which would provide us with the subject's velocity information and would allow us to estimate how accurately the fitted skeleton is able to follow the actual move, by calculating the error between the perceived and the actual movement. In particular, we would record a slower and a faster versions of the same movement and compare the corresponding errors.
 
 \noindent
 The subject's reference movement was determined to be a $180^o$ degrees right arm move starting from a vertical position with the hand facing the ceiling and following an arc. The testing procedure includes the modification of the \texttt{UserViewer} sample program in order to record twice the predefined movement as performed by the subject at high and low speeds. 
@@ -307,7 +313,7 @@ To test for this, the subject stands in front of the camera, lifting both arms f
 It may be necessary and efficient to use one camera to track multiple people and then process all the data in that way. This way fewer cameras would be needed for a particular class size with greater complexity being passed to the data analysis stages. 
  
 \noindent
-In order to discover how many subject can be tracked by a single camera, we incrementally increase the number of people standing in front of the camera until the results are unsatisfactory for at least one of the skeletons. Unsatisfactory implies a skeleton deviating away from the body or discontinuity in tracking any of the joints. NiTE officially claims that the library can track as many people as can possibly fit physically in the camera range. We find that the maximum number of people that can fit in the cameras field of view with all joints showing 5. 
+In order to discover how many subject can be tracked by a single camera, we incrementally increase the number of people standing in front of the camera until the results are unsatisfactory for at least one of the skeletons. Unsatisfactory implies a skeleton deviating away from the body or discontinuity in tracking any of the joints. \texttt{NiTE} officially claims that the library can track as many people as can possibly fit physically in the camera range. We find that the maximum number of people that can fit in the cameras field of view with all joints showing 5. 
  
 \begin{figure}[H]
 \centering
@@ -381,7 +387,7 @@ As it can be seen above, both sets of data give very similar standard deviations
 \noindent
 During our preliminary tests, the camera range which allows subject tracking and skeleton fitting was determined to be within 1.2 - 4.1 metres. While it is more than enough for various video game applications, the range would clearly be a significant constraint when trying to implement the camera tracking in a dance studio. From this result we can immediately rule out the idea of placing multiple cameras in elevated positions of a room, since such positioning would further reduce the already small tracking range.
 
-\medskip \noindent While the lighting conditions of a room had absolutely no effect on the tracking capabilities of the camera, we determined that various objects in the vicinity to the subject can sometimes be wrongly identified as parts of the body. Additionally, the ones further away from the tracked person might disrupt the continuity of the skeleton tracking and the data reported from it. We determined, that the number of people who can be actively tracked with the NiTE software is not restricted in any way other than how many can physically fit in the range of the camera, however any occlusion between them and the camera can create a serious challenge in assessing the performance of multiple dance students. In other words, it might be difficult to automatically assess the performance of multiple dancers in front of the same camera, due to the nature of this activity, during which the performers will inevitably obstruct themselves.
+\medskip \noindent While the lighting conditions of a room had absolutely no effect on the tracking capabilities of the camera, we determined that various objects in the vicinity to the subject can sometimes be wrongly identified as parts of the body. Additionally, the ones further away from the tracked person might disrupt the continuity of the skeleton tracking and the data reported from it. We determined, that the number of people who can be actively tracked with the \texttt{NiTE} software is not restricted in any way other than how many can physically fit in the range of the camera, however any occlusion between them and the camera can create a serious challenge in assessing the performance of multiple dance students. In other words, it might be difficult to automatically assess the performance of multiple dancers in front of the same camera, due to the nature of this activity, during which the performers will inevitably obstruct themselves.
 
 \medskip \noindent We also determined that there is a significant correlation between the dancer's speed of movement and the error in the skeleton's data with respect to the actual position of the subject. During very fast moves, the skeleton sometimes lags significantly behind the subject, which may lead to losing some data precision. This will however depend strongly on the nature of the dance move and its effect on the assessment of the student is unclear at this point.
 
@@ -391,7 +397,7 @@ During our preliminary tests, the camera range which allows subject tracking and
 
 \section{Automatic Evaluation of Student Performance}
 \noindent
-This section discusses the way in which the application will be used to evaluate the student's performance with respect to the teacher's. The software will have to detect errors that the student has made, detect time periods in which the student performed poorly as well as satisfactory and be able to give a few other useful statistics for the teacher to also grade the student. Using only information from the data points of the joints from NiTE and the RGB-D stream from OpenNI, various things need to be considered and multiple modules will need to be created to handle the data. 
+This section discusses the way in which the application will be used to evaluate the student's performance with respect to the teacher's. The software will have to detect errors that the student has made, detect time periods in which the student performed poorly as well as satisfactory and be able to give a few other useful statistics for the teacher to also grade the student. Using only information from the data points of the joints from \texttt{NiTE} and the RGB-D stream from OpenNI, various things need to be considered and multiple modules will need to be created to handle the data. 
 
 \begin{figure}[H]
 \centering
@@ -404,14 +410,14 @@ This section discusses the way in which the application will be used to evaluate
 
 \subsection{Motionless Activity Detector}
 \noindent 
-With the current design in mind the student will be asked to first move slightly so that the NiTE software can calibrate and start tracking. After this, the student will be required to stand still in a predefined position for a minimum amount of time, to be decided later, after which the student may start dancing. This will be the position that the next module will use to translate the coordinates with respect to a specific origin. The purpose of this module is to find a frame number during which the student will be in the standing still phase. 
+With the current design in mind the student will be asked to first move slightly so that the \texttt{NiTE} software can calibrate and start tracking. After this, the student will be required to stand still in a predefined position for a minimum amount of time, to be decided later, after which the student may start dancing. This will be the position that the next module will use to translate the coordinates with respect to a specific origin. The purpose of this module is to find a frame number during which the student will be in the standing still phase. 
 
 \noindent 
 The algorithm is simple. Under the assumption that there is a time period in which there is relatively little movement the algorithm is only required to find a period with the least sum of the absolute change in all the coordinates. The aforementioned ``period'' takes the form of a non-overlapping sliding window over the joint data, for each joint. This sliding window has to contain the data of less than half the number of frames that are recorded in the minimum time period of motionless activity so that a frame within that period of time can be found, if the student did indeed stand still for the period of time. The window must be sufficiently large however to get a sum over a wide enough range of values so that momentarily motionless activity is not detected instead at some other point. 
 
 \noindent
 The initial algorithm is of the form:
-\begin{itemize}
+\begin{compactitem}
 \setlength{\itemsep}{1pt}
 \setlength{\parskip}{0pt}
 \setlength{\parsep}{0pt}
@@ -421,7 +427,7 @@ The initial algorithm is of the form:
 	\item Get initial index of that frame.
 \item Do this for all major joints and make sure all initial indices match.
 \item If they do not all match, take the majority. 
-\end{itemize}
+\end{compactitem}
 \noindent
 To test this we perfom various tests.
 \subsubsection{Test for One Joint}
@@ -510,7 +516,7 @@ The purpose of the Translation Module is to take the original joint's positions 
 \subsubsection{Algorithm Description}
 \noindent
 The initial algorithm is of the form:
-\begin{itemize}
+\begin{compactitem}
 \setlength{\itemsep}{1pt}
 \setlength{\parskip}{0pt}
 \setlength{\parsep}{0pt}
@@ -518,7 +524,7 @@ The initial algorithm is of the form:
 	\item Crop the original data to begin from the starting frame.
 	\item Find the (x, y, z) coordinates of the torso during the motionless activity by using the frame number obtained in the first step.
 	\item For all joints: subtract the coordinates of the torso.
-\end{itemize}
+\end{compactitem}
 
 \subsubsection{Testing}
 \noindent
@@ -548,23 +554,23 @@ The purpose of the Data Alignment Module is to identify the frame shift between 
 \subsubsection{Algorithm Description}
 \noindent
 The first algorithm, which was eventually modified, was of the form:
-\begin{itemize}
+\begin{compactitem}
 \setlength{\itemsep}{1pt}
 \setlength{\parskip}{0pt}
 \setlength{\parsep}{0pt}
 	\item Calculate the cross-correlation between the teacher and student for every joint's x and y dimension.
 	\item For every cross-correlation, identify the frame lag for which the cross-correlation has the biggest value.
 	\item Calculate the mean of the frame lags and return it as the most likely misalignment value.
-\end{itemize}
+\end{compactitem}
 This version of the algotithm caused problems described in Section 2.4.3 and therefore the last step was changed to:
-\begin{itemize}
+\begin{compactitem}
 \setlength{\itemsep}{1pt}
 \setlength{\parskip}{0pt}
 \setlength{\parsep}{0pt}
 	\item Calculate the mean and standard deviation of all frame lags for which the cross-correlation has the highest value.
 	\item Discard the frame lags which lie outside of one standard deviation of the mean.
 	\item Calculate the average value of all other frame lags and return it as the most likely misalignment value.
-\end{itemize}
+\end{compactitem}
 
 \subsubsection{Testing \& Results}
 
@@ -590,7 +596,7 @@ The main purpose of the Data Analysis Module is to identify parts in the student
 \subsubsection{Algorithm Description}
 \noindent
  The exact steps of the algorithm are:
-\begin{itemize}
+\begin{compactitem}
 \setlength{\itemsep}{1pt}
 \setlength{\parskip}{0pt}
 \setlength{\parsep}{0pt}
@@ -601,14 +607,14 @@ The main purpose of the Data Analysis Module is to identify parts in the student
 	\item Calculate the simple score for 21 different time lags $l \in [-10;10]$ to get the highest score in a time frame of $\pm 0.333s$
  according to the following formula:
 	\item For the time lag with the lowest average error per frame, perform the windowed analysis, which consists of splitting the signal into variable number of equal parts, and calculating the previously described score for each part and joint separately in order to give more insightful results. 
-\end{itemize}
+\end{compactitem}
 \subsubsection{Testing}
-\begin{itemize}
+\begin{compactitem}
 \item{Case 1: Student correctly repeats the dance.}
 \item{Case 2: Student correctly repeats for a first portion of the dance but makes a single mistake with only a few joints close to the end.}
 \item{Case 3: Student makes a mistake at the beginning but recovers.}
 \item{Case 4: Student makes dramatic errors throughout.}
-\end{itemize}
+\end{compactitem}
 
 \noindent
 The purpose of these test cases is to measure the effectiveness of the algorithm in different scenarios. First and foremost, the module should give a better score ( a lower error ) for students that more closely represent the dance as performed by the teacher. Furthermore, the algorithm should be able to identify upon receiving a low score,  the set of joints which is mostly responsible and the time frame in which the errors occurred. It should also be able to give a very low score for anything that does not represent the dance at all, in all time frames.
@@ -705,26 +711,37 @@ To make the code quicker and to make the whole application integrate more easily
 This has been made much more time efficient by the use of the external library chosen for linear algebra called Armadillo.  The reason this library has been chosen is due to its similarity in syntax to Matlab but also due to its speed. Armadillo claims on its website \textbf{(Add reference http://arma.sourceforge.net/speed.html)} to be approximately up to 15 times faster for the operations that are needed for our algorithms than two competing libraries IT++ and NEWMAT. Also being well established and well documented, the transition has been fairly simple.  
 \subsection{Design}
 \subsubsection{High Level Design}
-\begin{itemize}
+\begin{compactitem}
 \item{How the front end and back end interact.}
 \item{Block Diagram.}
-\end{itemize}
+\end{compactitem}
 \subsubsection{Classes}
-\begin{itemize}
-\item{The two classes: ScoreProcessor and Skeletons.}
-\item{Purpose and relationship.}
-\item{Abstraction.}
-\end{itemize}
+\subsubsection*{A. Skeleton}
+\noindent 
+The \texttt{Skeleton} class adds a layer of abstraction to the raw data received from the \texttt{NiTE} software, which comes as an $m\times n $ matrix where $m$ is the number of frames and $n$ is 60 representing a 4-tuple (x, y, z, c) for each of the 15 joints.
+
+\noindent
+The class contains one data member \texttt{mat data}, where \texttt{mat} is an Armadillo class for a matrix. To enhance the level of abstraction, it also contains an enumerated data type that can be used to access different joints' data, called \texttt{Joint}. Additionally, in order to make the code in the application more readable and maintainable, a few static constant members have been added to represent the number of joints (15) and the number of columns in the matrix (60). It also includes all the standard methods, such as constructors, destructors, getters and setters.
+
+\subsubsection*{B. ScoreProcessor}
+\noindent
+The ScoreProcessor class' is in charge of taking the raw data from \texttt{NiTE}, analysing it and producing a score for a certain student performance, as compared to the teacher's.
+
+\noindent 
+The main data members of the class are two \texttt{Skeleton} objects to store the input teacher and student data and two more which contatin the data after processing (aligned, translated, truncated etc.). The class also contains 3 objects of type \texttt{mat}, which represent the windowed score for each coordinate, the windowed score for each joint and the average score for each window.
+
+\noindent
+Apart from the standard methods, such as getters, setters and others, the class contains a single public procedure, \texttt{analyse()}, which calls a number of private methods in order to perform the complete processing and set all the output data members. The high level data flow inside the \texttt{analyse()} method mimics that in Figure \ref{modules}. In this way, the user of the class only needs to be informed about how to use a few methods and can then just call the getters to retrieve the data that is of interest to them, adding a further layer of abstraction to the data.
 \subsection{Development}
 \subsubsection{Unit Testing}
 \noindent
 Given that the detailed low level design inside each method has been thoroughly tested in Matlab, the C++ code has been tested on a unit bases with emphasis on black box testing. Every method created in C++ has been tested against its Matlab counterpart with respect to its outputs, without considering its inner workings. Moreover, a test-first approach has been followed in order to minimise the amount of time between when an error is inserted into the program and when the error is detected and removed. The unit testing procedure is as follows:
-\begin{itemize}
+\begin{compactitem}
 \item Consider each method in isolation from the complete system.
 \item Write small program in C++ that calls method (before being created) and prints results in a text file in a directory accessible to Matlab.
 \item Write the method in C++.
 \item Write a script in Matlab that calls the corresponding fully tested Matlab function and then loads the text file that contains the outputs of the C++ program and compares the two results.
-\end{itemize}
+\end{compactitem}
 
 \noindent
 In this way, the process of testing is automated and the detection and removal of code defects can be done at the earliest possible stage. In addition, the code development can be easily divided among different pairs due to its decoupled modules. As long as the specifications and interface of each function is clearly defined, including its outputs, each pair can fully test and debug their part of the code without the need to wait for previous code to be developed.
