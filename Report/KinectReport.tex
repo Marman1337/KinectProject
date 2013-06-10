@@ -68,12 +68,12 @@ escapeinside={\%*}{*)} % if you want to add a comment within your code
 
 \begin{document}
 \title{Using Kinect to Evaluate Dance Performances\\ Third Year Group Project}
-\author{Stylianos Venieris, CID \\
-Marcin Baginski, CID \\
-Theo Pavlakou, CID \\
-Zeping Xue, CID \\
-Yijie Ge, CID \\
-Hesam Ipakchi, CID }
+\author{Stylianos Venieris, \texttt{sv1310}, CID \\
+Marcin Baginski, \texttt{mgb10}, CID \\
+Theo Pavlakou, \texttt{tp710}, CID \\
+Hesam Ipakchi, \texttt{hi310}, CID \\
+Zeping Xue, \texttt{zx510}, CID \\
+Yijie Ge, \texttt{yg2510}, CID }
 \date{\today}
 \maketitle
 \pagenumbering{gobble}
@@ -98,11 +98,11 @@ To test for the camera's range, we lay a tape measure on the ground starting fro
 \center
 \begin{tabular}{ | l | c |}
 \hline
-Distance from Camera/cm & Description of Performance \\
+Distance from Camera & Description of Performance \\
 \hline
-60 & Identification of subject. Tracking. No skeleton.\\
-120 & Skeleton fitted\\
-410 & Tracking is lost\\
+60 cm & Identification of subject. Tracking. No skeleton.\\
+120 cm & Skeleton fitted\\
+410 cm & Tracking is lost\\
 \hline
 \end{tabular}
 \caption{Subject moving away from camera. Subject height 180 cm.}
@@ -113,11 +113,11 @@ Distance from Camera/cm & Description of Performance \\
 \center
 \begin{tabular}{ | l | c |}
 \hline
-Distance from Camera/cm & Description of Performance \\
+Distance from Camera & Description of Performance \\
 \hline
-100 & Identification of subject. Tracking. No skeleton.\\
-120 & Skeleton fitted\\
-410 & Tracking is lost\\
+100 cm & Identification of subject. Tracking. No skeleton.\\
+120 cm & Skeleton fitted\\
+410 cm & Tracking is lost\\
 \hline
 \end{tabular}
 \caption{Subject moving towards camera. Subject height 180 cm.}
@@ -128,11 +128,11 @@ Distance from Camera/cm & Description of Performance \\
 \center
 \begin{tabular}{ | l | c |}
 \hline
-Distance from Camera/cm & Description of Performance \\
+Distance from Camera & Description of Performance \\
 \hline
-70 & Identification of subject. Tracking. No skeleton.\\
-110 & Skeleton fitted\\
-430 & Tracking is lost\\
+70 cm & Identification of subject. Tracking. No skeleton.\\
+110 cm & Skeleton fitted\\
+430 cm & Tracking is lost\\
 \hline
 \end{tabular}
 \caption{Subject moving away camera. Subject height 150 cm.}
@@ -143,18 +143,18 @@ Distance from Camera/cm & Description of Performance \\
 \center
 \begin{tabular}{ | l | c |}
 \hline
-Distance from Camera/cm & Description of Performance \\
+Distance from Camera & Description of Performance \\
 \hline
-50 & Identification of subject. Tracking. No skeleton.\\
-110 & Skeleton fitted\\
-430 & Tracking is lost\\
+50 cm & Identification of subject. Tracking. No skeleton.\\
+110 cm & Skeleton fitted\\
+430 cm & Tracking is lost\\
 \hline
 \end{tabular}
 \caption{Subject moving towards camera. Subject height 150cm.}
 \label{cam_range_150_toward}
 \end{table}
 \noindent
-These results highlight the fact that the camera has a restricted field of view and therefore the number of people that each camera can support is limited. This will have to be further considered when finalising a design for the application. One thing to note is that, since  the optimum distance away from the camera, with respect to tracking, is in the range of 1.5m to 3.5m it would not be beneficial to have the camera(s) in the corners of the room. This would cause a huge amount of the already small range to be wasted due to the height of the room. 
+These results highlight the fact that the camera has a restricted field of view and therefore the number of people that each camera can support is limited. This will have to be further considered when finalising a design for the application. One thing to note is that, since  the optimum distance away from the camera, with respect to tracking, is in the range of 1.5 m to 3.5 m it would not be beneficial to have the camera(s) in the corners of the room. This would cause a huge amount of the already small range to be wasted due to the height of the room. 
 
 \subsection{Effect of Varying Lighting Conditions}
 \noindent
@@ -205,7 +205,7 @@ Putting the chair directly in front of the subject at the level of its waits doe
 % Not finished. It seems that this section is quite a hand waving description of the experiment because we probably could have been more thorough.  
 \subsubsection{Person}
 \noindent
-In this experiment, the second person walks within different ranges of the camera and the initial subject. Interestingly enough, even at quite fast speeds of movement, the camera can calibrate and track both people quite quickly. This will most probably not be a limitation when designing the software. Nevertheless, in the case where two dancers are dancing next to each other, the interference between their bodies distorts the received IR reading and the accuracy of the perceived joints' position deteriorates substantially.Figure \ref{occlusion1} indicates the inaccurate tracking of the right hand of one of the subjects due to its obstruction by the dancer on the left.
+In this experiment, the second person walks within different ranges of the camera and the initial subject. Interestingly enough, even at quite fast speeds of movement, the camera can calibrate and track both people quite quickly. This will most probably not be a limitation when designing the software. Nevertheless, in the case where two dancers are dancing next to each other, the interference between their bodies distorts the received IR reading and the accuracy of the perceived joints' position deteriorates substantially. Figure \ref{occlusion1} indicates the inaccurate tracking of the right hand of one of the subjects due to its obstruction by the dancer on the left.
 
 \begin{figure}[H]
 \center
@@ -247,10 +247,10 @@ By capturing the recorded passage with a Desktop camera at a rate of 24 frames p
 \center
 \begin{tabular}{| c | r | r |}
 \hline
-Movement Speed & Number of Frames & Movement Duration/sec\\
+Movement Speed & Number of Frames & Movement Duration\\
 \hline
-Fast & 3 & 0.083\\
-Slow & 16 & 0.670\\
+Fast & 3 & 0.083 s\\
+Slow & 16 & 0.670 s\\
 \hline
 \end{tabular}
 \caption{Movement duration for fast and slow versions, recorded at 24 fps.}
@@ -263,7 +263,7 @@ The next step of the responsiveness evaluation is the estimation of the arm's ac
 \center
 \begin{tabular}{| c | r | r | r |}
 \hline
-Movement Speed & Starting Angle/deg & Perceived Ending Angle/deg & Actual Ending Angle/deg\\
+Movement Speed & Starting Angle & Perceived Ending Angle & Actual Ending Angle\\
 \hline
 Fast & $3.5^o$ & $-30.5^o$ & $-55.3^o$\\
 Slow & $4.4^o$ & $-49.2^o$ & $-64.0^o$\\
@@ -289,10 +289,10 @@ The angular velocities and the corresponding errors for both the slow and the fa
 \center
 \begin{tabular}{| c | r | r | r |}
 \hline
-Movement Speed & Perceived Angular Velocity/$^o/s$ & Actual Angular Velocity/$^o/s$ & Error/\% \\
+Movement Speed & Perceived Angular Velocity & Actual Angular Velocity & Error \\
 \hline
-Fast & $-408.0$ & $-705.0$ & $42.12\%$ \\
-Slow & $-67.2$ & $-89.4$ & $24.8\%$ \\
+Fast & $-408.0 ^o/s$ & $-705.0 ^o/s$ & $42.12\%$ \\
+Slow & $-67.2 ^o/s$ & $-89.4 ^o/s$ & $24.8\%$ \\
 \hline
 \end{tabular}
 \caption{Perceived and actual angular velocities and percentage errors.}
