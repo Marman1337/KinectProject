@@ -1,4 +1,4 @@
-\documentclass[10pt,a4paper]{article}
+\documentclass[11pt,a4paper]{article}
 %\textheight = 630pt
 %\textwidth = 480pt
 %\topmargin = 3pt
@@ -13,7 +13,7 @@
 \usepackage[compact]{titlesec}
 \titlespacing{\section}{0pt}{0.5ex}{0.5ex}
 \titlespacing{\subsection}{0pt}{0.5ex}{0ex}
-\titlespacing{\subsubsection}{0pt}{0.5ex}{0ex}
+\titlespacing{\subsubseSction}{0pt}{0.5ex}{0ex}
 \linespread{0.9}
 
 \usepackage{changepage}
@@ -725,22 +725,65 @@ To make the code quicker and to make the whole application integrate more easily
 \subsection{Linear Algebra Library Choice}
 This has been made much more time efficient by the use of the external library chosen for linear algebra called Armadillo.  The reason this library has been chosen is due to its similarity in syntax to Matlab but also due to its speed. Armadillo claims on its website \textbf{(Add reference http://arma.sourceforge.net/speed.html)} to be approximately up to 15 times faster for the operations that are needed for our algorithms than two competing libraries IT++ and NEWMAT. Also being well established and well documented, the transition has been fairly simple.  
 \subsection{Design}
+The software solution entails designing and implementing an application with a user interface enabling four main modes. Live performances must be recorded and the data logged during the performance, whilst also providing the option of subsequent replay. The extended features of recognition of errors with automated score generation and augmented reality are considered also. The user interface is required to be centred on the end user, so that it should be easily understood and controlled by non-technical users, such as dance students and teachers. Additionally, it is assumed the application will run on a computer with all necessary drivers installed required to use an RGB-D camera as well as the middleware OpenNI and NiTE 2.
 \subsubsection{High Level Design}
-\begin{compactitem}
-\item{How the front end and back end interact.}
-\item{Block Diagram.}
-\end{compactitem}
-\subsubsection{Classes}
-\subsubsection*{A. Skeleton}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.15]{System_Architecture_Diagram.jpg}
+\caption{High level block diagram of subsystems and interactions.}
+\label{system_architecture}
+\end{figure}
+
+The solution is based upon three main modules that interact to make up the application. Dialog boxes feature commonly in many applications, and users are very familiar with their appearance and control mechanisms, therefore they are used as the interface for the application. In this way, the user can control the application by passing through a series of dialog boxes (through button clicks), each responsible for a different operation. The Dialog Box Management system, manages all the dialog boxes that the user can possibly encounter, including the content that appear on them and how they communicate with one another.
+
+\noindent
+In order to detect and fit skeletons to the performer, the use of the frameworks: OpenNI and NiTE 2 are required. The images from the camera need to be displayed onto the screen, and accomplishing this requires a library called GLUT, an OpenGL utility toolkit. The management of the resources obtained from the frameworks and the usage through code utilising GLUT is achieved by the Sample Viewer system.
+
+\noindent
+The generation of scores, given the data for student and teacher skeletons, is achieved through the Dance Assessment system. These scores are then displayed on the screen as the application is running, and can be included as part of a report card file. As aforementioned, a library called Armadillo has been used, to provide functionality for processing intensive methods.
+
+\noindent
+The combination of these elements is facilitated through global variables with external linkage and objects that are accessible and editable by all the modules. Especially, the interface between the dialog boxes and the Sample Viewer system is essential in displaying content within dialog boxes. This is accomplished by creating two classes that contains methods, which create a child window inside the dialog box, and renders this window with GLUT-based functions from the Sample Viewer module, providing the effect of displaying content within a section of the dialog box window.
+
+\subsubsection{Subsystems}
+
+\subsubsection*{Dialog Box Management System}
+
+This system contains a set of classes, one for each dialog box the user can possibly interact with.
+
+\noindent
+The appearance of each dialog box has been designed by focusing on the end user, and the decision was actively taken to tailor the content within each dialog box to be simple to understand and control.  There are several examples of particular choices taken that demonstrate this.
+There is a mechanism by which the user can watch tutorial videos that detail knowledge and specify how to use each feature of the application.
+
+\noindent
+When loading or saving files (such as recording or data files), the dialog boxes that appear are standard and used by many Windows-based applications, providing familiarity to this process for the user.
+Within the mode that compares the skeletons of the student and teacher, included is a slider that acts as a media control, so that the user can move the position of the sliderís pointer essentially rewinding or forwarding the content on the screen, providing additional flexibility in the interaction between the user and the application.
+
+\subsubsection*{Sample Viewer System}
+
+This system contains one class that includes all methods to display the content on the screen for all modes, as well as all the necessary helper functions. This particular module uses extensively, the frameworks: OpenNI, NiTE 2 and GLUT. OpenNI is required for sensing the performers, in both depth and RGB colour modes, whilst NiTE 2 provides the ability to track the performers and fit skeletons on them. These two libraries were chosen since they are advanced and robust middleware, work on several platforms (which is important considering they are third-party software), and the interfacing between them and GLUT is very simple. The data obtained from each frame of the live camera/recording stream, using functions from OpenNi and NiTE 2, is displayed onto the screen in the form of a texture map within the GLUT environment. The skeletons are displayed using GLUT points and lines with the coordinate data obtained from NiTE 2 functions.
+
+\noindent
+This module also demonstrates features orientated towards the end user, mainly with respect to how the content displayed interacts with the user.
+
+\noindent
+For all the main modes of the application, parts of the content displayed can be switched on or off by the user using a click of a button. This results in the ability to control aspects of the image, such as the background of a recording, the tracked skeleton within the augmented reality mode and either the student or teacher skeleton within the automated score mode.
+Also integrated is a function which display a graph plotting the studentís average score for each window in the form of a bar chart, so that the user, for example, can locate which window has a particular low score and can return to play content from this specific window with just two clicks.
+
+\subsubsection*{Dance Assessment System}
+\noindent 
+The Dance Assessment System consists of two classes which work together to increase the level of abstraction for the user of the system and to make the system easily extendible for future use. 
+\subsubsection*{A. Skeleton Class}
 \noindent 
 The \texttt{Skeleton} class adds a layer of abstraction to the raw data received from the \texttt{NiTE} software, which comes as an $m\times n $ matrix where $m$ is the number of frames and $n$ is 60 representing a 4-tuple (x, y, z, c) for each of the 15 joints.
 
 \noindent
 The class contains one data member \texttt{mat data}, where \texttt{mat} is an Armadillo class for a matrix. To enhance the level of abstraction, it also contains an enumerated data type that can be used to access different joints' data, called \texttt{Joint}. Additionally, in order to make the code in the application more readable and maintainable, a few static constant members have been added to represent the number of joints (15) and the number of columns in the matrix (60). It also includes all the standard methods, such as constructors, destructors, getters and setters.
 
-\subsubsection*{B. ScoreProcessor}
+\subsubsection*{B. ScoreProcessor Class}
 \noindent
-The ScoreProcessor class' is in charge of taking the raw data from \texttt{NiTE}, analysing it and producing a score for a certain student performance, as compared to the teacher's.
+The \texttt{ScoreProcessor} class is in charge of taking the raw data from \texttt{NiTE}, analysing it and producing a score for a certain student performance, as compared to the teacher's.
 
 \noindent 
 The main data members of the class are two \texttt{Skeleton} objects to store the input teacher and student data and two more which contatin the data after processing (aligned, translated, truncated etc.). The class also contains 3 objects of type \texttt{mat}, which represent the windowed score for each coordinate, the windowed score for each joint and the average score for each window.
