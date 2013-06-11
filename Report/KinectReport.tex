@@ -744,7 +744,7 @@ In order to detect and fit skeletons to the performer, the use of the frameworks
 The generation of scores, given the data for student and teacher skeletons, is achieved through the Dance Assessment system. These scores are then displayed on the screen as the application is running, and can be included as part of a report card file. As aforementioned, a library called Armadillo has been used, to provide functionality for processing intensive methods.
 
 \noindent
-The combination of these elements is facilitated through global variables with external linkage and objects that are accessible and editable by all the modules. Especially, the interface between the dialog boxes and the Sample Viewer system is essential in displaying content within dialog boxes. This is accomplished by creating two classes that contains methods, which create a child window inside the dialog box, and renders this window with GLUT-based functions from the Sample Viewer module, providing the effect of displaying content within a section of the dialog box window.
+The combination of these elements is facilitated by external linkage and objects that are accessible and editable by all the modules. The interface between the dialog boxes and the Sample Viewer system is essential in displaying content within dialog boxes. This is accomplished by creating two classes that contains methods, which create a child window inside the dialog box, and renders this window with GLUT-based functions from the Sample Viewer module, providing the effect of displaying content within a section of the dialog box window.
 
 \subsubsection{Subsystems}
 
@@ -753,23 +753,21 @@ The combination of these elements is facilitated through global variables with e
 This system contains a set of classes, one for each dialog box the user can possibly interact with.
 
 \noindent
-The appearance of each dialog box has been designed by focusing on the end user, and the decision was actively taken to tailor the content within each dialog box to be simple to understand and control.  There are several examples of particular choices taken that demonstrate this.
-There is a mechanism by which the user can watch tutorial videos that detail knowledge and specify how to use each feature of the application.
+The appearance of each dialog box has been designed by focusing on the end user, and the decision has actively been taken to tailor the content within each dialog box to be simple to understand and control.  There are several examples of particular choices taken that demonstrate this. For instance, there is a mechanism by which the user can watch tutorial videos that detail knowledge and specify how to use each feature of the application.
 
 \noindent
 When loading or saving files (such as recording or data files), the dialog boxes that appear are standard and used by many Windows-based applications, providing familiarity to this process for the user.
-Within the mode that compares the skeletons of the student and teacher, included is a slider that acts as a media control, so that the user can move the position of the sliderís pointer essentially rewinding or forwarding the content on the screen, providing additional flexibility in the interaction between the user and the application.
+Within the mode that compares the skeletons of the student and teacher, included is a slider that acts as a media control, so that the user can move the position of the slider's pointer essentially rewinding or forwarding the content on the screen, providing additional flexibility in the interaction between the user and the application.
 
 \subsubsection*{Sample Viewer System}
 
-This system contains one class that includes all methods to display the content on the screen for all modes, as well as all the necessary helper functions. This particular module uses extensively, the frameworks: OpenNI, NiTE 2 and GLUT. OpenNI is required for sensing the performers, in both depth and RGB colour modes, whilst NiTE 2 provides the ability to track the performers and fit skeletons on them. These two libraries were chosen since they are advanced and robust middleware, work on several platforms (which is important considering they are third-party software), and the interfacing between them and GLUT is very simple. The data obtained from each frame of the live camera/recording stream, using functions from OpenNi and NiTE 2, is displayed onto the screen in the form of a texture map within the GLUT environment. The skeletons are displayed using GLUT points and lines with the coordinate data obtained from NiTE 2 functions.
+This system contains one class that includes all methods to display the content on the screen for all modes, as well as all the necessary helper functions. This particular module uses extensively the frameworks: OpenNI, NiTE 2 and GLUT. OpenNI is required for sensing the performers, in both depth and RGB colour modes, whilst NiTE 2 provides the ability to track the performers and fit skeletons on them. These two libraries have been chosen since they are advanced and robust middleware, work on several platforms (which is important considering they are third-party software), and the interfacing between them and GLUT is very simple. The data obtained from each frame of the live camera/recording stream, using functions from OpenNi and NiTE 2, is displayed onto the screen in the form of a texture map within the GLUT environment. The skeletons are displayed using GLUT points and lines with the coordinate data obtained from NiTE 2 functions.
 
 \noindent
 This module also demonstrates features orientated towards the end user, mainly with respect to how the content displayed interacts with the user.
 
 \noindent
-For all the main modes of the application, parts of the content displayed can be switched on or off by the user using a click of a button. This results in the ability to control aspects of the image, such as the background of a recording, the tracked skeleton within the augmented reality mode and either the student or teacher skeleton within the automated score mode.
-Also integrated is a function which display a graph plotting the studentís average score for each window in the form of a bar chart, so that the user, for example, can locate which window has a particular low score and can return to play content from this specific window with just two clicks.
+For all the main modes of the application, parts of the content displayed can be switched on or off by the user using a click of a button. This results in the ability to control aspects of the image, such as the background of a recording, the tracked skeleton within the augmented reality mode and either the student or teacher skeleton within the automated score mode. Also, integrated is a function which can display a graph plotting the student's average score for each window in the form of a bar chart, so that the user, for example, can locate which window has a particular low score and can return to play content from this specific window with just two clicks.
 
 \subsubsection*{Dance Assessment System}
 \noindent 
