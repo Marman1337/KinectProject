@@ -829,6 +829,8 @@ The problem with our current score function, as discussed in the previous sectio
 \noindent
 The method chosen to do this is based on a well known machine learning method called Linear Regression. There are many variations and the method chosen in this case is based on Multivariant Linear Regression using polynomials. The basic concept can be described as such. Given a certain ordered polynomial, a line of best fit can be found for a given data set by reducing the error squared between the points and the line. For example, if the data seems to be able to be represented by a second order polynomial, this can be represented as such, where $\epsilon$ is the error and $S$ is the score.
 
+
+
 \begin{equation}
 \hat{S} = \begin{pmatrix}
   \theta_0 &&
@@ -912,6 +914,12 @@ Upon termination the algorithm gives an order 4 polynomial with parameters:
 \noindent 
 Though it has chosen a polynomial that is two orders higher than the initial formula used to create the test data, as it can be seen in the figure, in the selected region the curve seems to fit the data set very well. It can therefore be concluded that the score function could be calculated with this method and ported into the product before becoming commercial. A few professional dance teachers could be hired to score a large set of pre-recorded dances and the error vs score given by the teachers could be used as the training data for the algorithm. 
 
+
+\subsection{Using Multiple Cameras}
+Theoretically, the use of multiple cameras would result in a higher accuracy in evaluation. It is possible that a single camera loses its tracking of part of the body while recording. For example, one arm will not be seen by the camera after the user turned 90 degrees. The use of second camera which records from another angle may track the whole skeleton after the first camera lost part of it. With this hypothesis, we carried out tests for the multiple cameras configuration.
+
+\noindent
+Two cameras are placed as one sees the front view of the subject and another sees the side view initially. Subjects are asked to make simple moves with 90 degrees turn. We first record the teacher performance, then several student performances. Data from both cameras are passed to our automatic evaluation system, scores for each camera recording are hence generated. Evaluation of only one recording is improved by the use of second camera - the second camera tracks the whole skeleton at all time, thus after the first camera loses its tracking of one arm, the second camera tracks it well. Scores come from both camera are combined, the low score due to lost of track from first camera is lifted up by the high score from the second camera. However, the test results are not consistent. Other tests always give bad score after the subject turns 90 degrees. This is due to the fact that the second camera is not able to track the whole skeleton at all time, it requires time to calibrate after the subject turns 90 degree. The use of multiple cameras does not improve the accuracy of evaluation.
 
 %% Limitations of software
 %   If a dance is too fast, high errors will be incurred.
