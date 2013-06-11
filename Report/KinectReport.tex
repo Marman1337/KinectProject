@@ -70,7 +70,7 @@ escapeinside={\%*}{*)} % if you want to add a comment within your code
 \title{Using Kinect to Evaluate Dance Performances\\ Third Year Group Project}
 \author{Stylianos Venieris, \texttt{sv1310}, CID \\
 Marcin Baginski, \texttt{mgb10}, CID \\
-Theo Pavlakou, \texttt{tp710}, CID \\
+Theo Pavlakou, \texttt{tp710}, CID 00651782\\
 Hesam Ipakchi, \texttt{hi310}, CID \\
 Zeping Xue, \texttt{zx510}, CID \\
 Yijie Ge, \texttt{yg2510}, CID }
@@ -723,9 +723,9 @@ The following figure (Figure \ref{error_score}) illustrates the transformation o
 \noindent
 To make the code quicker and to make the whole application integrate more easily it has been chosen to port all the code, written initially in Matlab, to C++. 
 \subsection{Linear Algebra Library Choice}
-This has been made much more time efficient by the use of the external library chosen for linear algebra called Armadillo.  The reason this library has been chosen is due to its similarity in syntax to Matlab but also due to its speed. Armadillo claims on its website \textbf{(Add reference http://arma.sourceforge.net/speed.html)} to be approximately up to 15 times faster for the operations that are needed for our algorithms than two competing libraries IT++ and NEWMAT. Also being well established and well documented, the transition has been fairly simple.  
+This has been made much more time efficient by the use of the external library chosen for linear algebra called Armadillo.  The reason this library has been chosen is due to its similarity in syntax to Matlab but also due to its speed. Armadillo claims\footnote{Armadillo [Internet]. 06/2013 [updated 04/06/2013]. Available from http://arma.sourceforge.net/speed.html.} to be approximately up to 15 times faster for the operations that are needed for our algorithms than two competing libraries IT++ and NEWMAT. Also being well established and well documented, the transition has been fairly simple.  
 \subsection{Design}
-The software solution entails designing and implementing an application with a user interface enabling four main modes. Live performances must be recorded and the data logged during the performance, whilst also providing the option of subsequent replay. The extended features of recognition of errors with automated score generation and augmented reality are considered also. The user interface is required to be centred on the end user, so that it should be easily understood and controlled by non-technical users, such as dance students and teachers. Additionally, it is assumed the application will run on a computer with all necessary drivers installed required to use an RGB-D camera as well as the middleware OpenNI and NiTE 2.
+The software solution entails designing and implementing an application with a user interface enabling four main modes. Live performances must be recorded and the data logged during the performance, whilst also providing the option of subsequent replay. The extended features of recognition of errors with automated score generation and augmented reality are considered also. The user interface is required to be centred on the end user, so that it should be easily understood and controlled by non-technical users, such as dance students and teachers. Additionally, it is assumed the application will run on a computer with all necessary drivers installed required to use an RGB-D camera.
 \subsubsection{High Level Design}
 
 \begin{figure}[H]
