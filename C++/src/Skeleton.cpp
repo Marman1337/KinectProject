@@ -46,6 +46,10 @@ mat Skeleton::getData(void)
 	return this->data;
 }
 
+/************************************************
+** Operators
+*************************************************/
+
 Skeleton Skeleton::operator=(const Skeleton &c)
 {
 	if(this == &c)

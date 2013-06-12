@@ -10,6 +10,10 @@ private:
 	mat data;
 
 public:
+	/**
+	*	An enum used to get each joint of the data by specifying using
+	*	their names and not numbers.
+	*/
 	typedef enum 
 	{
 		HEAD = 0,

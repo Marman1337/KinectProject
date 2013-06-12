@@ -12,10 +12,17 @@ using namespace std;
 #define NUM_WINDOWS 10
 #define SCALING_FACTOR 30000
 
+/**
+*	A struct representing the 4 tuple nature of each joint.
+*/
 struct jointData
 {
 	float x, y, z, confidence;
 };
+
+/**
+*	An struct giving a vector of type jointData for each of the 15 joints.
+*/
 
 struct skeletonData
 {
@@ -41,8 +48,8 @@ class ScoreProcessor
 private:
 	Skeleton teacher; 				// raw teacher data
 	Skeleton student; 				// raw student data
-	Skeleton alignedTeacher; 		// aligned teacher data
-	Skeleton alignedStudent; 		// aligned student data
+	Skeleton alignedTeacher; 			// aligned teacher data
+	Skeleton alignedStudent; 			// aligned student data
 	int windowLength; 				// the window length given as number of frames
 	double xTranslationTeacher;
 	double yTranslationTeacher;
@@ -92,6 +99,7 @@ private:
 	mat removeConfidence(mat data);
 	double penalise(int i);
 	mat raiseToPower(double base, mat exponent);
+	vec ScoreProcessor::weightVector(double headWeight, double armWeight, double legWeight, double hipWeight, double torsoWeight);
 
 	// Conversion functions
 	skeletonData convertSkeleton(mat inputData);
@@ -105,9 +113,9 @@ public:
 	ScoreProcessor(const ScoreProcessor &c);
 
 	// Constructors to make
-	ScoreProcessor(Skeleton teacherSkeleton, Skeleton studentSkeleton, headWeight, armWeight, legWeight, hipWeight, torsoWeight);
-	ScoreProcessor(const char *file_teach, const char *file_stud, headWeight, armWeight, legWeight, hipWeight, torsoWeight);
-	ScoreProcessor(ifstream &file_teach, ifstream &file_stud, headWeight, armWeight, legWeight, hipWeight, torsoWeight);
+	ScoreProcessor(Skeleton teacherSkeleton, Skeleton studentSkeleton, double headWeight, double armWeight, double legWeight, double hipWeight, double torsoWeight);
+	ScoreProcessor(const char *file_teach, const char *file_stud,  double headWeight, double armWeight, double legWeight, double hipWeight, double torsoWeight);
+	ScoreProcessor(ifstream &file_teach, ifstream &file_stud,  double headWeight, double armWeight, double legWeight, double hipWeight, double torsoWeight);
 
 	// Destructor
 	~ScoreProcessor(void);
@@ -119,6 +127,7 @@ public:
 	void setStudent(Skeleton stud);
 	void setStudent(const char *file_stud);
 	void setStudent(ifstream &file_stud);
+	void setJointWeights(double headWeight, double armWeight, double legWeight, double hipWeight, double torsoWeight);
 
 	// Getters
 	Skeleton getTeacher(void);
@@ -140,10 +149,6 @@ public:
 
 	// Analyse
 	void analyse();
-
-	// Tests
-	//mat errorToScore(double xScale, double xOffset, mat errorMat);
-
 };
 
 #endif /* SCORE_PROC_H */

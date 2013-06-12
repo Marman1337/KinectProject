@@ -14,6 +14,11 @@ ScoreProcessor::ScoreProcessor(void)
 	this->coordinateScoreWindowed = mat(0,0);
 	this->jointScoreWindowed = mat(0,0);
 	this->avgTotalScore = NULL;
+	this->headWeight = 0;
+	this->armWeight = 0;
+	this->legWeight = 0;
+	this->hipWeight = 0;
+	this->torsoWeight = 0;
 }
 
 ScoreProcessor::ScoreProcessor(Skeleton teacherSkeleton, Skeleton studentSkeleton)
@@ -26,6 +31,12 @@ ScoreProcessor::ScoreProcessor(Skeleton teacherSkeleton, Skeleton studentSkeleto
 	this->coordinateScoreWindowed = mat(0,0);
 	this->jointScoreWindowed = mat(0,0);
 	this->avgTotalScore = NULL;
+	this->headWeight = 0;
+	this->armWeight = 0;
+	this->legWeight = 0;
+	this->hipWeight = 0;
+	this->torsoWeight = 0;
+
 }
 
 ScoreProcessor::ScoreProcessor(const char *file_teach, const char *file_stud)
@@ -38,6 +49,11 @@ ScoreProcessor::ScoreProcessor(const char *file_teach, const char *file_stud)
 	this->coordinateScoreWindowed = mat(0,0);
 	this->jointScoreWindowed = mat(0,0);
 	this->avgTotalScore = NULL;
+	this->headWeight = 0;
+	this->armWeight = 0;
+	this->legWeight = 0;
+	this->hipWeight = 0;
+	this->torsoWeight = 0;
 }
 
 ScoreProcessor::ScoreProcessor(ifstream &file_teach, ifstream &file_stud)
@@ -50,6 +66,11 @@ ScoreProcessor::ScoreProcessor(ifstream &file_teach, ifstream &file_stud)
 	this->coordinateScoreWindowed = mat(0,0);
 	this->jointScoreWindowed = mat(0,0);
 	this->avgTotalScore = NULL;
+	this->headWeight = 0;
+	this->armWeight = 0;
+	this->legWeight = 0;
+	this->hipWeight = 0;
+	this->torsoWeight = 0;
 }
 
 ScoreProcessor::ScoreProcessor(const ScoreProcessor &c)
@@ -62,6 +83,67 @@ ScoreProcessor::ScoreProcessor(const ScoreProcessor &c)
 	this->coordinateScoreWindowed = c.coordinateScoreWindowed;
 	this->jointScoreWindowed = c.jointScoreWindowed;
 	this->avgTotalScore = c.avgTotalScore;
+	this->headWeight = 0;
+	this->armWeight = 0;
+	this->legWeight = 0;
+	this->hipWeight = 0;
+	this->torsoWeight = 0;	
+}
+
+// Constructors for score-weighting
+
+ScoreProcessor::ScoreProcessor(Skeleton teacherSkeleton, Skeleton studentSkeleton, double headWeight, double armWeight, double legWeight, double hipWeight, double torsoWeight)
+{
+	this->teacher = teacherSkeleton;
+	this->student = studentSkeleton;
+	this->alignedTeacher = Skeleton();
+	this->alignedStudent = Skeleton();
+	this->windowLength = 1;	
+	this->coordinateScoreWindowed = mat(0,0);
+	this->jointScoreWindowed = mat(0,0);
+	this->avgTotalScore = NULL;
+	this->headWeight = headWeight;
+	this->armWeight = armWeight;
+	this->legWeight = legWeight;
+	this->hipWeight = hipWeight;
+	this->torsoWeight = torsoWeight;
+}
+
+ScoreProcessor::ScoreProcessor(const char *file_teach, const char *file_stud,  double headWeight, double armWeight, double legWeight, double hipWeight, double torsoWeight)
+{
+
+	this->teacher = Skeleton(file_teach);
+	this->student = Skeleton(file_stud);
+	this->alignedTeacher = Skeleton();
+	this->alignedStudent = Skeleton();
+	this->windowLength = 1;	
+	this->coordinateScoreWindowed = mat(0,0);
+	this->jointScoreWindowed = mat(0,0);
+	this->avgTotalScore = NULL;
+	this->headWeight = headWeight;
+	this->armWeight = armWeight;
+	this->legWeight = legWeight;
+	this->hipWeight = hipWeight;
+	this->torsoWeight = torsoWeight;
+
+}
+
+
+ScoreProcessor::ScoreProcessor(ifstream &file_teach, ifstream &file_stud,  double headWeight, double armWeight, double legWeight, double hipWeight, double torsoWeight)
+{
+	this->teacher = Skeleton(file_teach);
+	this->student = Skeleton(file_stud);
+	this->alignedTeacher = Skeleton();
+	this->alignedStudent = Skeleton();
+	this->windowLength = 1;	
+	this->coordinateScoreWindowed = mat(0,0);
+	this->jointScoreWindowed = mat(0,0);
+	this->avgTotalScore = NULL;
+	this->headWeight = headWeight;
+	this->armWeight = armWeight;
+	this->legWeight = legWeight;
+	this->hipWeight = hipWeight;
+	this->torsoWeight = torsoWeight;
 }
 
 ScoreProcessor::~ScoreProcessor() {}
@@ -137,6 +219,16 @@ void ScoreProcessor::setStudent(ifstream &file_stud)
 	this->jointScoreWindowed = mat(0,0);
 	this->avgTotalScore = NULL;
 }
+
+void ScoreProcessor::setJointWeights(double headWeight, double armWeight, double legWeight, double hipWeight, double torsoWeight)
+{
+	this->headWeight = headWeight;
+	this->armWeight = armWeight;
+	this->legWeight = legWeight;
+	this->hipWeight = hipWeight;
+	this->torsoWeight = torsoWeight;
+}
+
 
 /************************************************
 ** Getters
@@ -359,6 +451,9 @@ double ScoreProcessor::calculateScore(Skeleton teacherInterim, Skeleton studentI
 		errorJointVec(i/4) = accumulate / 3;
 	}
 
+
+
+
 	return sum(errorJointVec)/Skeleton::numberOfJoints;
 }
 
@@ -459,17 +554,37 @@ mat ScoreProcessor::calculateJointScoreWindow(mat coordinateScore)
 		jointError.col(i/4) = sumError/3;
 	}
 
-	return jointError;
+	if(this->armWeight > 0 && this->headWeight > 0 && this->legWeight > 0 && this->hipWeight > 0 && this ->torsoWeight > 0)
+	{
+		vec weightingVector = weightVector(headWeight, armWeight, legWeight, hipWeight, torsoWeight);
+		mat scoreWindowJoint = zeros(NUM_WINDOWS, 15);
+	
+	for(Skeleton::Joint i = Skeleton::HEAD; i <= Skeleton::RIGHT_FOOT; i = (Skeleton::Joint) (i + Skeleton::nextJoint))
+	{
+		vec sumScore;
+		sumScore = jointError.col(i/4);
+		scoreWindowJoint.col(i/4) = weightingVector(i/4) * sumScore;
+	}
+
+	return scoreWindowJoint;
+	} else return jointError;
 }
 
 /**
-*	Calculates average error for each window.
-* Returns a 10x1 Matrix.
+*	Calculates average score for each window.
+* 	Returns a 10x1 Matrix.
 */
 
 colvec ScoreProcessor::calculateAvgScoreWindow(mat jointScore)
 {
-	return colvec(sum(jointScore,1)/Skeleton::numberOfJoints);
+	if(this->armWeight > 0 && this->headWeight > 0 && this->legWeight > 0 && this->hipWeight > 0 && this ->torsoWeight > 0)
+	{
+		double sumWeighting = this->armWeight * 4 + this->headWeight *2 + this->legWeight * 4 + this->hipWeight * 2 + this ->torsoWeight *3;
+		colvec scoreWindowAverage = sum(jointScore,1)/sumWeighting;
+	
+	return scoreWindowAverage;
+	} else return colvec(sum(jointScore,1)/Skeleton::numberOfJoints);
+	
 }
 
 /**
@@ -562,7 +677,7 @@ void ScoreProcessor::undoTranslate(void)
 
 /**
 *	Returns a matrix that has the same number of columns as the input matrix and one less row. 
-* 	Represents the difference of rows in series.
+* Represents the difference of rows in series.
 */
 
 mat ScoreProcessor::differenceMatrix(mat inputMatrix)
@@ -943,4 +1058,36 @@ void ScoreProcessor::analyse()
 
 	this->calculateAvgTotalScore();
 	this->undoTranslate();
+}
+
+/**
+*	Returns a vector of the weights for each joint when taking the weighted average for the score.
+*/
+
+vec ScoreProcessor::weightVector(double headWeight, double armWeight, double legWeight, double hipWeight, double torsoWeight)
+{
+	vec weightingVector = ones(15);
+
+	weightingVector(Skeleton::HEAD/4) = headWeight;
+	weightingVector(Skeleton::NECK/4) = headWeight;
+	
+	
+	weightingVector(Skeleton::LEFT_HAND/4) = armWeight;
+	weightingVector(Skeleton::RIGHT_HAND/4) = armWeight;
+	weightingVector(Skeleton::LEFT_ELBOW/4) = armWeight;
+	weightingVector(Skeleton::RIGHT_ELBOW/4) = armWeight;
+
+	weightingVector(Skeleton::LEFT_FOOT/4) = legWeight;
+	weightingVector(Skeleton::RIGHT_FOOT/4) = legWeight;
+	weightingVector(Skeleton::LEFT_KNEE/4) = legWeight;
+	weightingVector(Skeleton::RIGHT_KNEE/4) = legWeight;
+
+	weightingVector(Skeleton::LEFT_HIP/4) = hipWeight;
+	weightingVector(Skeleton::RIGHT_HIP/4) = hipWeight;
+	
+	weightingVector(Skeleton::LEFT_SHOULDER/4) = torsoWeight;
+	weightingVector(Skeleton::RIGHT_SHOULDER/4) = torsoWeight;
+	weightingVector(Skeleton::TORSO/4) = torsoWeight;
+	
+	return weightingVector;
 }
