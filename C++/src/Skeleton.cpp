@@ -4,6 +4,11 @@ const int Skeleton::nextJoint = 4;
 const int Skeleton::numberOfColumns = 60;
 const int Skeleton::numberOfJoints = 15;
 
+
+/************************************************
+** Constructors
+*************************************************/
+
 Skeleton::Skeleton(void)
 {
 	this->data = mat(0,0);
@@ -54,6 +59,10 @@ Skeleton Skeleton::operator=(const Skeleton &c)
 
 	return *this;
 }
+
+/************************************************
+** Getters
+*************************************************/
 
 colvec Skeleton::getJoint(int indexOfJoint)
 {

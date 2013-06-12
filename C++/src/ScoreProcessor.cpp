@@ -363,8 +363,8 @@ double ScoreProcessor::calculateScore(Skeleton teacherInterim, Skeleton studentI
 }
 
 /**
-*	Calculates score for each coordinate in a windowed manner.
-* Returns a 10x60 Matrix.
+*	Calculates error for each coordinate in a windowed manner.
+*   Returns a 10x60 Matrix.
 */
 
 mat ScoreProcessor::calculateCoordinateScoreWindow(Skeleton teacherInterim, Skeleton studentInterim)
@@ -408,6 +408,11 @@ mat ScoreProcessor::calculateCoordinateScoreWindow(Skeleton teacherInterim, Skel
 	return coordinateError;
 }
 
+
+/**
+*	Removes every 4th column in the data matrix, which represents
+*	the confidence level.
+*/
 mat ScoreProcessor::removeConfidence(mat data)
 {
 	int rows = data.n_rows;
@@ -427,14 +432,18 @@ mat ScoreProcessor::removeConfidence(mat data)
 	return output;
 }
 
+/**
+*	The function used to penalise jitter between two signals.
+*/
+
 double ScoreProcessor::penalise(int i)
 {
 	return -0.5*exp(-std::pow(0.3*i,2)/2) + 1.5;
 }
 
 /**
-*	Calculates score for each joint in a windowed manner.
-* Returns a 10x15 Matrix.
+*	Calculates error for each joint in a windowed manner.
+* 	Returns a 10x15 Matrix.
 */
 
 mat ScoreProcessor::calculateJointScoreWindow(mat coordinateScore)
@@ -454,7 +463,7 @@ mat ScoreProcessor::calculateJointScoreWindow(mat coordinateScore)
 }
 
 /**
-*	Calculates average score for each window.
+*	Calculates average error for each window.
 * Returns a 10x1 Matrix.
 */
 
@@ -553,7 +562,7 @@ void ScoreProcessor::undoTranslate(void)
 
 /**
 *	Returns a matrix that has the same number of columns as the input matrix and one less row. 
-* Represents the difference of rows in series.
+* 	Represents the difference of rows in series.
 */
 
 mat ScoreProcessor::differenceMatrix(mat inputMatrix)
@@ -589,9 +598,9 @@ mat ScoreProcessor::differenceMatrix(mat inputMatrix)
 
 /**
 *	Returns the frame which corresponds to corresponds to motionless activity for 
-* a single coordinate. 
-* The larger the window length, the longer the student must stand still but the
-* more accurate the result.
+* 	a single coordinate. 
+* 	The larger the window length, the longer the student must stand still but the
+* 	more accurate the result.
 */
 
 int ScoreProcessor::motionlessFrame(colvec coordData, const int windowLen)
@@ -808,8 +817,8 @@ void ScoreProcessor::zeroPad( mat &inputSignal1, mat &inputSignal2 )
 
 /**
 *	Aligns the two signals and returns them in the two input matrices 
-* passed by reference. The delay estimate is used as the number of 
-* frames that they are out of sync. 
+* 	passed by reference. The delay estimate is used as the number of 
+* 	frames that they are out of sync. 
 */
 
 void ScoreProcessor::align(Skeleton skeleton1, Skeleton skeleton2, int delayEstimate, mat &correctSignal1, mat &correctSignal2)
@@ -891,7 +900,7 @@ void ScoreProcessor::calculateAvgTotalScore(void)
 }
 
 /**
-*	A wrapper function that can be used to set all the member variables. 
+*	A wrapper function that can be used to set all the member variables of the object. 
 */
 
 void ScoreProcessor::analyse()
