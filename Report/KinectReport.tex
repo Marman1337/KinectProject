@@ -67,7 +67,7 @@ escapeinside={\%*}{*)} % if you want to add a comment within your code
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
-\title{Using Kinect to Evaluate Dance Performances\\ Third Year Group Project}
+\title{Using the Kinect to Evaluate Dance Performances\\ Third Year Group Project}
 \author{Stylianos Venieris, \texttt{sv1310}, CID 00654096\\
 Marcin Baginski, \texttt{mgb10}, CID 00656667\\
 Theo Pavlakou, \texttt{tp710}, CID 00651782\\
@@ -81,16 +81,16 @@ Yijie Ge, \texttt{yg2510}, CID 00650073 }
 
 
 \section*{\center Executive Summary}
-The rapid progress in the Machine Learning and Computer Vision areas has led to an emergence of new algorithms and devices. The devices of particular interest are RGB-D cameras which record the depth information as well as colour. What this means, is that what looks like a single, simple camera can capture essentially a 3D video stream, creating huge opportunities for new interactive software. The broad possibilities that come with such equipment have resulted in the radical improvement of the human-computer interaction, where the user is no longer required to communicate with the computer or console via any handheld device. “Using Kinect to Evaluate Dance Performances” proposes a possible application of these technologies to a dance classroom environment, where the students' performance can be automatically marked against the teacher's pre-recorded dance.
+The rapid progress in the Machine Learning and Computer Vision areas has led to an emergence of new algorithms and devices. The devices of particular interest are RGB-D cameras which record the depth information as well as colour. What this means, is that what looks like a single, simple camera can capture essentially a 3D video stream, creating huge opportunities for new interactive software. The broad possibilities that come with such equipment have resulted in the radical improvement of the human-computer interaction, where the user is no longer required to communicate with the computer or console via any handheld device. ``Using the Kinect to Evaluate Dance Performance'' proposes a possible application of these technologies to a dance classroom environment, where the students' performance can be automatically marked against the teacher's pre-recorded dance.
 
 \noindent
-An initial fundamental consideration is the evaluation of the available hardware (Microsoft Kinect and Asus Xtion) as well the software development kits which allow to communicate with the RGB-D cameras. Chapter 1 describes in detail the methodology and results of the assessment of the cameras and the \texttt{OpenNI} and \texttt{NiTE} open source software packages, which provide human recognition in the video recorded by a RGB-D camera. The results of a variety of tests based on the assessment criteria, such as the lighting conditions, occlusion during student’s performance or the interference levels among multiple cameras, show that despite some limitations, such as the small range of the camera and the limited number of people that can be actively tracked, the equipment can be successfully employed for the purposes of this application.
+An initial fundamental consideration is the evaluation of the available hardware (Microsoft Kinect and Asus Xtion) as well the software development kits which allow to communicate with the RGB-D cameras. Chapter 1 describes in detail the methodology and results of the assessment of the cameras and the \texttt{OpenNI} and \texttt{NiTE} open source software packages, which provide human recognition in the video recorded by an RGB-D camera. The results of a variety of tests based on some assessment criteria, such as the lighting conditions, occlusion during student's performance or the interference levels among multiple cameras, show that despite some limitations, such as the small range of the camera and the limited number of people that can be actively tracked, the equipment can be successfully employed for the purposes of this application.
 
 \noindent
-The automatic evaluation of student performance based on the Kinect RGB-D recordings lies at the core of the application. As Chapter 2 highlights, the algorithmic design is based on signal processing and aims to ensure the accurate comparison with the teacher’s performance. The detailed description of the algorithms includes analysis of the challenges that have been dealt with, the testing procedures and the experimental results which indicate their correctness and robustness, but also their assumptions and limitations. The C++ prototype is extensively discussed in Chapter 3, where the design decisions that concern the presentation, including the user interface and the graphics, as well as the software implementation of the algorithms are detailed and the integration process is discussed. Finally, further extensions are explained in Chapter 4. A more flexible marking scheme is suggested which allows the teacher to define the importance of each part of the student’s body during a dance. Furthermore, to increase the marking accuracy, it is suggested that a professional dance instructor is hired to grade a set of performances before the release of the product. By the means of a sophisticated machine learning algorithm, a marking scheme can be derived, based on professional input rather than arbitrary metrics.
+The automatic evaluation of student performance based on the RGB-D recordings lies at the core of the application. As Chapter 2 highlights, the algorithmic design is based on signal processing and aims to ensure the accurate comparison with the teacher's performance. The detailed description of the algorithms includes analysis of the challenges that have been dealt with, the testing procedures and the experimental results which indicate their correctness and robustness. Assumptions and limitations are also identified and expanded on. The C++ prototype is extensively discussed in Chapter 3, where the design decisions that concern the presentation, the user interface, the graphics, as well as the software implementation of the algorithms are detailed and the integration process is discussed. Finally, further extensions are explained in Chapter 4. A more flexible marking scheme is suggested which allows the teacher to define the importance of each part of the student’s body during a dance. Furthermore, to increase the marking accuracy, it is suggested that a professional dance instructor is hired to grade a set of performances before the release of the product. By the means of a sophisticated machine learning algorithm, a marking scheme can be derived, based on professional input rather than arbitrary metrics.
 
 \noindent
-In conclusion, “Using Kinect to Evaluate Dance Performances” suggests a realisation of a modern, interactive computer application that exploits emerging technologies, spanning from RGB-D cameras to Augmented Reality. By giving details of the work done for assessing equipment and building a prototype, the report presents the design process of the application step-by-step, with the underlying ideas and implementation. The numerous capabilities of this application would provide an extensive set of possibilities to a dance class where the students would be able to keep records of their performance and compare it against the teacher’s dance in order to improve themselves Furthermore, the teacher would be able to mark their students accurately and give detailed pieces of advice to students on their specific mistakes, highlighting in this way the pedagogical scope of this project.
+In conclusion, ``Using the Kinect to Evaluate Dance Performances'' suggests a realisation of a modern, interactive computer application that exploits emerging technologies, spanning from RGB-D cameras to Augmented Reality. By giving details of the work done for assessing equipment and building a prototype, the report presents the design process of the application step-by-step, with the underlying ideas and implementation. The numerous capabilities of this application would enable an extensive set of possibilities to be brought to the dance classroom. For instance, students would be able to keep records of their performances and compare them against their teacher's dance in order to improve themselves. Furthermore, teachers would be able to mark their students accurately and give detailed pieces of advice to students on specific mistakes, highlighting in this way the pedagogical scope of this project.
 
 \clearpage
 
@@ -98,11 +98,11 @@ In conclusion, “Using Kinect to Evaluate Dance Performances” suggests a real
 \setcounter{page}{1}
 \section{Kinect \& NiTE Software Evaluation}
 \noindent
-To determine a method of evaluating the dance student, the limitations of the camera and the \texttt{NiTE} software must first be evaluated with respect to the criteria addressed below. To do this, we use the \texttt{UserViewer} Application that comes as a sample with the \texttt{NiTE} software library with the camera elevated 75 cm above the ground, within the 60 cm to 180 cm range that is suggested by Microsoft for optimal tracking. 
+To determine a method of assessing the dance student, the limitations of the camera and the \texttt{NiTE} software must first be evaluated with respect to the criteria addressed below. To do this, we use the \texttt{UserViewer} Application that comes as a sample with the \texttt{NiTE} software library with the camera elevated 75 cm above the ground, within the 60 cm to 180 cm range that is suggested by Microsoft for optimal tracking. 
 
 \subsection{Camera Range}
 \noindent 
-To test for the camera's range, we lay a tape measure on the ground starting from directly below the camera up to 8 m away from the camera. We then use two subjects of different heights and body shapes to evaluate the performance of the camera and the software for tracking at different distances. The subject first starts within a few centimetres of the camera and slowly moves backwards until the camera calibrates and starts tracking and continues to do so until the tracking is lost. After this, the subject is required to start from the depths of the room, much further than the range of the camera, and to start walking slowly towards the camera, again taking a record of the following specifications. The results can be shown in Tables \ref{cam_range_180_away} to \ref{cam_range_150_toward}.
+To test for the camera's range, we lay a tape measure up to 8 m away from the camera. We then use two subjects of different heights and body shapes to evaluate the performance of the camera and the software for tracking at different distances. The subject first starts within a few centimetres of the camera and slowly moves backwards until the camera calibrates and starts tracking and continues to do so until the tracking is lost. After this, the subject is required to start from the depths of the room, much further than the range of the camera, and to start walking slowly towards the camera, again taking a record of the following specifications. The results can be shown in Tables \ref{cam_range_180_away} to \ref{cam_range_150_toward}.
 \\
 \begin{table}[H]
 \center
@@ -160,15 +160,15 @@ Distance from Camera & Description of Performance \\
 430 cm & Tracking is lost\\
 \hline
 \end{tabular}
-\caption{Subject moving towards camera. Subject height 150cm.}
+\caption{Subject moving towards camera. Subject height 150 cm.}
 \label{cam_range_150_toward}
 \end{table}
 \noindent
-These results highlight the fact that the camera has a restricted field of view and therefore the number of people that each camera can support is limited. This will have to be further considered when finalising a design for the application. One thing to note is that, since  the optimum distance away from the camera, with respect to tracking, is in the range of 1.5 m to 3.5 m it would not be beneficial to have the camera(s) in the corners of the room. This would cause a huge amount of the already small range to be wasted due to the height of the room. 
+These results highlight the fact that the camera has a restricted field of view and therefore the number of people that each camera can support is limited. This will have to be further considered when finalising the design for the application. One thing to note is that, since  the optimum distance away from the camera with respect to tracking is in the range of 1.5 m to 3.5 m, it would not be beneficial to have the camera(s) in the corners of the room. This would cause a huge amount of the already small range to be wasted due to the height of the room. 
 
 \subsection{Effect of Varying Lighting Conditions}
 \noindent
-In order to evaulate the effect of varying lighting conditions on the tracking capabilities of the camera, we utilise a lux meter to determine the intensity of light in a room. The meter has been calibrated such that a complete darkness represents 0 lux. We then perform a series of tests to determine, if the varying lighting conditions have an effect on the tracking range of the camera. Table \ref{cam_range_varying_light} illustrates the results:
+In order to evaulate the effect of varying lighting conditions on the tracking capabilities of the camera, we utilise a lux meter to determine the intensity of light in a room. The meter has been calibrated such that complete darkness represents 0 lux. We then perform a series of tests to determine if the varying lighting conditions have an effect on the tracking range of the camera. Table \ref{cam_range_varying_light} illustrates the results:
 \begin{table}[H]
 \center
 \begin{tabular}{ | l | c |}
@@ -187,13 +187,13 @@ Light intensity & Tracking range (starts - stops tracking) \\
 \end{table}
 
 \noindent
-Since the skeleton is primarily fitted using the depth sensor of the RGB-D camera, the light intensity was expected to have little, if any, effect on the tracking range of the camera. Initially, it was expected that the higher intensity of light might have a negative impact on the effectiveness of the IR depth sensor, however this has not been the case. It has been confirmed that varying light intensity, within bounds that we have been able to achieve, have no effect on the range of the camera and its tracking capabilities.
+Since the skeleton is primarily fitted using the depth sensor of the RGB-D camera, the light intensity was expected to have little, if any, effect on the tracking range of the camera. Initially, it was expected that the higher intensity of light might have a negative impact on the effectiveness of the IR depth sensor, however this has not been the case. It has been confirmed that varying light intensity, within bounds that we have been able to achieve, has no effect on the range of the camera and its tracking capabilities.
 
 \subsection{Obstruction in Range}
 \noindent
-To test for the possibility that obstructions could interfere with the fitting of the skeleton on the subject, we place a chair in various positions around the subject and in front of the subject. We then do the same with another person walking in the vicinity of the subject. This scenario is probably more relevant to the situations which may be encountered in a dance class room.  
+To test for the possibility that obstructions could interfere with the fitting of the skeleton on the subject, we place a chair in various positions around the subject and in front of it. We then do the same with another person walking in the vicinity of the subject. This scenario is probably more relevant to the situations which may be encountered in a dance class room.  
 \subsubsection{Chair}
-\noindent Positioning the chair adjacent to the subject produces interesting results. When the subject is holding the chair, the \texttt{NiTE} software falsely identifies the chair as an extension of the subject's body and, thus, tries to fit a skeleton to the chair as well as the person. This can be seen in Figure \ref{lifting_chair}.
+\noindent Positioning the chair adjacent to the subject produces interesting results. When the subject is holding the chair, the \texttt{NiTE} software falsely identifies the chair as an extension of the subject's body and tries to fit a skeleton to the chair as well as the person. This can be seen in Figure \ref{lifting_chair}.
 
 \begin{figure}[H]
 \center
@@ -203,7 +203,7 @@ To test for the possibility that obstructions could interfere with the fitting o
 \end{figure}
 
 \noindent
-Putting the chair directly in front of the subject at the level of its waits does not give the same result, but instead the proportion of the skeleton that is created by the software is quite distorted due to the reflection of the IR on the chair which does not allow the precise localisation and detection of the subject's obstructed parts. As Figure \ref{chair} illustrates the perceived angle of the subject's right leg appears to have a deviation angle of $45^o$ that does not agree with the actual leg position.
+Putting the chair directly in front of the subject at the level of its waiste does not give the same result. Instead, the proportion of the skeleton that is created by the software is quite distorted due to the reflection of the IR on the chair. As Figure \ref{chair} illustrates the perceived angle of the subject's right leg appears to have a deviation angle of $45^o$ that does not agree with the actual leg position.
 
 \begin{figure}[H]
 \center
@@ -215,7 +215,7 @@ Putting the chair directly in front of the subject at the level of its waits doe
 % Not finished. It seems that this section is quite a hand waving description of the experiment because we probably could have been more thorough.  
 \subsubsection{Person}
 \noindent
-In this experiment, the second person walks within different ranges of the camera and the initial subject. Interestingly enough, even at quite fast speeds of movement, the camera can calibrate and track both people quite quickly. This will most probably not be a limitation when designing the software. Nevertheless, in the case where two dancers are dancing next to each other, the interference between their bodies distorts the received IR reading and the accuracy of the perceived joints' position deteriorates substantially. Figure \ref{occlusion1} indicates the inaccurate tracking of the right hand of one of the subjects due to its obstruction by the dancer on the left.
+In this experiment, the second person walks within different ranges of the camera and the initial subject. Interestingly enough, even at quite fast speeds of movement, the camera can calibrate and track both people quite quickly. This will most probably not be a limitation when designing the software. Nevertheless, in the case where two dancers are dancing next to each other, the interference between their bodies distorts the received IR reading and the accuracy of the perceived joints' position deteriorates substantially. Figure \ref{occlusion1} (left) indicates the inaccurate tracking of the right hand of one of the subjects due to its obstruction by the dancer on the left.
 
 \begin{figure}[H]
 \center
@@ -226,16 +226,16 @@ In this experiment, the second person walks within different ranges of the camer
 \end{figure} 
 
 \noindent
-Moreover, when a subject stands directly in front of another, \texttt{NiTE} is not always able to distinguish between the two subjects and thus it appears as if they are one body. This is shown in Figure \ref{occlusion1}.
+Moreover, when a subject stands directly in front of another, \texttt{NiTE} is not always able to distinguish between the two subjects and it appears as if they are one body. This is shown in Figure \ref{occlusion1} (right).
 
 \subsection{Velocity of Movement}
-Another important criterion regarding the performance of both the Kinect camera and the \texttt{NiTE} software package is the accuracy and responsiveness of the skeleton fitting. Our evaluation procedure consists of the recording of a predefined movement which provides us with the subject's velocity information and allows us to estimate how accurately the fitted skeleton is able to follow the actual move, by calculating the error between the perceived and the actual movement. In particular, we record a slower and a faster versions of the same movement and compare the corresponding errors.
+Another important criterion regarding the performance of both the Kinect camera and the \texttt{NiTE} software package is the accuracy and responsiveness of the skeleton fitting. Our evaluation procedure consists of the recording of a predefined movement which provides us with the subject's velocity information. It then allows us to estimate how accurately the fitted skeleton is able to follow the actual move, by calculating the error between the perceived and the actual movement. In particular, we record a slower and a faster versions of the same movement and compare the corresponding errors.
 
 \noindent
-The subject's reference movement is determined to be a $180^o$ degrees right arm move starting from a vertical position with the hand facing the ceiling and following an arc. The testing procedure includes the modification of the \texttt{UserViewer} sample program in order to record twice the predefined movement as performed by the subject at high and low speeds. 
+The subject's reference movement is determined to be a $180^o$ right arm move starting from a vertical position with the hand facing the ceiling and following an arc. The testing procedure includes the modification of the \texttt{UserViewer} sample program in order to record twice the predefined movement as performed by the subject at high and low speeds. 
  
 \noindent
-By capturing the recorded passage with a Desktop camera at a rate of 24 frames per second (fps), we are able to extract individual frames from the recorded videos. At this point, we define a starting and an ending point of the subject's right arm and select the frames that more accurately correspond to these positions. After following this procedure for both recordings, we end up with 3 frames from the fast and 16 from the slow version. The starting and ending position frames for the slow and the fast versions are shown below on Figure \ref{start_pos}. The substantial deviation between the shoulder-elbow vertex of the skeleton and the arm indicate the important increased error when the subject performs a fast move.
+By capturing the recorded passage with a Desktop camera at a rate of 24 frames per second (fps), we are able to extract individual frames from the recorded videos. At this point, we define a starting and an ending point of the subject's right arm and select the frames that more accurately correspond to these positions. After following this procedure for both recordings, we end up with 3 frames from the fast and 16 from the slow version. The starting and ending position frames for the slow and the fast versions are shown below in Figure \ref{start_pos}. The substantial deviation between the shoulder-elbow vertex of the skeleton and the arm indicate the important increased error when the subject performs a fast move.
 
 \begin{figure}[H]
 \center
@@ -267,7 +267,7 @@ Slow & 16 & 0.670\\
 \end{table}
 
 \noindent
-The next step of the responsiveness evaluation is the estimation of the arm's actual starting and ending positions as well as its perceived position as defined by the fitted skeleton. As the arm follows an arc-shaped movement, we focus on measuring the angle between the subject's elbow and shoulder, with the shoulder  defined as the reference, and finding an estimate of the skeleton fitting error by comparing the actual angle and the angle of the vertex between the two joints with respect to the shoulder joint. Although both the actual and perceived starting positions are the same, the ending positions are different and result in errors in the subject's tracking. The angle measurements can be seen below in Table \ref{angle}.
+The next step of the responsiveness evaluation is the estimation of the arm's actual starting and ending positions as well as its perceived position as defined by the fitted skeleton. As the arm follows an arc-shaped movement, we focus on measuring the angle between the subject's elbow and shoulder, with the shoulder  defined as the reference, and finding an estimate of the skeleton fitting error by comparing the actual angle and the angle of the vertex between the two joints with respect to the shoulder joint. Although both the actual and perceived starting positions are the same, the ending positions are different and result in errors in the subject's tracking. The angle measurements can be seen below in Table \ref{angle_error}.
 
 \begin{table}[H]
 \center
@@ -280,7 +280,7 @@ Slow & $4.4^o$ & $-49.2^o$ & $-64.0^o$\\
 \hline
 \end{tabular}
 \caption{Perceived and actual starting and ending angles of the subject's arm.}
-\label{angle}
+\label{angle_error}
 \end{table}
 
 \noindent
@@ -290,19 +290,19 @@ The final step involved the estimation of the actual and perceived angular veloc
 \end{equation}
 
 \noindent where \[\theta_{displacement} = \theta_{end} - \theta_{start}\]
-$\theta$ represents the angle from the horizontal (positive direction being counter-clockwise) and $\omega$ stands for the angular velocity.
+$\theta$ represents the angle from the horizontal axis (positive direction being counter-clockwise) and $\omega$ stands for the angular velocity.
  
 \noindent 
-The angular velocities and the corresponding errors for both the slow and the fast recordings are presented on the following table.
+The angular velocities and the corresponding errors for both the slow and the fast recordings are presented in the following table.
 
 \begin{table}[H]
 \center
 \begin{tabular}{| c | r | r | r |}
 \hline
-Movement Speed & Perceived Angular Velocity/$^o/s$ & Actual Angular Velocity/$^o/s$ & Error/\% \\
+Movement Speed & Perceived Angular Velocity & Actual Angular Velocity & Error\\
 \hline
-Fast & $-272.0$ & $-470.4$ & $42.1\%$ \\
-Slow & $-80.0$ & $-102.1$ & $24.8\%$ \\
+Fast & $-272.0^o/s$ & $-470.4^o/s$ & $42.1\%$ \\
+Slow & $-80.0^o/s$  & $-102.1^o/s$ & $24.8\%$ \\
 \hline
 \end{tabular}
 \caption{Perceived and actual angular velocities and percentage errors.}
@@ -312,10 +312,10 @@ Slow & $-80.0$ & $-102.1$ & $24.8\%$ \\
 
 \subsection{Camera Angle Relative to Subject}
 \noindent 
-The fact that the application is to be used for the purpose of dancing means that an investigation into how the angle between the camera and the subject affects the results can help draw useful conclusions. For instance, in a certain dance the subject may turn so that only the profile is visible to the camera. Doing so without losing any information, due to occlusion because of on of the arms or legs being covered by the rest of the body, may prove to be vital for the software to work effectively. 
+The fact that the application is to be used for the purpose of dancing means that an investigation into how the angle between the camera and the subject affects the results can help draw useful conclusions. For instance, in a certain dance the subject may turn so that only the profile is visible to the camera. Doing so without losing any information, due to occlusion of one of the arms or legs being covered by the rest of the body, may prove to be vital for the software to work effectively. 
  
 \noindent
-To test for this, the subject stands in front of the camera, lifting both arms from the sides in the positive y direction up to $90^o$ and then back down. The subject then turns $90^o$ about the y-axis so that the right arm is in front of the camera, but the left arm is covered by the body. The results can be seen in Figure \ref{angle_camera}. As it can be seen here, at frame number 322 there is a peak in the y-coordinate of the right hand and the x-coordinate, but at frame 465 when the subject turns, only the y-coordinate changes. This is perfectly understandable since the the x-coordinate now stays roughly constant whilst the arm is raised. For the left arm however, both the x-coordinate and y-coordinate values are lost when the subject rotates, and thus there is a loss of information due to self occlusion. This may be a problem, however, as long as the teacher's information is also lost, it may not be.  
+To test for this, the subject stands in front of the camera, lifting both arms from the sides in the positive y direction up to $90^o$ and then back down. The subject then turns $90^o$ about the y-axis so that the right arm is in front of the camera, but the left arm is covered by the body. The results can be seen in Figure \ref{angle_camera}. As it can be seen here, at frame number 322 there is a peak in the y-coordinate of the right hand and the x-coordinate, but at frame 465 when the subject turns, only the y-coordinate changes. This is perfectly understandable since the the x-coordinate now stays roughly constant whilst the arm is raised. For the left arm however, both the x-coordinate and y-coordinate values are lost when the subject rotates, thus there is a loss of information due to self occlusion. This may be a problem, however, as long as the teacher's information is also lost, it may not be.  
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.2]{Angle_To_Camera.jpg}
@@ -328,7 +328,7 @@ To test for this, the subject stands in front of the camera, lifting both arms f
 It may be necessary and efficient to use one camera to track multiple people and then process all the data in that way. This way fewer cameras would be needed for a particular class size with greater complexity being passed to the data analysis stages. 
  
 \noindent
-In order to discover how many subject can be tracked by a single camera, we incrementally increase the number of people standing in front of the camera until the results are unsatisfactory for at least one of the skeletons. Unsatisfactory implies a skeleton deviating away from the body or discontinuity in tracking any of the joints. \texttt{NiTE} officially claims that the library can track as many people as can possibly fit physically in the camera range. We find that the maximum number of people that can fit in the cameras field of view with all joints showing to be 5. 
+In order to discover how many subject can be tracked by a single camera, we incrementally increase the number of people standing in front of the camera until the results are unsatisfactory for at least one of the skeletons. Unsatisfactory implies a skeleton deviating away from the body or discontinuity in tracking any of the joints. \texttt{NiTE} officially claims that the library can track as many people as can possibly fit physically in the camera range. We find that the maximum number of people that can fit in the camera's field of view with all joints showing to be 5. 
  
 \begin{figure}[H]
 \centering
@@ -338,13 +338,13 @@ In order to discover how many subject can be tracked by a single camera, we incr
 \label{people_pos}
 \end{figure}
 \noindent
-However, as mentioned before, a subject needs to be 2.5 to 4 metres away from the camera to be fully visible. Added to this, since the application of our software is for dancers, we need to provide an adequate spacing between students to allow for the movements involved in their practice. After splitting up the area for 5 subjects, each one has less than 1 $m^2$ of free space which is not considered enough for dancers. With 3 people for each camera however it will be able to provide a wide enough radius for each of the students.
+However, as mentioned before, a subject needs to be 2.5 to 4 metres away from the camera to be fully visible. Added to this, since the application of our software is for dancers, we need to provide an adequate spacing between students to allow for the movements involved in their practice. After splitting up the area for 5 subjects, each one has less than 1 $m^2$ of free space which is not considered enough for dancers. With 3 people for each camera, however, it will be able to provide a wide enough radius for each of the students.
 \subsection{Multiple Cameras}
 \noindent
-Despite the various capabilities offered by a single Kinect camera, there are a number of weaknesses that can substantially limit the potential of its applications. Due to the active hacking community, the Kinect's specifications have been determined by reverse engineering the RGB camera, the IR laser projector and the 3-D depth sensor. An important result is that the angular field of view of the Kinect's RGB camera is limited to $62.7^o$ with the IR camera having a field of view of $57.8^o$. Given the aforementioned specifications and according to our testing, at an average working range of 2.5 meters, the depth image is only 3.5 meters wide. To overcome this obstacle and widen our field of view, additional Kinects can be used side by side. 
+Despite the various capabilities offered by a single Kinect camera, there are a number of weaknesses that can substantially limit the potential of its applications. Due to the active hacking community, the Kinect's specifications have been determined by reverse engineering the RGB camera, the IR laser projector and the 3-D depth sensor. An important result is that the angular field of view of the Kinect's RGB camera is limited to $62.7^o$ with the IR camera having a field of view of $57.8^o$. Given the aforementioned specifications and according to our testing, at an average working range of 2.5 meters, the depth image is only 3.5 meters wide. To overcome this obstacle and widen our field of view, additional Kinects can be used. 
  
 \noindent
-Another limitation which motivates the use of multiple Kinects is the fact that as the depth data sensed by the IR sensor come from a single direction, more accurate data is captured when the subject is perpendicular to the camera's normal. In particular, for our application whenever the subject stands with a profile view to the camera, data is lost and thus the subject's tracking would be less accurate. With multiple Kinects, a mixture of data from different angles can be captured and combined as necessary to increase accuracy and produce a more complete scene.
+Another limitation which motivates the use of multiple Kinects is the fact that as the depth data sensed by the IR sensor comes from a single direction, more accurate data is captured when the subject is perpendicular to the camera's normal. In particular, for our application whenever the subject stands with a profile view to the camera, data is lost and thus the subject's tracking would be less accurate. With multiple Kinects, a mixture of data from different angles can be captured and combined as necessary to increase accuracy and produce a more complete scene.
  
 \noindent
 Nevertheless, the employment of multiple Kinects can lead to new obstacles. Research has suggested that using more than one camera with an overlapping region between them can lead to depth images that contain blind spots. To test whether this would be a problem in our application, we use the following initial setup.
@@ -358,10 +358,10 @@ Nevertheless, the employment of multiple Kinects can lead to new obstacles. Rese
 \end{figure}
 
 \noindent
-We first record the camera's reading without a subject in the scene. As Figure \ref{2_cameras_config1}. below shows, the IR interference caused by the Kinect on the opposite side of the room creates a substantial blind spot which confuses the algorithm that determines the depth and no useful depth data is captured.
+We first record the camera's reading without a subject in the scene. As Figure \ref{2_cameras_config1} shows, the IR interference caused by the Kinect on the opposite side of the room creates a substantial blind spot which confuses the algorithm that determines the depth and no useful depth data is captured.
  
 \noindent
-When a subject comes in the scene, although it is tracked, the interference still poses a problem by distorting the left hand of the subject as shown in Figure \ref{IR_interference_w_subject}. Such a distortion is intolerable to our application. 
+When a subject comes into the scene, although it is tracked, the interference still poses a problem by distorting the left hand of the subject as shown in Figure \ref{IR_interference_w_subject}. Such distortion is intolerable to our application. 
 
 \begin{figure}[H]
 \centering
@@ -386,7 +386,7 @@ A more useful configuration includes the placement of the second Kinect in such 
 In this case, a recording of the camera's view without a subject gives us a much lower level of interference compared to the initial configuration. This can be seen in Figure \ref{2_cameras_config2}.
   
 \noindent
-In our experiment, the subject is asked to stand still in front of the camera with arms to the side for about 5 seconds. This is initially done four times with a single camera. The measured data is used as a reference when comparing to a two-cameras configuration. The same measurements are taken for two cameras placed in a $90^o$ angle. In this way, the effect of the interference can be quantified by comparing the two set of data. The method we follow to compare the sets of data is by comparing the mean of the standard deviations for each trial. This is illustrated in Figure \ref{Multiple_Std}. 
+In our experiment, the subject is asked to stand still in front of the camera with arms to the side for about 5 seconds. This is initially done four times with a single camera. The measured data is used as a reference when comparing to a two-camera configuration. The same measurements are taken for two cameras placed in a $90^o$ angle. In this way, the effect of the interference can be quantified by comparing the two sets of data. By comparing the mean of the standard deviations for each trial for both sets of data, a conclusion can be drawn as to whether a significant difference is present. This is illustrated in Figure \ref{Multiple_Std}. 
  
 \begin{figure}[H]
 \centering
@@ -406,7 +406,7 @@ During our preliminary tests, the camera range which allows subject tracking and
 
 \medskip \noindent We also determined that there is a significant correlation between the dancer's speed of movement and the error in the skeleton's data with respect to the actual position of the subject. During very fast moves, the skeleton sometimes lags significantly behind the subject, which may lead to losing some data precision. This will however depend strongly on the nature of the dance move and its effect on the assessment of the student is unclear at this point.
 
-\medskip \noindent As mentioned in the previous sections, some dance moves may require the performer to turn around and therefore cover some parts of their body from the camera. This unwanted, yet also unavoidable issue can partially be resolved by placing multiple RGB-D devices close to each side of the subject. This however poses another problem of the interference between them. %We will investigate the actual cost/performance ratio of this solution in the following sections, when we will evaluate the performance of the automatic scoring algorithms with respect to the data from multiple cameras.
+\medskip \noindent As mentioned in the previous sections, some dance moves may require the performer to turn around and therefore cover some parts of their body from the camera. This unwanted, yet also unavoidable issue, can partially be resolved by placing multiple RGB-D devices close to each side of the subject. This however poses another problem of the interference between them. %We will investigate the actual cost/performance ratio of this solution in the following sections, when we will evaluate the performance of the automatic scoring algorithms with respect to the data from multiple cameras.
 
 \clearpage
 
