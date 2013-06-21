@@ -412,7 +412,7 @@ During our preliminary tests, the camera range which allows subject tracking and
 
 \section{Automatic Evaluation of Student Performance}
 \noindent
-This section discusses the way in which the application will be used to evaluate the student's performance with respect to the teacher's. The software will have to detect errors that the student has made, detect time periods in which the student performed poorly as well as satisfactory and be able to give a few other useful statistics for the teacher to also grade the student. Using only information from the data points of the joints from \texttt{NiTE} and the RGB-D stream from OpenNI, various things need to be considered and multiple modules will need to be created to handle the data. 
+This section discusses the way in which the application will be used to evaluate the student's performance with respect to the teacher's. The software will have to detect errors that the student has made, identify time periods in which the student has performed poorly and be able to give a few other useful statistics for the teacher to grade the student. Using only information from the data points of the joints from \texttt{NiTE} and the RGB-D stream, various things need to be considered and multiple modules will need to be created to handle the data. 
 
 \begin{figure}[H]
 \centering
@@ -421,14 +421,14 @@ This section discusses the way in which the application will be used to evaluate
 \label{modules}
 \end{figure}
  
-\noindent The design will consist of various modules, as seen in Figure \ref{modules}, that will divide the tasks into manageable chunks, which will be very helpful when trying to develop the software due to the level of abstraction associated with each piece of data. The algorithms will first be developed in Matlab, due to ease of use making the development of the algorithms as fast as possible, and then will be ported to C++, due to its speed and ease of integration with the development environment being used to develop the rest of the software. 
+\noindent The design will consist of various modules, as seen in Figure \ref{modules}, that will divide the tasks into manageable chunks, which will be very helpful when trying to develop the software due to the level of abstraction associated with each piece of data. The algorithms will first be developed in Matlab, due to the ease of quick prototyping, and then will be ported to C++, due to its speed and ease of integration with the \texttt{OpenNI} and \texttt{NiTE}. 
 
 \subsection{Motionless Activity Detector}
 \noindent 
-With the current design in mind the student will be asked to first move slightly so that the \texttt{NiTE} software can calibrate and start tracking. After this, the student will be required to stand still in a predefined position for a minimum amount of time, to be decided later, after which the student may start dancing. This will be the position that the next module will use to translate the coordinates with respect to a specific origin. The purpose of this module is to find a frame number during which the student will be in the standing still phase. 
+With the current design in mind the student will be asked to first move slightly so that the \texttt{NiTE} software can calibrate and start tracking. After this, the student will be required to stand still in a predefined position for a minimum amount of time, to be decided later, after which the student may start dancing. This will be the position that the next module will use to translate the coordinates with respect to a specific origin. The purpose of this module is to find a frame number during which the student will be standing still. 
 
 \noindent 
-The algorithm is simple. Under the assumption that there is a time period in which there is relatively little movement the algorithm is only required to find a period with the least sum of the absolute change in all the coordinates. The aforementioned ``period'' takes the form of a non-overlapping sliding window over the joint data, for each joint. This sliding window has to contain the data of less than half the number of frames that are recorded in the minimum time period of motionless activity so that a frame within that period of time can be found, if the student did indeed stand still for the period of time. The window must be sufficiently large however to get a sum over a wide enough range of values so that momentarily motionless activity is not detected instead at some other point. 
+The algorithm is simple. Under the assumption that there is a time period in which there is relatively little movement the algorithm is only required to find a period with the least sum of the absolute change in all the coordinates. The aforementioned ``period'' takes the form of a non-overlapping sliding window over the joint data, for each joint. This sliding window has to contain the data of less than half the number of frames that are recorded in the minimum time period of motionless activity so that a frame within that period of time can be found, if the student did indeed stand still for the period of time. The window must be sufficiently large however to get a sum over a wide enough range of values so that momentarily motionless activity is not detected instead at some point in the dance. 
 
 \noindent
 The initial algorithm is of the form:
@@ -436,15 +436,16 @@ The initial algorithm is of the form:
 \setlength{\itemsep}{1pt}
 \setlength{\parskip}{0pt}
 \setlength{\parsep}{0pt}
-	\item Make a sliding window of $n_{f}$ number of frames.
+	\item Make a sliding window of $n_{f}$, the number of frames.
 	\item Take the sum of the absolute difference between the frames for each of the coordinates (x, y, z).
-	\item Find the window with the minimum for the sum of absolute derivative of the positions of the coordinates between frames.
+	\item Find the window with the minimum sum of absolute differences between frames for each coordinate value.
 	\item Get initial index of that frame.
 \item Do this for all major joints and make sure all initial indices match.
 \item If they do not all match, take the majority. 
 \end{compactitem}
 \noindent
 To test this we perfom various tests.
+
 \subsubsection{Test for One Joint}
 The first step is to check that the algorithm works for only one joint, chosen to be the right hand. The subject moves the right hand until the \texttt{UserViewer} calibrates and starts tracking, then holds the hand in a certain position for a minimum of 1 second, and then moves it again. The data from all the points is then printed to a file, in a form that can be loaded by Matlab into a matrix and our algorithm is used to find the stationary point.  
 
@@ -452,14 +453,14 @@ The first step is to check that the algorithm works for only one joint, chosen t
 To confirm our results, a plot of the graph for the coordinate's positions versus frames is created and the video is also watched with the frame number in the top left corner. If the frame number returned by the algorithm corresponds to a time period in which the subject is still, this is taken as a correct result. 
 \subsubsection{Test for Multiple Points}
 \noindent 
-In this test the subject walks in front of the camera moving their limbs until tracking commences, then stands still for 1 second and then moves again. Variations of this are tested in which all body parts are used, the upper half and the lower half. Once again, the data is processed by the Matlab scripts created but this time a vector of results is returned by the algorithm. Each result in the vector is the stationary point for each joint for each of the coordinates (x, y, z). The algorithm then takes the frame value that has the highest occurrence in the vector and returns this as a frame in which there is no motion of the subject. The same criteria as in the previous test is used to measure the correctness of the algorithm. 
+In this test the subject walks in front of the camera moving their limbs until tracking commences, then stands still for 1 second and then moves again. Variations of this are tested in which all body parts are used, the upper half and the lower half. Once again, the data is processed by the Matlab scripts created, but this time a vector of results is returned by the algorithm. Each result in the vector is the stationary point for each of the coordinates (x, y, z) for each joint. The algorithm then takes the frame value that has the highest occurrence in the vector and returns this as a frame in which there is no motion of the subject. The same criteria as in the previous test is used to measure the correctness of the algorithm. 
 
 \subsubsection{Obstacles Encountered}
 \noindent
-Various problems have arisen during the tests. The first problem is associated with the data itself. The data comes in a 4-tuple for each joint, representing the (x, y, z) coordinates and the fourth value is the confidence level. This is a basic measure for how reliable the reading is of a particular point. When the confidence level is equal to zero, the coordinates of the previous data point is used. This presents a problem for our initial algorithm however, because it works with differences between frames, and so if the confidence value is equal to zero, which happens often enough, the difference is also zero even when there is alot of activity taking place. To counter this, we change the algorithm so that, if two adjacent data points have the same value, a very large difference is associated to them. The probability of having results that are exactly equal is significantly low as the number of significant digits in the data is quite high, and empirically this has proven to be the case. 
+Various problems have arisen during the tests. The first problem is associated with the data itself. The data comes in a 4-tuple for each joint, representing the (x, y, z) coordinates and the fourth value is the confidence level (c). This is a basic measure for how reliable the reading is of a particular point. When the confidence level is equal to zero, the coordinates of the previous data point is used. This presents a problem for our initial algorithm however, because it works with differences between frames, and so if the confidence value is equal to zero, which happens often enough, the difference is also zero even when there is alot of activity taking place. To counter this, we change the algorithm so that, if two adjacent data points have the same value, a very large difference is associated to them. The probability of having results that are exactly equal is significantly low as the number of significant digits in the data is quite high, and empirically this has proven to be the case. 
 
 \noindent
-Another issue is concerned with the number of frames to use for the window size. A large window size means that a much more reliable conclusion from the results can be drawn, as the sample size increases, but at a cost that the student has to stand still for a longer period of time, since the window size time should be less than twice the time period of no motion. This means a good balance has to be found. On the one hand, making the student stand still for too long deteriorates the user experience. On the other hand, the smaller the window size, the more susceptible to detecting temporary motionless activity within the dancing period. From the experiments, it has been found that a frame size of 30 frames makes the best compromise and means that the student must stand still for at least two seconds. This is not a problem, however, since other commercial software for different purposes requires a stand still period which is of a similar magnitude, such as facial recognition systems in airports.  
+Another issue is concerned with the number of frames to use for the window size. A large window size means that a much more reliable conclusion from the results can be drawn, as the sample size increases, but at a cost that the student has to stand still for a longer period of time (since the window size time should be less than twice the time period of no motion). This means a good balance has to be found. On the one hand, making the student stand still for too long deteriorates the user experience. On the other hand, the smaller the window size, the more susceptible to detecting temporary motionless activity within the dancing period. From the experiments, it has been found that a window size of 30 frames makes the best compromise and means that the student must stand still for at least two seconds. This is not a problem, however, since other commercial software for different purposes requires a stand still period which is of a similar magnitude, such as facial recognition systems in airports.  
 
 \noindent
 A further complication is that the number of frames shown in the .oni file recording is greater than that of the data in the file processed by Matlab. This means that the offset has to be found by writing to a separate file the starting frame when the first piece of data is written to the frame processed by Matlab. 
@@ -513,6 +514,7 @@ z & 121 & 121 & 121 & 91 & 121 & 121 & 151 & 121\\
 
 \noindent
 Though there are quite a few different values returned, there are 2 or 3 ones that are in a significant majority in either case. These are usually only separated by a window or two at most which corresponds to the majority of the frames returned being in a period of three seconds from each other. Since the subject usually stands for about 3 to 4 seconds, in our specific scenario, these results are valid as confirmed below.
+
 \begin{figure}[h]
 \center
 \includegraphics[scale=0.2]{Motionless_R_Hand_L_Foot_X.jpg} 
@@ -526,7 +528,7 @@ As it can be seen from Figure \ref{motionless_rh_lf} though the frame numbers th
 \clearpage
 \subsection{Translation Module}
 \noindent
-The purpose of the Translation Module is to take the original jointss position data and remove the information which only adds unnecessary complexity, such as the exact position of the subject in the view of the camera. This is needed, because when we are comparing two dance moves, we do not want the score to be affected by the position of the dancers in the range of the camera e.g. in one recording the subject is standing on the left, in the other on the right. In order words, the score should be based only on what moves the dancers perform, not where do they perform them. In order to achieve that, we are going to shift all joint's positions so that they are relative to the torso joint, which we treat as the origin of the coordinate system.
+The purpose of the Translation Module is to take the original joints' position data and remove the information which only adds unnecessary complexity, such as the exact position of the subject in the view of the camera. This is needed, because when we are comparing two dance moves, we do not want the score to be affected by the position of the dancers in the range of the camera e.g. in one recording the subject is standing on the left, in the other on the right. In order words, the score should be based only on what moves the dancers perform, not where they perform them. In order to achieve that, we will shift all joints' positions so that they are relative to the torso joint in the first frame, which we treat as the origin of the coordinate system.
 
 \subsubsection{Algorithm Description}
 \noindent
@@ -558,10 +560,9 @@ In order to test the algorithm, we record two videos, where the subject performs
 Figure \ref{pre_translation_graph} (left) shows the original data from two recordings for the right hand joint. Clearly, in both recordings, near the end the subject performs the same movement which is indicated by a spike in signal's value from being relatively constant. However, the absolute values of both signals do not correspond.
  
 \noindent
-Figure \ref{pre_translation_graph} (right) shows the same signal after running it through the Translation Module. Now, the signal does not contain the initial calibration data any more. Additionally, both the shape and the absolute values of the signal are close to each other, which is the desired outcome.
+Figure \ref{pre_translation_graph} (right) shows the same signal after running it through the Translation Module. Now, the signal does not contain the initial calibration data any more. Additionally, both the shape and the absolute values of the signals are close to each other, which is the desired outcome.
 
 \clearpage
-%\subsection{Scaling Module}
 \subsection{Data Alignment Module}
 \noindent
 The purpose of the Data Alignment Module is to identify the frame shift between two similar dance moves and then align the signals, making it possible for them to be compared. The raw data will always be significantly misaligned, since it is highly unlikely for two people to start performing the dance at the exact same fraction of a second. The problem is visualised in figure \ref{pre_post_alginment} which shows the initial misalignment between two signals as well as the result of passing them through the Data Alignment Module.
@@ -603,11 +604,12 @@ As it can be seen in figure \ref{pre_post_alginment}, before being aligned the s
 \clearpage
 \subsubsection{Obstacles Encountered}
 \noindent
-This module had to be changed from its first iteration due to the fact that some signals were giving the wrong delay estimate. This is perfectly understandable by an example. Consider a joint which does not really change during the dance move, only due to noise, this signal will give a delay estimate that is completely random. These wrong estimate results were affecting the results for the averaged out delay estimate. To overcome this, the algorithm now calculates the sample mean and sample standard deviation of all the delay estimates for every joint. It then only takes into account samples that lie within one standard deviation of the mean and calculates their average. In this way outliers do not affect the results and resulting in a more accurate alignment of the two signals.  
+This module has had to be changed from its first iteration due to the fact that some signals had been giving the wrong delay estimate. This is perfectly understandable by an example. Consider a joint which does not really change during the dance move, only due to noise, this signal will give a delay estimate that is completely random. These wrong estimate results had been affecting the results for the averaged out delay estimate. To overcome this, the algorithm now calculates the sample mean and sample standard deviation of all the delay estimates for every joint. It then only takes into account samples that lie within one standard deviation of the mean and calculates their average. In this way outliers do not affect the results and resulting in a more accurate alignment of the two signals.  
 
 \subsection{Data Analysis Module}
 \noindent
 The main purpose of the Data Analysis Module is to identify parts in the student's performance which deviate from the teacher's. Therefore, some notion of signal similarity needs to be established. We have decided that the approach would be to calculate the sum of squared errors  between the teacher's and student's performance, normalised by some arbitrary value to keep ``reasonable'' errors within a predefined range. Since at this point the signals are already aligned, we are not performing any processing with time-lags spanning over the entire length of the signals any more. However, since we are aware of the potential small misalignment, we allow a 21-sample-wide window of error in which we perform the initial data analysis. After establishing the best score for the entire signal, we additionally perform a windowed analysis which considers only parts of the signals at a time.
+
 \subsubsection{Algorithm Description}
 \noindent
  The exact steps of the algorithm are:
@@ -617,7 +619,7 @@ The main purpose of the Data Analysis Module is to identify parts in the student
 \setlength{\parsep}{0pt}
 	\item Make signals the same length using truncation.
 	\item Calculate the sum of the error squared for the student's data for all joint data.
-	\item Divide answer by number of samples and by a value $\alpha$, where $\alpha$ is a number that keeps the error in the range of $[0, 1]$ for reasonable errors. 
+	\item Divide answer by the number of samples and by a value $\alpha$, where $\alpha$ is a number that keeps the error in the range of $[0, 1]$ for reasonable errors. 
 	\item Average all data for each joint to get 15 scores, one for each joint.
 	\item Calculate the simple score for 21 different time lags $l \in [-10;10]$ to get the highest score in a time frame of $\pm 0.333s$
  according to Equation \eqref{error_eq}.
@@ -626,13 +628,13 @@ The main purpose of the Data Analysis Module is to identify parts in the student
 \subsubsection{Testing}
 \begin{compactitem}
 \item{Case 1: Student correctly repeats the dance.}
-\item{Case 2: Student correctly repeats for a first portion of the dance but makes a single mistake with only a few joints close to the end.}
+\item{Case 2: Student correctly repeats for the first portion of the dance but makes a single mistake with only a few joints close to the end.}
 \item{Case 3: Student makes a mistake at the beginning but recovers.}
-\item{Case 4: Student makes dramatic errors throughout.}
+\item{Case 4: Student makes dramatic errors throughout the dance.}
 \end{compactitem}
 
 \noindent
-The purpose of these test cases is to measure the effectiveness of the algorithm in different scenarios. First and foremost, the module should give a better score ( a lower error ) for students that more closely represent the dance as performed by the teacher. Furthermore, the algorithm should be able to identify upon receiving a low score,  the set of joints which is mostly responsible and the time frame in which the errors occurred. It should also be able to give a very low score for anything that does not represent the dance at all, in all time frames.
+The purpose of these test cases is to measure the effectiveness of the algorithm in different scenarios. First and foremost, the module should give a better score (a lower error) for students that more closely represent the dance as performed by the teacher. Furthermore, the algorithm should be able to identify upon receiving a low score,  the set of joints which is mostly responsible and the time frame in which the errors occurred. It should also be able to give a very low score for anything that does not represent the dance at all, in all time frames.
 
 \noindent
 
@@ -643,37 +645,37 @@ The purpose of these test cases is to measure the effectiveness of the algorithm
 Being the most complex and important module in the whole system many problems have had to be tackled whilst creating it and the algorithm has had to be rethought out a few times also. 
 
 \noindent
-Initially, the algorithm used the following formula to give a measure of the error.
+Initially, the algorithm had used the following formula to give a measure of the error.
 
 \begin{equation}
 \epsilon_{frame} = \frac{1}{N} \dfrac{\sum\limits_{n=1}^{N}(t(n)-s(n))^2}{\sum\limits_{n=1}^{N}t(n)^2}
 \end{equation}
-where $N$ is the number of samples in the shorter signal, $t(n)$ and $s(n)$ are the teacher's and student's signals respectively. In this way, it was thought that the error could be normalised to some extent, however it was later discovered that in the initial code the torso automatically has a higher normalised error than any other body part for the same absolute error. This is due to the fact that the torso is centred about 0, since it is considered the origin, and therefore when diving the sum of the error squared by the sum of the teacher's torso coordinate values squared any small error is hugely magnified in comparison to the same absolute error in the hand coordinate values for instance. This had thought to be rectified however by first subtracting the mean of the signals before comparing them. In this way, all the signals are centred about zero and any similar absolute error is treated in a much fairer way with no bias for specific joints. The initial offset was also saved so that, if necessary, the initial starting positions can be compared and a weighting for the score can be given to that also. This also presented problems though since in this way no bias was given to different body parts but bias was given to different frames of the signal. Frames where the values of the teacher were closer to 0 gave larger errors. Also, by subtracting the sample mean of the whole signal, signals that may have been close to each other at some parts in the original signals may have strayed from each other after. The final algorithm has now been corrected by purely taking the absolute error squaring it and normalising it to an arbitrary constant, $\alpha$, which keeps all reasonable errors within the range $[0, 1]$, any error greater than this is effectively given the value 1. The way this has been chosen is by looking at errors in the video that seem to deserve a max error value of 1 and finding an average value of $\alpha$ that can achieve this. The value calculated is then divided by the number of frames to get an average error measure per frame. The new equation is given by Equation \eqref{error_eq}.
+where $N$ is the number of samples in the shorter signal, $t(n)$ and $s(n)$ are the teacher's and student's signals respectively. In this way, it was thought that the error could be normalised to some extent, however it was later discovered that in the initial code the torso automatically has a higher normalised error than any other body part for the same absolute error. This is due to the fact that the torso is centred about 0, since it is considered the origin, and therefore when dividing the sum of the error squared by the sum of the teacher's torso coordinate values squared, any small error is hugely magnified in comparison to the same absolute error in the hand coordinate values for instance. This had been thought to be rectified, however, by first subtracting the mean of the signals before comparing them. In this way, all signals would be centred around zero and any similar absolute error would be treated in a much fairer way with no bias for specific joints. The initial offset was also saved so that, if necessary, the initial starting positions could also be compared and a weighting for the score could be given to that also. This also presented problems though, since in this way no bias was given to different body parts but bias was given to different frames of the signal. Frames where the values of the teacher were closer to 0 gave larger errors. Also, by subtracting the sample mean of the whole signal, parts of the signals that may have been close to each other initially may have strayed from each other afterwards. The final algorithm has now been corrected by purely taking the absolute error, squaring it and normalising it to an arbitrary constant, $\alpha$, which keeps all reasonable errors within the range $[0, 1]$. Any error greater than this is effectively given the value 1. The way this has been chosen is by looking at errors in the video that seem to deserve a max error value of 1 and finding an average value of $\alpha$ that can achieve this. The value calculated is then divided by the number of frames to get an average error measure per frame. The new equation is given by Equation \eqref{error_eq}.
 \begin{equation}
 \epsilon_{frame} = \dfrac{\sum\limits_{n=1}^{N}(t(n)-s(n))^2}{\alpha N}
 \label{error_eq}
 \end{equation}
  
 \noindent
-Another problem that persisted is that, if the student performs well for a large portion of the dance but makes a huge error at some point, this information was not conveyed as an average was taken for the score and a single value was returned. This has been fixed however with the return of another vector of scores for each joint, in which the x, y, and z coordinates of the joint are each given a score and an average is taken. Additionally, this has been further improved by windowing the signal and giving a score for each joint and an average score for a specific time window. In this way the student can now know at what time period they have made an error and what body part has to improve. An example of such a case can be seen in Figure \ref{error_left_shoulder}. In this scenario the student performs two errors which are reflected in the score of windows 4, 7 and 8 (see Figure \ref{error_score}). The window size (time period) can be determined by the teacher according to how high a resolution is necessary for the dance.
+Another problem that had persisted is that, if the student performs well for a large portion of the dance but makes a huge error at some point, this information was not conveyed, as only an average score was returned. This has been fixed however with the return of another vector of scores for each joint, which is an average of the the x, y, and z coordinates of the joint. Additionally, this has been further improved by windowing the signal and giving a score for each joint and an average score for a specific time window. In this way the student can now know at what time period they have made an error and what body part has to improve. An example of such a case can be seen in Figure \ref{error_left_shoulder}. In this scenario the student performs two errors which are reflected in the score of windows 4, 7 and 8 (see Figure \ref{error_score}).
  
 \noindent
-Added to this, there have been small issues that have been apparent by the fact that the student may perform very similar movements to the teacher, but slightly out of synchronisation. This can be thought of as a slight jitter between the two signals. To illustrate this, a toy example can be seen in Figure \ref{jitter} of two signals. Let the window size be 5 frames and the signal length be 15 frames as shown. Clearly, the optimum alignment based on our specification is the alignment shown in the figure, however there clearly is a misalignment between the first ``dance move'' (this first window). It can be seen that having the first window as is would mean that the absolute error would be 3, whereas with a shift of just one frame the absolute error becomes 0. We have decided that this should be taken into consideration when giving a score to the student. For instance, a student should not receive a low score for having a high error, if within a certain shift, the error could be vastly reduced. The student should however be penalised for the fact that they have not been perfectly on time. The way that we have taken this into consideration is by assigning to a window the minimum error of the following function:
+Added to this, there have been small issues that have been apparent by the fact that the student may perform very similar movements to the teacher, but slightly out of synchronisation. This can be thought of as a slight jitter between the two signals. To illustrate this, a toy example can be seen in Figure \ref{jitter} of two signals. Let the window size be 5 frames and the signal length be 15 frames as shown. Clearly, the optimum alignment based on our specification is the alignment shown in the figure, however, there is a misalignment between the first ``dance move'' (this first window). It can be seen that having the first window as is, would mean that the absolute error would be 3, whereas with a shift of just one frame the absolute error becomes 0. We have decided that this should be taken into consideration when giving a score to the student. For instance, a student should not receive a low score for having a high error, if within a certain shift, the error could be vastly reduced. The student should, however, be penalised for the fact that they have not been perfectly on time. The way that we have taken this into consideration is by assigning to a window the minimum error of the following function:
 \begin{equation}
 min\left[p(s) \times \epsilon_{window}\right]
 \end{equation}
-where $\epsilon_window$ is the absolute error of the window and $p(s)$ is the penalisation function which takes as an argument $s$ the amount of lag between the two signals (higher absolute lags giving a higher value with 0 taking a value 1). It should be noted that in this scenario there would be no penalisation due to the fact that the error becomes zero after alignment, but this is almost impossible in practice. 
+where $\epsilon_{window}$ is the absolute error of the window and $p(s)$ is the penalisation function which takes as an argument $s$ the amount of lag between the two signals (higher absolute lags giving a higher value with 0 taking a value 1). It should be noted that in this scenario there would be no penalisation due to the fact that the error becomes zero after alignment, but this is almost impossible in practice. 
 
 
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.2]{Jitter_Example.jpg}
-\caption{Example showing signal jitter.}
+\caption{Example showing signal jitter. For most part of the signal (after frame 5) the student and teacher signals are exactly the same.}
 \label{jitter}
 \end{figure}
 
 \noindent
-Another issue is the fact that though the error may be considered a plausible measure for the correctness of a dance to an engineer or a scientist, this may not be the case for an artist such as the dance teacher. Added to this, the relationship may not be linear and so some care must be taken when finding a function to translate this into a score for the regular individual.
+Another issue is presented by the fact that although the error may be considered a plausible measure for the correctness of a dance to an engineer or a scientist, this may not be the case for an artist such as the dance teacher. Added to this, the relationship may not be linear and so some care must be taken when finding a function to translate this into a score for the regular individual.
 
 \begin{figure}[H]
 \centering
@@ -684,20 +686,21 @@ Another issue is the fact that though the error may be considered a plausible me
 
 \subsubsection{Results}
 \noindent
-The graphs in Figure \ref{error_score} show the results of test cases 1 to 4. As it is clear, the more closely the student represents the dance, the lower the error (top left) and the higher the score (top right). This is both in the average score case, and in the time framed case. In Case 1, though the student tries to replicate the dance the same, it can clearly be seen in the windowed results that this is not the case and once the window is identified, the joint(s) which made the error can also be identified. In this case, it appears to be the x-coordinate of the left shoulder as can be seen in Figure \ref{error_left_shoulder}. Whether or not this should be penalised so much since the overall movement is quite similar, is not discussed here as this is more of a subjective issue. It is also clear that in the Case 2 and Case 3 scenario only some of the windows are given a low score, whereas in the rest of them the error is comparable to that of Case 1. This follows the video data as the student makes two errors with the arms within the periods of time that are represented by the windows. Finally, Case 4 shows a low score for almost all of the window frames as predicted, only having a high score for the first 3 windows due to the fact that no motion is taking place for both the student and the teacher. 
+The graphs in Figure \ref{error_score} show the results of test cases 1 to 4. As it is clear, the more closely the student represents the dance, the lower the error (top left) and the higher the score (top right). This is both in the average score case, and in the time framed case. In Case 1, though the student tries to replicate the dance, it can clearly be seen in the windowed results that this is not the case and once the window is identified, the joint(s) which made the error can also be identified. In this case, it appears to be the x-coordinate of the left shoulder as can be seen in Figure \ref{error_left_shoulder}. Whether or not this should be penalised to such an extent is not discussed here, as this is more of a subjective issue. It is also evident that in the Case 2 and Case 3 scenario only some of the windows are given a low score, whereas in the rest of them the error is comparable to that of Case 1. This follows the video data as the student makes two errors with the arms within the periods of time that are represented by the windows. Finally, Case 4 shows a low score for almost all of the window frames as predicted, only having a high score for the first 3 windows due to the fact that no motion is taking place for both the student and the teacher. 
 
 \subsubsection{Score Function}
 \noindent
-The results of the error show that there is a great need for user friendly feedback. One thing to note is that firstly, the results are given in an unintuitive scale for the regular daily user. Added to this is the fact that the results are not bounded in any way. Ideally, we would like for a good score to get something that appears to be close to 100\% and a bad score to get close to 0\%. To do this, have iterated through various functions to map errors to a score. The final result can be seen in equation \eqref{score_function}, where $\epsilon$ is the error and $a$, $b$, and $c$ are constants chosen to give a maximum score of 100 and a minimum of 0.
+The results of the error show that there is a great need for user friendly feedback. One thing to note is that firstly, the results are given in an unintuitive scale for the regular daily user. Added to this, is the fact that the results are not bounded in any way. Ideally, we would like for a good score to get something that appears to be close to 100\% and a bad score to get close to 0\%. To do this, we have iterated through various functions to map errors to a score. The final result can be seen in equation \eqref{score_function_math}, where $\epsilon$ is the error and $a$, $b$, and $c$ are constants chosen to give a maximum score of 100 and a minimum of 0.
 
 % score = -2.^(6.652410119*(0.3*error_score+0.8))+140;
  
 \begin{equation}
-S(\epsilon) = \min\left[ -2^{a\epsilon + b}+c, 0 \right]
+S(\epsilon) = \max\left[ -2^{a\epsilon + b}+c, 0 \right]
+\label{score_function_math}
 \end{equation}
 
 \noindent
-By passing the estimated error $\epsilon$ through the scoring function $S$, we obtain a score in the range of $[0,100]$ which complies with most conventional scoring schemes and thus is more intuitive. The calibrated scoring function can be seen below in Figure \ref{score_function}.
+By passing the estimated error $\epsilon$ through the scoring function, $S$, we obtain a score in the range of $[0,100]$ which complies with most conventional scoring schemes and thus is more intuitive. The calibrated scoring function can be seen below in Figure \ref{score_function}.
 
 \begin{figure}[H]
 \centering
@@ -707,15 +710,16 @@ By passing the estimated error $\epsilon$ through the scoring function $S$, we o
 \caption{Graph of scoring function (left) and penalisation function (right).}
 \label{score_function}
 \end{figure}
+
 \noindent
-The following figure (Figure \ref{error_score}) illustrates the transformation of an unbounded and unintuitive error estimate $\epsilon$ to a user friendly score. The top left figure shows the overall error of the four test cases while the top right one shows the actual calculated score for these errors. The detailed score per window for each test case can be seen in the four bottom graphs.
+The following figure (Figure \ref{error_score}) illustrates the transformation of an unbounded and unintuitive error estimate, $\epsilon$, to a user friendly score. The left figure shows the overall error of the four test cases while the middle one shows the actual calculated score for these errors. The detailed score per window for each test case can be seen in the four graphs on the right.
 
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.15]{Data_Analysis_Average_Score.jpg}
 \includegraphics[scale=0.15]{Data_Analysis_Window_Score.jpg}
 
-\caption{Overall error of the four test cases (top left) and score calculated for these errors (top right). Score calculated for four test cases split into 10 portions of time (bottom four graphs).}
+\caption{Overall error of the four test cases (left bar chart) and score calculated for these errors (middle bar chart). Score calculated for four test cases split into 10 portions of time (right bar charts).}
 \label{error_score}
 \end{figure}
 
@@ -724,9 +728,10 @@ The following figure (Figure \ref{error_score}) illustrates the transformation o
 \noindent
 To make the code quicker and to make the whole application integrate more easily it has been chosen to port all the code, written initially in Matlab, to C++. 
 \subsection{Linear Algebra Library Choice}
-This has been made much more time efficient by the use of the external library chosen for linear algebra called Armadillo.  The reason this library has been chosen is due to its similarity in syntax to Matlab but also due to its speed. Armadillo claims\footnote{Armadillo [Internet]. 06/2013 [updated 04/06/2013]. Available from http://arma.sourceforge.net/speed.html.} to be approximately up to 15 times faster for the operations that are needed for our algorithms than two competing libraries IT++ and NEWMAT. Also being well established and well documented, the transition has been fairly simple.  
+This has been made much more time efficient by the use of the external library chosen for linear algebra called \texttt{Armadillo}. The reason this library has been chosen is due to its similarity in syntax to Matlab but also due to its speed. \texttt{Armadillo} claims\footnote{Armadillo [Internet]. 06/2013 [updated 04/06/2013]. Available from http://arma.sourceforge.net/speed.html.} to be approximately up to 15 times faster for the operations that are needed for our algorithms than two competing libraries \texttt{IT++} and \texttt{NEWMAT}. Also being well established and well documented, the transition has been fairly simple.  
 \subsection{Design}
 The software solution entails designing and implementing an application with a user interface enabling four main modes. Live performances must be recorded and the data logged during the performance, whilst also providing the option of subsequent replay. The extended features of recognition of errors with automated score generation and augmented reality are considered also. The user interface is required to be centred on the end user, so that it should be easily understood and controlled by non-technical users, such as dance students and teachers. Additionally, it is assumed the application will run on a computer with all necessary drivers installed required to use an RGB-D camera.
+
 \subsubsection{High Level Design}
 
 \begin{figure}[H]
@@ -736,16 +741,16 @@ The software solution entails designing and implementing an application with a u
 \label{system_architecture}
 \end{figure}
 
-The solution is based upon three main modules that interact to make up the application. Dialog boxes feature commonly in many applications, and users are very familiar with their appearance and control mechanisms, therefore they are used as the interface for the application. In this way, the user can control the application by passing through a series of dialog boxes (through button clicks), each responsible for a different operation. The Dialog Box Management system, manages all the dialog boxes that the user can possibly encounter, including the content that appear on them and how they communicate with one another.
+The solution is based upon three main modules that interact to make up the application. Dialog boxes feature commonly in many applications, and users are very familiar with their appearance and control mechanisms, therefore they are used as the interface for the application. In this way, the user can control the application by passing through a series of dialog boxes, each responsible for a different operation. The Dialog Box Management system manages all the dialog boxes that the user can possibly encounter, including the content that appear on them and how they communicate with one another.
 
 \noindent
-In order to detect and fit skeletons to the performer, the use of the frameworks: OpenNI and NiTE 2 are required. The images from the camera need to be displayed onto the screen, and accomplishing this requires a library called GLUT, an OpenGL utility toolkit. The management of the resources obtained from the frameworks and the usage through code utilising GLUT is achieved by the Sample Viewer system.
+In order to detect and fit skeletons to the performer, the use of the frameworks \texttt{OpenNI} and \texttt{NiTE} are required. The images from the camera need to be displayed onto the screen, and accomplishing this requires a library called \texttt{GLUT}, an \texttt{OpenGL} utility toolkit. The management of the resources obtained from the frameworks and the usage through code utilising \texttt{GLUT} is achieved by the Sample Viewer system.
 
 \noindent
-The generation of scores, given the data for student and teacher skeletons, is achieved through the Dance Assessment system. These scores are then displayed on the screen as the application is running, and can be included as part of a report card file. As aforementioned, a library called Armadillo has been used, to provide functionality for processing intensive methods.
+The generation of scores, given the data for student and teacher skeletons, is achieved through the Dance Assessment system. These scores are then displayed on the screen as the application is running, and can be included as part of a report card file. As aforementioned, a library called \texttt{Armadillo} has been used, to provide functionality for processing intensive methods.
 
 \noindent
-The combination of these elements is facilitated by external linkage and objects that are accessible and editable by all the modules. The interface between the dialog boxes and the Sample Viewer system is essential in displaying content within dialog boxes. This is accomplished by creating two classes that contains methods, which create a child window inside the dialog box, and renders this window with GLUT-based functions from the Sample Viewer module, providing the effect of displaying content within a section of the dialog box window.
+The combination of these elements is facilitated by external linkage and objects that are accessible and editable by all the modules. The interface between the dialog boxes and the Sample Viewer system is essential in displaying content within dialog boxes. This is accomplished by creating two classes that contain methods, which create a child window inside the dialog box, and render this window with \texttt{GLUT}-based functions from the Sample Viewer module, providing the effect of displaying content within a section of the dialog box window.
 
 \subsubsection{Subsystems}
 
@@ -754,21 +759,21 @@ The combination of these elements is facilitated by external linkage and objects
 This system contains a set of classes, one for each dialog box the user can possibly interact with.
 
 \noindent
-The appearance of each dialog box has been designed by focusing on the end user, and the decision has actively been taken to tailor the content within each dialog box to be simple to understand and control.  There are several examples of particular choices taken that demonstrate this. For instance, there is a mechanism by which the user can watch tutorial videos that detail knowledge and specify how to use each feature of the application.
+The appearance of each dialog box has been designed by focusing on the end user, and the decision has actively been taken to tailor the content within each dialog box to be simple to understand and control. There are several examples of particular choices taken that demonstrate this. For instance, there is a mechanism by which the user can watch tutorial videos that detail knowledge and specify how to use each feature of the application.
 
 \noindent
-When loading or saving files (such as recording or data files), the dialog boxes that appear are standard and used by many Windows-based applications, providing familiarity to this process for the user.
-Within the mode that compares the skeletons of the student and teacher, included is a slider that acts as a media control, so that the user can move the position of the slider's pointer essentially rewinding or forwarding the content on the screen, providing additional flexibility in the interaction between the user and the application.
+When loading or saving files (such as recordings or data files), the dialog boxes that appear are standard and used by many Windows-based applications, providing familiarity to this process for the user.
+Within the mode that compares the skeletons of the student and teacher, a slider is included that acts as a media control, so that the user can move the position of the slider pointer essentially rewinding or forwarding the content on the screen, providing additional flexibility in the interaction between the user and the application.
 
 \subsubsection*{Sample Viewer System}
 
-This system contains one class that includes all methods to display the content on the screen for all modes, as well as all the necessary helper functions. This particular module uses extensively the frameworks: OpenNI, NiTE 2 and GLUT. OpenNI is required for sensing the performers, in both depth and RGB colour modes, whilst NiTE 2 provides the ability to track the performers and fit skeletons on them. These two libraries have been chosen since they are advanced and robust middleware, work on several platforms (which is important considering they are third-party software), and the interfacing between them and GLUT is very simple. The data obtained from each frame of the live camera/recording stream, using functions from OpenNi and NiTE 2, is displayed onto the screen in the form of a texture map within the GLUT environment. The skeletons are displayed using GLUT points and lines with the coordinate data obtained from NiTE 2 functions.
+This system contains one class that includes all methods to display the content on the screen for all modes, as well as all the necessary helper functions. This particular module uses extensively the frameworks: \texttt{OpenNI}, \texttt{NiTE} and \texttt{GLUT}. \texttt{OpenNI} is required for sensing the performers, in both depth and RGB colour modes, whilst \texttt{NiTE} provides the ability to track the performers and fit skeletons on them. These two libraries have been chosen since they are advanced and robust middleware, work on several platforms (which is important considering they are third-party software), and the interfacing between them and \texttt{GLUT} is very simple. The data obtained from each frame of the live camera/recording stream, using functions from \texttt{OpenNI} and \texttt{NiTE}, is displayed onto the screen in the form of a texture map within the \texttt{GLUT} environment. The skeletons are displayed using \texttt{GLUT} points and lines with the coordinate data obtained from \texttt{NiTE} functions.
 
 \noindent
 This module also demonstrates features orientated towards the end user, mainly with respect to how the content displayed interacts with the user.
 
 \noindent
-For all the main modes of the application, parts of the content displayed can be switched on or off by the user using a click of a button. This results in the ability to control aspects of the image, such as the background of a recording, the tracked skeleton within the augmented reality mode and either the student or teacher skeleton within the automated score mode. Also, integrated is a function which can display a graph plotting the student's average score for each window in the form of a bar chart, so that the user, for example, can locate which window has a particular low score and can return to play content from this specific window with just two clicks.
+For all the main modes of the application, parts of the content displayed can be switched on or off by the user using a click of a button. This results in the ability to control aspects of the image, such as the background of a recording, the tracked skeleton within the augmented reality mode and either the student or teacher skeleton within the automated score mode. Also, a function is integrated, which can display a graph plotting the student's average score for each window in the form of a bar chart, so that the user, for example, can locate which window has a particularly low score and can return to play content from this specific window with just two clicks.
 
 \subsubsection*{Dance Assessment System}
 \noindent 
@@ -778,21 +783,22 @@ The Dance Assessment System consists of two classes which work together to incre
 The \texttt{Skeleton} class adds a layer of abstraction to the raw data received from the \texttt{NiTE} software, which comes as an $m\times n $ matrix where $m$ is the number of frames and $n$ is 60 representing a 4-tuple (x, y, z, c) for each of the 15 joints.
 
 \noindent
-The class contains one data member \texttt{mat data}, where \texttt{mat} is an Armadillo class for a matrix. To enhance the level of abstraction, it also contains an enumerated data type that can be used to access different joints' data, called \texttt{Joint}. Additionally, in order to make the code in the application more readable and maintainable, a few static constant members have been added to represent the number of joints (15) and the number of columns in the matrix (60). It also includes all the standard methods, such as constructors, destructors, getters and setters.
+The class contains one data member \texttt{mat data}, where \texttt{mat} is an \texttt{Armadillo} class for a matrix. To enhance the level of abstraction, it also contains an enumerated data type that can be used to access different joints' data, called \texttt{Joint}. Additionally, in order to make the code in the application more readable and maintainable, a few static constant members have been added to represent the number of joints (15) and the number of columns in the matrix (60). It also includes all the standard methods, such as constructors, destructors, getters and setters.
 
 \subsubsection*{B. ScoreProcessor Class}
 \noindent
 The \texttt{ScoreProcessor} class is in charge of taking the raw data from \texttt{NiTE}, analysing it and producing a score for a certain student performance, as compared to the teacher's.
 
 \noindent 
-The main data members of the class are two \texttt{Skeleton} objects to store the input teacher and student data and two more which contatin the data after processing (aligned, translated, truncated etc.). The class also contains 3 objects of type \texttt{mat}, which represent the windowed score for each coordinate, the windowed score for each joint and the average score for each window.
+The main data members of the class are two \texttt{Skeleton} objects to store the input teacher and student data and two more which contain the data after processing (aligned, translated, truncated etc.). The class also contains 3 objects of type \texttt{mat}, which represent the windowed score for each coordinate, the windowed score for each joint and the average score for each window.
 
 \noindent
-Apart from the standard methods, such as getters, setters and others, the class contains a single public procedure, \texttt{analyse()}, which calls a number of private methods in order to perform the complete processing and set all the output data members. The high level data flow inside the \texttt{analyse()} method mimics that in Figure \ref{modules}. In this way, the user of the class only needs to be informed about how to use a few methods and can then just call the getters to retrieve the data that is of interest to them, adding a further layer of abstraction to the data.
+Apart from the standard methods, such as getters, setters and others, the class contains a single public procedure, \texttt{analyse()}, which calls a number of private methods in order to perform the complete processing and set all the output data members. The high level data flow inside the \texttt{analyse()} method mimics that of Figure \ref{modules}. In this way, the user of the class only needs to be informed about how to use a few methods and can then just call the getters to retrieve the data that is of interest to them, adding a further layer of abstraction to the data.
+
 \subsection{Development}
 \subsubsection{Unit Testing}
 \noindent
-Given that the detailed low level design inside each method has been thoroughly tested in Matlab, the C++ code has been tested on a unit bases with emphasis on black box testing. Every method created in C++ has been tested against its Matlab counterpart with respect to its outputs, without considering its inner workings. Moreover, a test-first approach has been followed in order to minimise the amount of time between when an error is inserted into the program and when the error is detected and removed. The unit testing procedure is as follows:
+Given that the detailed low level design inside each method has been thoroughly tested in Matlab, the C++ code has been tested on a unit bases with emphasis on black box testing. Every method created in C++ has been tested against its Matlab counterpart with respect to its outputs, without considering its inner workings. Moreover, a test-first approach has been followed in order to minimise the amount of time between when an error is introduced into the program and when the error is detected and removed. The unit testing procedure is as follows:
 \begin{compactitem}
 \item Consider each method in isolation from the complete system.
 \item Write small program in C++ that calls method (before being created) and prints results in a text file in a directory accessible to Matlab.
@@ -805,11 +811,10 @@ In this way, the process of testing is automated and the detection and removal o
 
 \subsubsection{Integration}
 \noindent
-The integration approach of our programs is the incremental combination of the separate software modules. An alternative method would be the combination of the components into a single system all at once. Nevertheless, such an approach would cause several problems. When multiple modules in our system are put together for the first time, new problems would appear and their simultaneous integration makes it harder to locate errors. In other words, an error could be in any of the new modules, in the interface between the new modules or in the interaction between the new modules and the core of the system. On the other hand, our incremental approach allows us to locate and remove defects easily as the integration of every new module with the core of our system is tested and debugged fully before the addition of any new modules.
+The integration approach of our programs is the incremental combination of the separate software modules. An alternative method would be the combination of the components into a single system all at once. Nevertheless, such an approach would cause several problems. When multiple modules in our system are put together for the first time, new problems would appear and their simultaneous integration would makes it harder to locate errors. In other words, an error could be in any of the new modules, due to the interface between the new modules or in the interaction between the new modules and the core of the system. On the other hand, our incremental approach allows us to locate and remove defects easily as the integration of every new module with the core of our system is tested and debugged fully before the addition of any new modules.
  
 \noindent
-The architecture of our system includes the Presentation Layer with the Graphical User Interface and the Processing Layer where the algorithms are implemented. The integration of these two main components ..
-
+The architecture of our system includes the Presentation Layer with the Graphical User Interface and the Processing Layer where the algorithms are implemented. Due to the care taken to maintain modularity, the integration procedure has been relatively straight forward. 
 
 \subsubsection{Integration and System Testing}
 The final code is tested by making a test program that calls the \texttt{analyse()} procedure in C++ and prints all the member variables to text files. This again is tested against the Matlab results using a script in the same way as in the unit testing.
@@ -817,20 +822,19 @@ The final code is tested by making a test program that calls the \texttt{analyse
 \clearpage
 \section{Extensions: Improving Scoring Accuracy \& Credibility}
 \noindent
-After building the first prototype, it can be seen that various improvements can be made. These improvements can both enhance the user experience and at the same time increase the accuracy of the application and seeing that time has not been a limitation, we have decided to pursue a couple of extensions to the application to improve its overall performance.
+After building the first prototype, it can be seen that various improvements can be made. These improvements can both enhance the user experience and at the same time increase the accuracy of the application and seeing that time has not been a limitation, we have decided to consider a few extensions to the application to improve its overall performance.
 
 \subsection{Weighted Average Score}
 \noindent
-In order to make the scoring function more subjective to the user, different weights can be applied to different joints. As a result, the application can give score which depends on requirements from the teacher on a specific dance. We decided to have weighting factors for 5 sets of joints - head, arms, torso, hips and legs. The teacher can set each of them to "least important", "important" and "very important" according to the importance of the accuracy of this set of joints in a dance. Each level of importance corresponds to a numerical value of 1, 2 and 3 in the underlying code. Hence, the window score of a joint is  multiplied by its weighting factor. Finally, the overall window score is calculated after  normalising by dividing the sum of scores of all joints in a window with the sum of weighting factors. This extension is provided as an advanced setting which the teacher can decide whether to use or not. In the case when this option is not required, the average score is calculated without involving any weighting factors. 
+In order to make the scoring function more subjective to the user, different weights can be applied to different joints. As a result, the application can give score which depends on requirements from the teacher on a specific dance. We decided to have weighting factors for 5 sets of joints - head, arms, torso, hips and legs. The teacher can set each of them to ``least important'',``important'' and ``very important'' according to the importance of the accuracy of this set of joints in a dance. Each level of importance corresponds to a numerical value of 1, 2 and 3 in the underlying code. Hence, the window score of a joint is  multiplied by its weighting factor. Finally, the overall window score is calculated after  normalising by dividing the sum of scores of all joints in a window with the sum of weighting factors. This extension is provided as an advanced setting which the teacher can decide whether to use or not. In the case when this option is not required, the average score is calculated without involving any weighting factors. 
 
 \subsection{Score Function Accuracy}
 \noindent
-The problem with our current score function, as discussed in the previous section (2.4.5), is that the maximum is 100\% and the minimum is 0\% but everything in between that is chosen quite arbitrarily without professional input. What would be best is for a few  teachers to grade a set of performances and for a score function to be chosen in such a way as to best fit the given data. This score function could then be used in the final product.
+The problem with our current score function, as discussed in the previous section (2.4.5), is that the maximum is 100\% and the minimum is 0\%, but everything between these two values has been chosen quite arbitrarily without professional input. An alternative approach that would lead to more credible results is for a few  teachers to grade a set of performances and for a score function to be chosen in such a way as to best fit the given data. This score function could then be used in the final product.
+
 \subsubsection{Method Description}
 \noindent
-The method chosen to do this is based on a well known machine learning method called Linear Regression. There are many variations and the method chosen in this case is based on Multivariant Linear Regression using polynomials. The basic concept can be described as such. Given a certain ordered polynomial, a line of best fit can be found for a given data set by reducing the error squared between the points and the line. For example, if the data seems to be able to be represented by a second order polynomial, this can be represented as such, where $\epsilon$ is the error and $S$ is the score.
-
-
+The approach chosen to do this is based on a well known machine learning method called Linear Regression. There are many variations and the method chosen in this case is based on Multivariant Linear Regression using polynomials. The basic concept can be described as such. Given a certain ordered polynomial, a line of best fit can be found for a given data set by reducing the error squared between the points and the line. For example, if the data seems to be able to be represented by a second order polynomial, this can be represented as such, where $\epsilon$ is the error and $S$ is the score.
 
 \begin{equation}
 \hat{S} = \begin{pmatrix}
@@ -860,7 +864,7 @@ The objective of linear regression is to minimize the cost function given by:
 \begin{equation}
 J(\theta) = \frac{1}{2m} \sum_{i=1}^m \left( \boldsymbol \theta^T \cdot \boldsymbol \epsilon_i - S_i\right)^2  + \lambda \sum_{j=1}^n \theta_j^2
 \end{equation} 
-where $S_i$ is the actual score for the given error, $i$ is the data sample chosen and $m$ is the number of data samples in our training set. To avoid overfitting of the curve, which happens when the curve fits the training data very well but fails to make predictions well, we use the regulation constant $\lambda$, which penalises all $\theta_j$ up until n, the order of the polynomial, as they become too large. The way to choose the parameters for a certain order polynomial is to iteratively keep updating $\boldsymbol \theta$ in the following way until it converges.
+where $S_i$ is the actual score for the given error, $i$ is the data sample chosen and $m$ is the number of data samples in our training set. To avoid overfitting of the curve, which happens when the curve fits the training data very well but fails to make predictions well, we use the regulation constant $\lambda$, which penalises all $\theta_j$ up until $n$, the order of the polynomial, as they become too large. The way to choose the parameters for a certain order polynomial is to iteratively keep updating $\boldsymbol \theta$ in the following way until it converges.
 
 \begin{equation}
   \theta_j :=
@@ -869,7 +873,7 @@ where $S_i$ is the actual score for the given error, $i$ is the data sample chos
 \theta_j \left(1- \frac{\alpha\lambda}{m} \right) - \frac{\alpha}{m} \frac{\partial}{\partial \theta_j } J( \theta_j), & \text{if }j > 0 \\
 \end{cases}
 \end{equation} 
-where $\alpha$ is the step size. It can be shown mathematically that the larger $\alpha$ is, the faster the rate of convergence, but the lower the accuracy and the higher the chance of divergence also. Moreover, if $\lambda$ is too large, it may also underfit the curve and if it is too small, it may not have a significant effect at all. Therefore, care needs to be taken in choosing $\alpha$ and $\lambda$. This, alongside the choice of which order should be chosen for the polynomial, is done in an iterative manner which first chooses the order of the polynomial for which the error is least and then chooses the value of $\lambda$ for which the cost is least when trying to predict the value of a separate data set. The code for this can be found in the Appendix.
+where $\alpha$ is the step size. It can be shown mathematically that the larger $\alpha$ is, the faster the rate of convergence, but the lower the accuracy and the higher the chance of divergence. Moreover, if $\lambda$ is too large, it may also underfit the curve and if it is too small, it may not have a significant effect at all. Therefore, care needs to be taken in choosing $\alpha$ and $\lambda$. This, alongside the choice of which order should be chosen for the polynomial, is done in an iterative manner which first chooses the order of the polynomial for which the error is least and then chooses the value of $\lambda$ for which the cost is least when trying to predict the value of a separate data set. 
 
 \subsubsection{Customising the Algorithm}
 \noindent
@@ -890,11 +894,11 @@ The actual parameter vector is:
 -80
 \end{pmatrix}
 \end{equation}
-We choose to take 41 points between 0 and 1 for the error values, equally spaced with 0.025 error difference between them. We then add some noise taken from a normal distribution with parameters $\mathcal{N}(0, 16)$. This helps to make the data more realistic as it is very unlikely that the teacher would give scores absolutely consistent with the curve chosen only based on the error. With this as the training set, the script is then run and finds the order that gives the least cost for the number of iterations and the value chosen for $\alpha$. It then finds the $\lambda$ that gives the lowest error for future predictions also and calculates the parameters for the chosen order of polynomial. The results can be seen in Figure \ref{machine_learning_results}
+We choose to take 41 points between 0 and 1 for the error values, equally spaced with 0.025 error difference between them. We then add some noise taken from a normal distribution with parameters $\mathcal{N}(0, 16)$. This helps to make the data more realistic as it is very unlikely that the teacher would give scores absolutely consistent with the curve chosen only based on the error. With this as the training set, the script is then run and finds the order that gives the least cost for the number of iterations and the value chosen for $\alpha$. It then finds the $\lambda$ that gives the lowest error for future predictions and calculates the parameters for the chosen order of polynomial. The results can be seen in Figure \ref{machine_learning_results}.
 
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.15]{Score_Function_Machine_Learning.jpg}
+\includegraphics[scale=0.3]{Score_Function_Machine_Learning.jpg}
 
 \caption{Results of machine learning algorithm trying to fit a curve (red) to the data points (blue) to reduce the cost function $J(\theta)$.}
 \label{machine_learning_results}
@@ -917,26 +921,13 @@ Though it has chosen a polynomial that is two orders higher than the initial for
 
 
 \subsection{Using Multiple Cameras}
-Theoretically, the use of multiple cameras would result in a higher accuracy in evaluation. It is possible that a single camera loses its tracking of part of the body while recording. For example, one arm will not be seen by the camera after the user turned 90 degrees. The use of second camera which records from another angle may track the whole skeleton after the first camera lost part of it. With this hypothesis, we carried out tests for the multiple cameras configuration.
+Theoretically, the use of multiple cameras would result in a higher accuracy in evaluation. It is possible for a single camera to lose its tracking of part of the body while recording. For example, one arm could not be visible by the camera after the user turns by $90^o$ . The use of second camera, which would record from another angle, would be able to track the whole skeleton after the first camera would lose part of it. With this hypothesis, we have carried out tests for the multiple camera configuration.
 
 \noindent
-Two cameras are placed as one sees the front view of the subject and another sees the side view initially. Subjects are asked to make simple moves with 90 degrees turn. We first record the teacher performance, then several student performances. Data from both cameras are passed to our automatic evaluation system, scores for each camera recording are hence generated. Evaluation of only one recording is improved by the use of second camera - the second camera tracks the whole skeleton at all time, thus after the first camera loses its tracking of one arm, the second camera tracks it well. Scores come from both camera are combined, the low score due to lost of track from first camera is lifted up by the high score from the second camera. However, the test results are not consistent. Other tests always give bad score after the subject turns 90 degrees. This is due to the fact that the second camera is not able to track the whole skeleton at all time, it requires time to calibrate after the subject turns 90 degree. The use of multiple cameras does not improve the accuracy of evaluation.
-
-%% Limitations of software
-%   If a dance is too fast, high errors will be incurred.
-%   Can't track dances in which there is too much interaction between 2 people e.g. salsa.
-%   Student cannot be too short or tall compared to teacher or may need scaling module also. 
+Two cameras are placed so that one sees the front view of the subject and another sees the side view initially. Subjects are asked to make simple moves with a $90^o$ turn. We first record the teacher's performance followed by several student performances. Data from both cameras is passed to our automatic evaluation system and scores for each camera recording are hence generated. From the results, it is found that the evaluation of only one recording is improved by the use of the second camera. Scores coming from both cameras are combined. The low scores, due to the loss of information caused by the lack of tracking from first camera are averaged with the high scores from the second camera. However, the test results are not consistent. This is due to the fact that the second camera is not able to track the whole skeleton at all times and requires time to calibrate after the subject turns by $90^o$. Only about 1 in 6 cases does the use of the second camera actually improve the accuracy of the algorithm and therefore we conclude that the use of multiple cameras does not improve the accuracy of evaluation as a whole. Furthermore, \texttt{OpenNI} and \texttt{NiTE} do not currently support recording from multiple cameras using only one computer, and therefore the cost and equipment overhead makes it prohibiting for our application. 
 
 \clearpage
 \section*{Appendix}
-\subsection*{Some Code}
-\begin{lstlisting}
-int main()
-{
-	// your code
-	x = 5;
-	// our code
-}
+All code can be found on the accompanying CD. 
 
-\end{lstlisting}
 \end{document}
